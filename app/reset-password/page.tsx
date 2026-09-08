@@ -7,9 +7,12 @@ import { createClient } from '@/lib/supabase/client';
 const INVALID_LINK_MESSAGE =
   'Este enlace ha caducado o no es válido. Pide uno nuevo desde "¿Olvidaste tu contraseña?".';
 
+type Status = 'checking' | 'has_code' | 'confirming' | 'ready' | 'invalid';
+
 export default function ResetPasswordPage() {
   const supabase = createClient();
-  const [status, setStatus] = useState<'checking' | 'ready' | 'invalid'>('checking');
+  const [status, setStatus] = useState<Status>('checking');
+  const [code, setCode] = useState<string | null>(null);
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -22,18 +25,17 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    // El link del email manda acá con ?code=... (flujo PKCE). Hay que
-    // canjearlo por una sesión de "recuperación" antes de poder cambiar la
-    // contraseña — el cliente no lo hace solo con solo detectar la URL.
+    // El link del email trae ?code=... (flujo PKCE). Muchos clientes de
+    // correo (Gmail incluido) "visitan" los links automáticamente para
+    // escanearlos en busca de phishing antes de que la persona los toque —
+    // y como este código solo sirve una vez, ese escaneo lo gastaba antes de
+    // tiempo. Por eso NO lo canjeamos solo al cargar la página: esperamos a
+    // que la persona toque un botón, así el escaneo automático no lo consume.
     async function prepare() {
-      const code = new URLSearchParams(window.location.search).get('code');
-      if (code) {
-        const { error } = await supabase!.auth.exchangeCodeForSession(code);
-        if (error) {
-          setStatus('invalid');
-          return;
-        }
-        setStatus('ready');
+      const codeParam = new URLSearchParams(window.location.search).get('code');
+      if (codeParam) {
+        setCode(codeParam);
+        setStatus('has_code');
         return;
       }
 
@@ -44,6 +46,13 @@ export default function ResetPasswordPage() {
     prepare();
   }, [supabase]);
 
+  async function handleConfirmLink() {
+    if (!supabase || !code) return;
+    setStatus('confirming');
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    setStatus(error ? 'invalid' : 'ready');
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (password !== confirm) {
@@ -51,7 +60,7 @@ export default function ResetPasswordPage() {
       return;
     }
     if (!supabase) {
-      setError('El login todavía no está conectado. Configurá Supabase (ver SETUP.md).');
+      setError('El login todavía no está conectado. Configura Supabase (ver SETUP.md).');
       return;
     }
     setLoading(true);
@@ -86,6 +95,26 @@ export default function ResetPasswordPage() {
     return (
       <section className="mx-auto max-w-md px-6 py-20 text-center">
         <p className="text-sm text-vivi-muted">Comprobando tu enlace…</p>
+      </section>
+    );
+  }
+
+  if (status === 'has_code' || status === 'confirming') {
+    return (
+      <section className="mx-auto max-w-md px-6 py-20 text-center">
+        <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Recuperar acceso</p>
+        <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink">Confirma que eres tú</h1>
+        <p className="mt-3 text-sm text-vivi-muted">
+          Por seguridad, toca el botón para continuar y elegir tu contraseña nueva.
+        </p>
+        <button
+          type="button"
+          disabled={status === 'confirming'}
+          onClick={handleConfirmLink}
+          className="mt-8 rounded-xl bg-vivi-navy px-6 py-3 text-sm font-bold text-white hover:bg-vivi-navyLight disabled:opacity-60"
+        >
+          {status === 'confirming' ? 'Comprobando…' : 'Continuar'}
+        </button>
       </section>
     );
   }
