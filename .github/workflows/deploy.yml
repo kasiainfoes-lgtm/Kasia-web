@@ -8,12 +8,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # VPS_SSH_KEY is stored as a single base64 line (not a raw multi-line
+      # PEM block) so it survives copy/paste into the GitHub secret UI
+      # without a stray line break silently corrupting it. Decode it here.
+      - name: Decode deploy key
+        id: key
+        run: |
+          echo "${{ secrets.VPS_SSH_KEY }}" | base64 -d > /tmp/deploy_key
+          {
+            echo 'private_key<<KEYEOF'
+            cat /tmp/deploy_key
+            echo KEYEOF
+          } >> "$GITHUB_OUTPUT"
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ steps.key.outputs.private_key }}
           script: |
             set -e
             cd /var/www/Kasia-web
