@@ -8,6 +8,9 @@ type Settings = {
   diditConfigured: boolean;
   diditApiKeyMasked: string | null;
   diditWorkflowId: string;
+  emailConfigured: boolean;
+  resendApiKeyMasked: string | null;
+  emailFrom: string;
 };
 
 export default function IntegrationsForm() {
@@ -15,7 +18,9 @@ export default function IntegrationsForm() {
   const [stripeSecretKey, setStripeSecretKey] = useState('');
   const [diditApiKey, setDiditApiKey] = useState('');
   const [diditWorkflowId, setDiditWorkflowId] = useState('');
-  const [saving, setSaving] = useState<'stripe' | 'didit' | null>(null);
+  const [resendApiKey, setResendApiKey] = useState('');
+  const [emailFrom, setEmailFrom] = useState('');
+  const [saving, setSaving] = useState<'stripe' | 'didit' | 'email' | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   function load() {
@@ -24,6 +29,7 @@ export default function IntegrationsForm() {
       .then((data: Settings) => {
         setSettings(data);
         setDiditWorkflowId(data.diditWorkflowId);
+        setEmailFrom(data.emailFrom);
       });
   }
 
@@ -56,6 +62,21 @@ export default function IntegrationsForm() {
     setDiditApiKey('');
     setSaving(null);
     setMessage('Configuración de Didit guardada.');
+    load();
+  }
+
+  async function saveEmail(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving('email');
+    setMessage(null);
+    await fetch('/api/admin/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resendApiKey, emailFrom }),
+    });
+    setResendApiKey('');
+    setSaving(null);
+    setMessage('Configuración de email guardada.');
     load();
   }
 
@@ -144,6 +165,55 @@ export default function IntegrationsForm() {
           className="mt-4 rounded-xl bg-vivi-navy px-5 py-2.5 text-sm font-semibold text-white hover:bg-vivi-navyLight disabled:opacity-50"
         >
           {saving === 'didit' ? 'Guardando…' : 'Guardar configuración de Didit'}
+        </button>
+      </form>
+
+      <form onSubmit={saveEmail} className="rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-vivi-ink">Email (Resend)</h2>
+          <span
+            className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+              settings.emailConfigured ? 'bg-vivi-mintLight text-emerald-700' : 'bg-slate-100 text-vivi-muted'
+            }`}
+          >
+            {settings.emailConfigured ? 'Conectado' : 'Sin conectar'}
+          </span>
+        </div>
+        <p className="mt-2 text-sm text-vivi-muted">
+          Manda el email de &ldquo;aprobado&rdquo; y el de &ldquo;necesitamos más información&rdquo;
+          cuando revisás una solicitud en /admin/solicitudes. Creá una cuenta gratis en{' '}
+          <a href="https://resend.com" target="_blank" rel="noreferrer" className="underline">
+            resend.com
+          </a>{' '}
+          y sacá tu API key.
+        </p>
+        {settings.resendApiKeyMasked && (
+          <p className="mt-2 text-xs text-vivi-muted">API key actual: {settings.resendApiKeyMasked}</p>
+        )}
+        <label className={`${labelClass} mt-4`}>API key</label>
+        <input
+          type="password"
+          placeholder="re_..."
+          value={resendApiKey}
+          onChange={(e) => setResendApiKey(e.target.value)}
+          className={inputClass}
+        />
+        <label className={`${labelClass} mt-4`}>Remitente</label>
+        <input
+          placeholder="Kasia <hola@tudominio.com>"
+          value={emailFrom}
+          onChange={(e) => setEmailFrom(e.target.value)}
+          className={inputClass}
+        />
+        <p className="mt-1.5 text-xs text-vivi-muted">
+          Tiene que ser un dominio que hayas verificado en Resend.
+        </p>
+        <button
+          type="submit"
+          disabled={saving === 'email' || (!resendApiKey && !emailFrom)}
+          className="mt-4 rounded-xl bg-vivi-navy px-5 py-2.5 text-sm font-semibold text-white hover:bg-vivi-navyLight disabled:opacity-50"
+        >
+          {saving === 'email' ? 'Guardando…' : 'Guardar configuración de email'}
         </button>
       </form>
     </div>

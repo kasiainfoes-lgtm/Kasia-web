@@ -106,6 +106,8 @@ create table if not exists public.app_settings (
   stripe_secret_key text,
   didit_api_key text,
   didit_workflow_id text,
+  resend_api_key text,
+  email_from text,
   updated_at timestamptz not null default now(),
   constraint app_settings_singleton check (id = 1)
 );
@@ -140,9 +142,13 @@ create table if not exists public.applications (
   budget numeric not null,
   stay_duration_months int not null,
   -- Rutas dentro del bucket privado `application-documents` (ver más abajo).
-  -- Solo se completan cuando occupation_type = 'estudiante'.
+  -- Se completan cuando el estudiante los sube en /apply, o cuando alguien del
+  -- equipo pide más información desde /admin/solicitudes y la persona los sube
+  -- después en /apply/documents?app=<id>.
   financial_proof_path text,
   unpaid_rent_insurance_path text,
+  documents_requested_at timestamptz, -- cuándo se pidió más documentación desde /admin
+  documents_submitted_at timestamptz, -- cuándo se subieron los documentos pedidos
   status text not null default 'REVIEW',  -- 'APPROVED' | 'REVIEW' | 'NOT_ELIGIBLE'
   internal_reason text,               -- nunca se muestra al usuario
   created_at timestamptz not null default now(),
@@ -180,6 +186,10 @@ create policy "users read their own profile"
 -- alter table public.applications drop column if exists has_pet;
 -- alter table public.applications add column if not exists financial_proof_path text;
 -- alter table public.applications add column if not exists unpaid_rent_insurance_path text;
+-- alter table public.applications add column if not exists documents_requested_at timestamptz;
+-- alter table public.applications add column if not exists documents_submitted_at timestamptz;
+-- alter table public.app_settings add column if not exists resend_api_key text;
+-- alter table public.app_settings add column if not exists email_from text;
 
 -- ============================================================================
 -- Documentos del formulario de compatibilidad: cuando alguien contesta que es

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ChoiceCard from '@/components/ChoiceCard';
+import DocumentFileInput, { type DocumentUploadStatus } from '@/components/DocumentFileInput';
 
 const ZONES = [
   'Cualquier zona',
@@ -21,7 +22,6 @@ const DURATIONS = [3, 6, 9, 12, 18, 24];
 
 type PetType = 'perro' | 'gato' | 'otro' | '';
 type DocumentKind = 'financial-proof' | 'unpaid-rent-insurance';
-type UploadStatus = 'idle' | 'uploading' | 'done' | 'error';
 
 type FormState = {
   zone: string;
@@ -47,7 +47,7 @@ export default function ApplyWizard() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [uploadStatus, setUploadStatus] = useState<Record<DocumentKind, UploadStatus>>({
+  const [uploadStatus, setUploadStatus] = useState<Record<DocumentKind, DocumentUploadStatus>>({
     'financial-proof': 'idle',
     'unpaid-rent-insurance': 'idle',
   });
@@ -253,12 +253,12 @@ export default function ApplyWizard() {
                 <p className="text-xs leading-relaxed text-vivi-muted">
                   Como estudiante necesitamos dos documentos para revisar tu solicitud.
                 </p>
-                <DocumentUpload
+                <DocumentFileInput
                   label="Comprobante de solvencia económica"
                   status={uploadStatus['financial-proof']}
                   onChange={(file) => handleDocumentUpload('financial-proof', file)}
                 />
-                <DocumentUpload
+                <DocumentFileInput
                   label="Seguro de impago"
                   status={uploadStatus['unpaid-rent-insurance']}
                   onChange={(file) => handleDocumentUpload('unpaid-rent-insurance', file)}
@@ -368,34 +368,6 @@ function YesNo({ value, onChange }: { value: boolean | null; onChange: (v: boole
     <div className="flex gap-3">
       <ChoiceCard label="Sí" selected={value === true} onClick={() => onChange(true)} />
       <ChoiceCard label="No" selected={value === false} onClick={() => onChange(false)} />
-    </div>
-  );
-}
-
-function DocumentUpload({
-  label,
-  status,
-  onChange,
-}: {
-  label: string;
-  status: 'idle' | 'uploading' | 'done' | 'error';
-  onChange: (file: File | null) => void;
-}) {
-  return (
-    <div>
-      <label className="mb-1.5 block text-xs font-semibold text-vivi-ink">{label}</label>
-      <input
-        type="file"
-        accept="application/pdf,image/png,image/jpeg"
-        disabled={status === 'uploading'}
-        onChange={(e) => onChange(e.target.files?.[0] ?? null)}
-        className="block w-full text-xs text-vivi-muted file:mr-3 file:rounded-lg file:border-0 file:bg-vivi-navy file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
-      />
-      {status === 'uploading' && <p className="mt-1 text-xs text-vivi-muted">Subiendo…</p>}
-      {status === 'done' && <p className="mt-1 text-xs font-semibold text-emerald-600">Subido ✓</p>}
-      {status === 'error' && (
-        <p className="mt-1 text-xs text-red-600">No pudimos subir el archivo. Probá de nuevo.</p>
-      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function CreateAccountForm({ email }: { email: string }) {
+export default function CreateAccountForm({ email, appId }: { email: string; appId: string }) {
   const router = useRouter();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -21,7 +21,7 @@ export default function CreateAccountForm({ email }: { email: string }) {
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ password, appId }),
     });
     setLoading(false);
     if (!res.ok) {

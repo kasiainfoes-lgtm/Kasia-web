@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 const tabs = [
   { href: '/admin', label: 'Resumen' },
+  { href: '/admin/solicitudes', label: 'Solicitudes' },
   { href: '/admin/propiedades', label: 'Propiedades' },
   { href: '/admin/integraciones', label: 'Integraciones' },
 ];

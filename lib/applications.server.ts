@@ -1,6 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchRooms } from '@/lib/properties.server';
-import { scoreApplication, type ApplicationAnswers, type ApplicationStatus } from '@/lib/application-scoring';
+import { scoreApplication, type ApplicationAnswers, type ApplicationStatus, type PetType } from '@/lib/application-scoring';
 
 export type Application = {
   id: string;
@@ -8,6 +8,23 @@ export type Application = {
   email: string;
   phone: string | null;
   status: ApplicationStatus;
+};
+
+export type AdminApplication = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  zone: string;
+  occupationType: 'trabajador' | 'estudiante';
+  petType: PetType;
+  budget: number;
+  status: ApplicationStatus;
+  financialProofPath: string | null;
+  unpaidRentInsurancePath: string | null;
+  documentsRequestedAt: string | null;
+  documentsSubmittedAt: string | null;
+  createdAt: string;
 };
 
 const DEFAULT_COOLDOWN_DAYS = 30;
@@ -92,6 +109,37 @@ export async function submitApplication(
     phone: data.phone,
     status: data.status as ApplicationStatus,
   };
+}
+
+export async function fetchAllApplications(): Promise<AdminApplication[]> {
+  const admin = createAdminClient();
+  if (!admin) return [];
+
+  const { data, error } = await admin
+    .from('applications')
+    .select(
+      'id, name, email, phone, zone, occupation_type, pet_type, budget, status, financial_proof_path, unpaid_rent_insurance_path, documents_requested_at, documents_submitted_at, created_at'
+    )
+    .order('created_at', { ascending: false });
+
+  if (error || !data) return [];
+
+  return data.map((row) => ({
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phone: row.phone,
+    zone: row.zone,
+    occupationType: row.occupation_type,
+    petType: row.pet_type,
+    budget: Number(row.budget),
+    status: row.status,
+    financialProofPath: row.financial_proof_path,
+    unpaidRentInsurancePath: row.unpaid_rent_insurance_path,
+    documentsRequestedAt: row.documents_requested_at,
+    documentsSubmittedAt: row.documents_submitted_at,
+    createdAt: row.created_at,
+  }));
 }
 
 export async function getApplicationById(id: string): Promise<Application | null> {

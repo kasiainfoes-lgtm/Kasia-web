@@ -18,6 +18,12 @@ export async function GET() {
     ),
     diditApiKeyMasked: maskSecret(settings.diditApiKey),
     diditWorkflowId: settings.diditWorkflowId ?? '',
+    emailConfigured: !!(
+      (settings.resendApiKey || process.env.RESEND_API_KEY) &&
+      (settings.emailFrom || process.env.EMAIL_FROM)
+    ),
+    resendApiKeyMasked: maskSecret(settings.resendApiKey),
+    emailFrom: settings.emailFrom ?? '',
   });
 }
 
@@ -38,6 +44,12 @@ export async function POST(request: Request) {
   }
   if (typeof body.diditWorkflowId === 'string' && body.diditWorkflowId.trim()) {
     update.didit_workflow_id = body.diditWorkflowId.trim();
+  }
+  if (typeof body.resendApiKey === 'string' && body.resendApiKey.trim()) {
+    update.resend_api_key = body.resendApiKey.trim();
+  }
+  if (typeof body.emailFrom === 'string' && body.emailFrom.trim()) {
+    update.email_from = body.emailFrom.trim();
   }
 
   const { error } = await admin.from('app_settings').update(update).eq('id', 1);

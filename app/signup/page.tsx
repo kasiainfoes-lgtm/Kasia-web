@@ -7,8 +7,11 @@ import CreateAccountForm from '@/components/CreateAccountForm';
 
 export const dynamic = 'force-dynamic';
 
-export default async function SignupPage() {
-  const appId = cookies().get(APP_ID_COOKIE)?.value;
+export default async function SignupPage({ searchParams }: { searchParams: { app?: string } }) {
+  // El id de la solicitud puede venir de la cookie (justo después de /apply,
+  // en el mismo navegador) o de ?app=<id> (el link del email de "aprobado",
+  // que puede abrirse días después y en otro dispositivo).
+  const appId = searchParams.app || cookies().get(APP_ID_COOKIE)?.value;
   if (!appId) redirect('/apply');
 
   const application = await getApplicationById(appId);
@@ -23,7 +26,7 @@ export default async function SignupPage() {
         disponibles para tu búsqueda.
       </p>
 
-      <CreateAccountForm email={application.email} />
+      <CreateAccountForm email={application.email} appId={application.id} />
 
       <p className="mt-6 text-center text-sm text-vivi-muted">
         ¿Ya tenés cuenta?{' '}

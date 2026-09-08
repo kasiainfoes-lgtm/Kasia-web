@@ -16,7 +16,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Supabase no está configurado.' }, { status: 501 });
   }
 
-  const appId = cookies().get(APP_ID_COOKIE)?.value;
+  const body = await request.json().catch(() => null);
+
+  // El id de la solicitud puede venir de la cookie (justo después de /apply,
+  // en el mismo navegador) o del cuerpo del pedido (el link del email de
+  // "aprobado", que puede abrirse días después y en otro dispositivo).
+  const appId = cookies().get(APP_ID_COOKIE)?.value || body?.appId;
   if (!appId) {
     return NextResponse.json({ error: 'No encontramos tu solicitud. Volvé a /apply.' }, { status: 400 });
   }
@@ -38,7 +43,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { password } = await request.json();
+  const password = body?.password;
   if (!password || String(password).length < 6) {
     return NextResponse.json({ error: 'La contraseña debe tener al menos 6 caracteres.' }, { status: 400 });
   }

@@ -4,6 +4,8 @@ export type AppSettings = {
   stripeSecretKey: string | null;
   diditApiKey: string | null;
   diditWorkflowId: string | null;
+  resendApiKey: string | null;
+  emailFrom: string | null;
 };
 
 // Las claves se pueden cargar desde /admin/integraciones (quedan en la tabla
@@ -11,13 +13,17 @@ export type AppSettings = {
 // en la base de datos gana, así el equipo no depende de tocar Netlify/Vercel.
 export async function getAppSettings(): Promise<AppSettings> {
   const admin = createAdminClient();
-  if (!admin) return { stripeSecretKey: null, diditApiKey: null, diditWorkflowId: null };
+  if (!admin) {
+    return { stripeSecretKey: null, diditApiKey: null, diditWorkflowId: null, resendApiKey: null, emailFrom: null };
+  }
 
   const { data } = await admin.from('app_settings').select('*').eq('id', 1).single();
   return {
     stripeSecretKey: data?.stripe_secret_key || null,
     diditApiKey: data?.didit_api_key || null,
     diditWorkflowId: data?.didit_workflow_id || null,
+    resendApiKey: data?.resend_api_key || null,
+    emailFrom: data?.email_from || null,
   };
 }
 
@@ -31,5 +37,13 @@ export async function resolveDiditConfig(): Promise<{ apiKey: string | null; wor
   return {
     apiKey: settings.diditApiKey || process.env.DIDIT_API_KEY || null,
     workflowId: settings.diditWorkflowId || process.env.DIDIT_WORKFLOW_ID || null,
+  };
+}
+
+export async function resolveResendConfig(): Promise<{ apiKey: string | null; from: string | null }> {
+  const settings = await getAppSettings();
+  return {
+    apiKey: settings.resendApiKey || process.env.RESEND_API_KEY || null,
+    from: settings.emailFrom || process.env.EMAIL_FROM || null,
   };
 }
