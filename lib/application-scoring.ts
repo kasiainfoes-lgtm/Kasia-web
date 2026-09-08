@@ -61,22 +61,17 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
     return { status: 'NOT_ELIGIBLE', internalReason: 'NO_MATCHING_INVENTORY' };
   }
 
+  // Nada de lo que sigue descalifica sola una solicitud: cualquier perfil que
+  // llegue hasta acá queda en revisión manual para que alguien del equipo
+  // decida en /admin/solicitudes si aprobarlo o pedir más información. El
+  // motivo interno solo sirve de contexto, nunca cambia el estado.
   if (answers.smoker) {
     return { status: 'REVIEW', internalReason: 'SMOKING_POLICY_MISMATCH' };
   }
 
-  // Estudiantes: el sistema no los descalifica, pero alguien del equipo
-  // revisa a mano el comprobante de solvencia económica y el seguro de
-  // impago (subidos en el formulario) antes de aprobar la cuenta.
   if (answers.occupationType === 'estudiante') {
     return { status: 'REVIEW', internalReason: 'DOCUMENTATION_REVIEW' };
   }
 
-  const cheapestMatchPrice = Math.min(...matchingRooms.map((r) => r.price));
-  const isTightBudgetFit = answers.budget - cheapestMatchPrice < 30;
-  if (isTightBudgetFit) {
-    return { status: 'REVIEW', internalReason: 'DOCUMENTATION_REVIEW' };
-  }
-
-  return { status: 'APPROVED', internalReason: null };
+  return { status: 'REVIEW', internalReason: null };
 }
