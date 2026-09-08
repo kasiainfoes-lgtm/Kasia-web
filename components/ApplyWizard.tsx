@@ -19,6 +19,10 @@ const ZONES = [
 
 const DURATIONS = [3, 6, 9, 12, 18, 24];
 
+type PetType = 'perro' | 'gato' | 'otro' | '';
+type DocumentKind = 'financial-proof' | 'unpaid-rent-insurance';
+type UploadStatus = 'idle' | 'uploading' | 'done' | 'error';
+
 type FormState = {
   zone: string;
   moveInDate: string;
@@ -26,12 +30,15 @@ type FormState = {
   occupancyType: 'individual' | 'pareja' | '';
   hasMinors: boolean | null;
   hasPet: boolean | null;
+  petType: PetType;
   occupationType: 'trabajador' | 'estudiante' | '';
   smoker: boolean | null;
   stayDurationMonths: number | '';
   name: string;
   email: string;
   phone: string;
+  financialProofPath: string | null;
+  unpaidRentInsurancePath: string | null;
 };
 
 const STEP_TITLES = ['Tu búsqueda', 'Cómo vas a vivir', 'Tu perfil', 'Tus datos', 'Comprobando disponibilidad'];
@@ -40,6 +47,10 @@ export default function ApplyWizard() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<Record<DocumentKind, UploadStatus>>({
+    'financial-proof': 'idle',
+    'unpaid-rent-insurance': 'idle',
+  });
   const [form, setForm] = useState<FormState>({
     zone: '',
     moveInDate: '',
@@ -47,22 +58,52 @@ export default function ApplyWizard() {
     occupancyType: '',
     hasMinors: null,
     hasPet: null,
+    petType: '',
     occupationType: '',
     smoker: null,
     stayDurationMonths: '',
     name: '',
     email: '',
     phone: '',
+    financialProofPath: null,
+    unpaidRentInsurancePath: null,
   });
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  async function handleDocumentUpload(kind: DocumentKind, file: File | null) {
+    if (!file) return;
+    setUploadStatus((s) => ({ ...s, [kind]: 'uploading' }));
+    try {
+      const fd = new FormData();
+      fd.append('kind', kind);
+      fd.append('file', file);
+      const res = await fetch('/api/apply/documents', { method: 'POST', body: fd });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      update(kind === 'financial-proof' ? 'financialProofPath' : 'unpaidRentInsurancePath', data.path);
+      setUploadStatus((s) => ({ ...s, [kind]: 'done' }));
+    } catch {
+      setUploadStatus((s) => ({ ...s, [kind]: 'error' }));
+    }
+  }
+
+  const isStudent = form.occupationType === 'estudiante';
+  const studentDocsReady =
+    !isStudent || (form.financialProofPath !== null && form.unpaidRentInsurancePath !== null);
+
   const stepValid = [
     form.zone !== '' && form.moveInDate !== '',
-    form.occupancyType !== '' && form.hasMinors !== null && form.hasPet !== null,
-    form.occupationType !== '' && form.smoker !== null && form.stayDurationMonths !== '',
+    form.occupancyType !== '' &&
+      form.hasMinors !== null &&
+      form.hasPet !== null &&
+      (form.hasPet === false || form.petType !== ''),
+    form.occupationType !== '' &&
+      form.smoker !== null &&
+      form.stayDurationMonths !== '' &&
+      studentDocsReady,
     form.name.trim() !== '' && /\S+@\S+\.\S+/.test(form.email),
   ][step];
 
@@ -73,7 +114,7 @@ export default function ApplyWizard() {
       const res = await fetch('/api/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, petType: form.hasPet ? form.petType : 'ninguno' }),
       });
       if (!res.ok) throw new Error();
       router.push('/apply/result');
@@ -159,8 +200,35 @@ export default function ApplyWizard() {
               <YesNo value={form.hasMinors} onChange={(v) => update('hasMinors', v)} />
             </Field>
             <Field label="¿Tenés mascota?">
-              <YesNo value={form.hasPet} onChange={(v) => update('hasPet', v)} />
+              <YesNo
+                value={form.hasPet}
+                onChange={(v) => {
+                  update('hasPet', v);
+                  if (!v) update('petType', '');
+                }}
+              />
             </Field>
+            {form.hasPet === true && (
+              <Field label="¿Qué tipo de mascota?">
+                <div className="flex gap-3">
+                  <ChoiceCard
+                    label="Perro"
+                    selected={form.petType === 'perro'}
+                    onClick={() => update('petType', 'perro')}
+                  />
+                  <ChoiceCard
+                    label="Gato"
+                    selected={form.petType === 'gato'}
+                    onClick={() => update('petType', 'gato')}
+                  />
+                  <ChoiceCard
+                    label="Otro"
+                    selected={form.petType === 'otro'}
+                    onClick={() => update('petType', 'otro')}
+                  />
+                </div>
+              </Field>
+            )}
           </div>
         )}
 
@@ -180,6 +248,23 @@ export default function ApplyWizard() {
                 />
               </div>
             </Field>
+            {isStudent && (
+              <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs leading-relaxed text-vivi-muted">
+                  Como estudiante necesitamos dos documentos para revisar tu solicitud.
+                </p>
+                <DocumentUpload
+                  label="Comprobante de solvencia económica"
+                  status={uploadStatus['financial-proof']}
+                  onChange={(file) => handleDocumentUpload('financial-proof', file)}
+                />
+                <DocumentUpload
+                  label="Seguro de impago"
+                  status={uploadStatus['unpaid-rent-insurance']}
+                  onChange={(file) => handleDocumentUpload('unpaid-rent-insurance', file)}
+                />
+              </div>
+            )}
             <Field label="¿Fumás?">
               <YesNo value={form.smoker} onChange={(v) => update('smoker', v)} />
             </Field>
@@ -283,6 +368,34 @@ function YesNo({ value, onChange }: { value: boolean | null; onChange: (v: boole
     <div className="flex gap-3">
       <ChoiceCard label="Sí" selected={value === true} onClick={() => onChange(true)} />
       <ChoiceCard label="No" selected={value === false} onClick={() => onChange(false)} />
+    </div>
+  );
+}
+
+function DocumentUpload({
+  label,
+  status,
+  onChange,
+}: {
+  label: string;
+  status: 'idle' | 'uploading' | 'done' | 'error';
+  onChange: (file: File | null) => void;
+}) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-xs font-semibold text-vivi-ink">{label}</label>
+      <input
+        type="file"
+        accept="application/pdf,image/png,image/jpeg"
+        disabled={status === 'uploading'}
+        onChange={(e) => onChange(e.target.files?.[0] ?? null)}
+        className="block w-full text-xs text-vivi-muted file:mr-3 file:rounded-lg file:border-0 file:bg-vivi-navy file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
+      />
+      {status === 'uploading' && <p className="mt-1 text-xs text-vivi-muted">Subiendo…</p>}
+      {status === 'done' && <p className="mt-1 text-xs font-semibold text-emerald-600">Subido ✓</p>}
+      {status === 'error' && (
+        <p className="mt-1 text-xs text-red-600">No pudimos subir el archivo. Probá de nuevo.</p>
+      )}
     </div>
   );
 }

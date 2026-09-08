@@ -12,11 +12,13 @@ export type InternalReason =
   | 'DOCUMENTATION_REVIEW'
   | null;
 
+export type PetType = 'ninguno' | 'perro' | 'gato' | 'otro';
+
 export type ApplicationAnswers = {
   zone: string;
   occupancyType: 'individual' | 'pareja';
   hasMinors: boolean;
-  hasPet: boolean;
+  petType: PetType;
   smoker: boolean;
   occupationType: 'trabajador' | 'estudiante';
   budget: number;
@@ -34,7 +36,9 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
     return { status: 'NOT_ELIGIBLE', internalReason: 'MIN_STAY_NOT_MET' };
   }
 
-  if (answers.hasPet) {
+  // Por el momento ninguna habitación admite perros. Gatos u otras mascotas
+  // sí pueden seguir el flujo normal.
+  if (answers.petType === 'perro') {
     return { status: 'NOT_ELIGIBLE', internalReason: 'PET_POLICY_MISMATCH' };
   }
 
@@ -59,6 +63,13 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
 
   if (answers.smoker) {
     return { status: 'REVIEW', internalReason: 'SMOKING_POLICY_MISMATCH' };
+  }
+
+  // Estudiantes: el sistema no los descalifica, pero alguien del equipo
+  // revisa a mano el comprobante de solvencia económica y el seguro de
+  // impago (subidos en el formulario) antes de aprobar la cuenta.
+  if (answers.occupationType === 'estudiante') {
+    return { status: 'REVIEW', internalReason: 'DOCUMENTATION_REVIEW' };
   }
 
   const cheapestMatchPrice = Math.min(...matchingRooms.map((r) => r.price));

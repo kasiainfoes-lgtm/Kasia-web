@@ -14,6 +14,8 @@ const REQUIRED_FIELDS = [
   'stayDurationMonths',
 ] as const;
 
+const VALID_PET_TYPES = ['ninguno', 'perro', 'gato', 'otro'] as const;
+
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body) {
@@ -26,13 +28,29 @@ export async function POST(request: Request) {
     }
   }
 
+  const occupationType = body.occupationType === 'estudiante' ? 'estudiante' : 'trabajador';
+  const petType = VALID_PET_TYPES.includes(body.petType) ? body.petType : 'ninguno';
+  const financialProofPath = body.financialProofPath ? String(body.financialProofPath) : null;
+  const unpaidRentInsurancePath = body.unpaidRentInsurancePath
+    ? String(body.unpaidRentInsurancePath)
+    : null;
+
+  // Los estudiantes tienen que haber subido los dos documentos antes de
+  // poder enviar la solicitud — el equipo los revisa a mano.
+  if (occupationType === 'estudiante' && (!financialProofPath || !unpaidRentInsurancePath)) {
+    return NextResponse.json(
+      { error: 'Como estudiante necesitamos el comprobante de solvencia económica y el seguro de impago.' },
+      { status: 400 }
+    );
+  }
+
   const answers: ApplicationAnswers = {
     zone: String(body.zone),
     occupancyType: body.occupancyType === 'pareja' ? 'pareja' : 'individual',
     hasMinors: !!body.hasMinors,
-    hasPet: !!body.hasPet,
+    petType,
     smoker: !!body.smoker,
-    occupationType: body.occupationType === 'estudiante' ? 'estudiante' : 'trabajador',
+    occupationType,
     budget: Number(body.budget),
     stayDurationMonths: Number(body.stayDurationMonths),
   };
@@ -45,6 +63,8 @@ export async function POST(request: Request) {
     email: String(body.email).trim(),
     phone: body.phone ? String(body.phone).trim() : null,
     moveInDate: body.moveInDate || null,
+    financialProofPath,
+    unpaidRentInsurancePath,
   });
 
   const cookieBase = {

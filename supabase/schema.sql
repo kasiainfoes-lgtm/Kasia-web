@@ -134,11 +134,15 @@ create table if not exists public.applications (
   move_in_date date,
   occupancy_type text not null,       -- 'individual' | 'pareja'
   has_minors boolean not null default false,
-  has_pet boolean not null default false,
+  pet_type text not null default 'ninguno',  -- 'ninguno' | 'perro' | 'gato' | 'otro'
   smoker boolean not null default false,
   occupation_type text not null,      -- 'trabajador' | 'estudiante'
   budget numeric not null,
   stay_duration_months int not null,
+  -- Rutas dentro del bucket privado `application-documents` (ver más abajo).
+  -- Solo se completan cuando occupation_type = 'estudiante'.
+  financial_proof_path text,
+  unpaid_rent_insurance_path text,
   status text not null default 'REVIEW',  -- 'APPROVED' | 'REVIEW' | 'NOT_ELIGIBLE'
   internal_reason text,               -- nunca se muestra al usuario
   created_at timestamptz not null default now(),
@@ -168,3 +172,25 @@ alter table public.profiles enable row level security;
 create policy "users read their own profile"
   on public.profiles for select
   using (auth.uid() = id);
+
+-- Si ya habías corrido una versión anterior de este schema (con la columna
+-- booleana `has_pet` en vez de `pet_type`), ejecutá esto una vez:
+-- alter table public.applications add column if not exists pet_type text not null default 'ninguno';
+-- update public.applications set pet_type = case when has_pet then 'perro' else 'ninguno' end;
+-- alter table public.applications drop column if exists has_pet;
+-- alter table public.applications add column if not exists financial_proof_path text;
+-- alter table public.applications add column if not exists unpaid_rent_insurance_path text;
+
+-- ============================================================================
+-- Documentos del formulario de compatibilidad: cuando alguien contesta que es
+-- estudiante en /apply, tiene que subir comprobante de solvencia económica y
+-- seguro de impago antes de poder enviar la solicitud (ver /api/apply/documents
+-- y lib/application-scoring.ts). Se guardan acá, en un bucket privado.
+-- ============================================================================
+insert into storage.buckets (id, name, public)
+values ('application-documents', 'application-documents', false)
+on conflict (id) do nothing;
+
+-- Sin policies para anon/authenticated a propósito: la subida y cualquier
+-- lectura pasan siempre por rutas de servidor con la service_role key
+-- (que bypassea RLS), igual que el resto de las tablas de este archivo.

@@ -21,7 +21,14 @@ function cooldownDays(): number {
 // reglas: si ya hay una solicitud reciente con el mismo email o teléfono,
 // se devuelve ese mismo resultado sin volver a evaluar las respuestas nuevas.
 export async function submitApplication(
-  answers: ApplicationAnswers & { name: string; email: string; phone: string | null; moveInDate: string | null }
+  answers: ApplicationAnswers & {
+    name: string;
+    email: string;
+    phone: string | null;
+    moveInDate: string | null;
+    financialProofPath: string | null;
+    unpaidRentInsurancePath: string | null;
+  }
 ): Promise<Application | null> {
   const admin = createAdminClient();
   if (!admin) return null;
@@ -64,11 +71,13 @@ export async function submitApplication(
       move_in_date: answers.moveInDate,
       occupancy_type: answers.occupancyType,
       has_minors: answers.hasMinors,
-      has_pet: answers.hasPet,
+      pet_type: answers.petType,
       smoker: answers.smoker,
       occupation_type: answers.occupationType,
       budget: answers.budget,
       stay_duration_months: answers.stayDurationMonths,
+      financial_proof_path: answers.financialProofPath,
+      unpaid_rent_insurance_path: answers.unpaidRentInsurancePath,
       status,
       internal_reason: internalReason,
     })

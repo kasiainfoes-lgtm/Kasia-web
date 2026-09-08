@@ -57,9 +57,20 @@ El catálogo real (`/rooms`) ya no es público. El flujo es:
 
 **Para ajustar las reglas de aprobación:** están todas en
 `lib/application-scoring.ts`, en un solo lugar, con comentarios explicando cada
-una (estancia mínima, mascota, menores, presupuesto, si hay habitaciones que
-matcheen zona/presupuesto/ocupación, fumador, y un margen de presupuesto muy
-ajustado que manda a revisión manual).
+una (estancia mínima, tipo de mascota, menores, presupuesto, si hay habitaciones
+que matcheen zona/presupuesto/ocupación, fumador, estudiante, y un margen de
+presupuesto muy ajustado que manda a revisión manual).
+
+**Mascotas:** el formulario pregunta el tipo (perro / gato / otro). Por el
+momento ninguna habitación admite perros, así que quedan descalificados con
+el mismo mensaje genérico que el resto de los casos sin disponibilidad; gatos
+y otras mascotas siguen el flujo normal.
+
+**Estudiantes:** además de las preguntas del formulario, tienen que subir
+comprobante de solvencia económica y seguro de impago (bucket privado
+`application-documents` en Supabase Storage, creado por `supabase/schema.sql`).
+La cuenta no se rechaza automáticamente por ser estudiante, pero queda en
+estado `REVIEW` hasta que alguien del equipo revise esos documentos a mano.
 
 **Anti-reintentos:** si alguien vuelve a mandar el formulario con el mismo
 email o teléfono antes de que pasen `APPLICATION_COOLDOWN_DAYS` días (30 por
