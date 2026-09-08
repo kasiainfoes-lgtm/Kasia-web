@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const { apiKey, workflowId } = await resolveDiditConfig();
   if (!apiKey || !workflowId) {
     return NextResponse.json(
-      { error: 'Didit no está configurado todavía. Cargá tus claves en /admin/integraciones.' },
+      { error: 'Didit no está configurado todavía. Carga tus claves en /admin/integraciones.' },
       { status: 501 }
     );
   }

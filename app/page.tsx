@@ -40,7 +40,7 @@ export default async function HomePage() {
             Alquiler residencial, verificado y pensado para quedarte.
           </h1>
           <p className="mt-4 max-w-xl text-sm text-slate-300 sm:text-base">
-            Contanos qué buscás y en dos minutos te decimos si tenemos disponibilidad para vos. El
+            Cuéntanos qué buscas y en dos minutos te decimos si tenemos disponibilidad para ti. El
             catálogo completo, con precios y fechas exactas, se desbloquea después.
           </p>
 
@@ -68,7 +68,7 @@ export default async function HomePage() {
             Tres pasos antes de ver la disponibilidad real.
           </h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-3">
-            <Step n={1} title="Contanos qué buscás" desc="Zona, presupuesto, para cuándo y cómo vas a vivir." />
+            <Step n={1} title="Cuéntanos qué buscas" desc="Zona, presupuesto, para cuándo y cómo vas a vivir." />
             <Step
               n={2}
               title="Evaluamos tu compatibilidad"
@@ -77,7 +77,7 @@ export default async function HomePage() {
             <Step
               n={3}
               title="Ves la disponibilidad real"
-              desc="Si hay match, creás tu cuenta y ves habitaciones, precios y fechas exactas."
+              desc="Si hay match, creas tu cuenta y ves habitaciones, precios y fechas exactas."
             />
           </div>
         </div>

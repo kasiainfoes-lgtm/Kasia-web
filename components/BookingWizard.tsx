@@ -130,7 +130,7 @@ export default function BookingWizard({ room }: { room: Room }) {
 
         {authRequired && (
           <div className="mt-6 rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
-            Necesitás iniciar sesión para continuar con la reserva.
+            Necesitas iniciar sesión para continuar con la reserva.
             <a
               href={`/login?next=/reservar/${room.id}`}
               className="mt-3 block rounded-lg bg-vivi-navy px-4 py-2 text-center text-sm font-semibold text-white"
@@ -147,7 +147,7 @@ export default function BookingWizard({ room }: { room: Room }) {
             ) : (
               <>
                 <p className="text-sm text-vivi-muted">
-                  Verificá tu identidad con documento + selfie para poder reservar.
+                  Verifica tu identidad con documento + selfie para poder reservar.
                 </p>
                 <button
                   onClick={handleVerifyKyc}

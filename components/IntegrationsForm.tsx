@@ -105,7 +105,7 @@ export default function IntegrationsForm() {
           </span>
         </div>
         <p className="mt-2 text-sm text-vivi-muted">
-          Cobra la fianza + comisión al reservar. Sacá tu clave en Stripe → Developers → API keys.
+          Cobra la fianza + comisión al reservar. Saca tu clave en Stripe → Developers → API keys.
         </p>
         {settings.stripeKeyMasked && (
           <p className="mt-2 text-xs text-vivi-muted">Clave actual: {settings.stripeKeyMasked}</p>
@@ -139,7 +139,7 @@ export default function IntegrationsForm() {
           </span>
         </div>
         <p className="mt-2 text-sm text-vivi-muted">
-          Verifica documento + selfie antes de reservar. Sacá tu API key y creá un workflow en el
+          Verifica documento + selfie antes de reservar. Saca tu API key y crea un workflow en el
           panel de Didit.
         </p>
         {settings.diditApiKeyMasked && (
@@ -148,7 +148,7 @@ export default function IntegrationsForm() {
         <label className={`${labelClass} mt-4`}>API key</label>
         <input
           type="password"
-          placeholder="Pegá tu API key de Didit"
+          placeholder="Pega tu API key de Didit"
           value={diditApiKey}
           onChange={(e) => setDiditApiKey(e.target.value)}
           className={inputClass}
@@ -181,11 +181,11 @@ export default function IntegrationsForm() {
         </div>
         <p className="mt-2 text-sm text-vivi-muted">
           Manda el email de &ldquo;aprobado&rdquo; y el de &ldquo;necesitamos más información&rdquo;
-          cuando revisás una solicitud en /admin/solicitudes. Creá una cuenta gratis en{' '}
+          cuando revisas una solicitud en /admin/solicitudes. Crea una cuenta gratis en{' '}
           <a href="https://resend.com" target="_blank" rel="noreferrer" className="underline">
             resend.com
           </a>{' '}
-          y sacá tu API key.
+          y saca tu API key.
         </p>
         {settings.resendApiKeyMasked && (
           <p className="mt-2 text-xs text-vivi-muted">API key actual: {settings.resendApiKeyMasked}</p>

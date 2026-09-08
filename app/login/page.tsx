@@ -45,7 +45,7 @@ function LoginForm() {
   return (
     <section className="mx-auto max-w-md px-6 py-20">
       <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Iniciar sesión</p>
-      <h1 className="mt-2 text-3xl font-extrabold text-vivi-ink">Entrá a tu cuenta Kasia</h1>
+      <h1 className="mt-2 text-3xl font-extrabold text-vivi-ink">Entra en tu cuenta Kasia</h1>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
@@ -90,9 +90,9 @@ function LoginForm() {
       </form>
 
       <p className="mt-6 text-center text-sm text-vivi-muted">
-        ¿No tenés cuenta?{' '}
+        ¿No tienes cuenta?{' '}
         <Link href="/apply" className="font-semibold text-vivi-navy">
-          Completá tu perfil de búsqueda
+          Completa tu perfil de búsqueda
         </Link>
       </p>
     </section>

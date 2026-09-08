@@ -18,7 +18,7 @@ export default async function ReservaExitoPage({ params }: { params: { id: strin
       </span>
       <h1 className="mt-4 text-2xl font-extrabold text-vivi-ink">Pago recibido</h1>
       <p className="mt-3 text-sm text-vivi-muted">
-        Reservaste <strong>{room.title}</strong>. Coordiná tu visita y hablá con tu asesora cuando
+        Has reservado <strong>{room.title}</strong>. Coordina tu visita y habla con tu asesora cuando
         quieras.
       </p>
 

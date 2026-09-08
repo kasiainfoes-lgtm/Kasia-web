@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const secretKey = await resolveStripeSecretKey();
   if (!secretKey) {
     return NextResponse.json(
-      { error: 'Stripe no está configurado todavía. Cargá tu clave en /admin/integraciones.' },
+      { error: 'Stripe no está configurado todavía. Carga tu clave en /admin/integraciones.' },
       { status: 501 }
     );
   }

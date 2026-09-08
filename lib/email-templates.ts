@@ -36,8 +36,8 @@ export function approvedEmailTemplate(name: string, signupUrl: string) {
       '¡Buenas noticias!',
       `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">Hola ${safeName},</p>
        <p style="margin:0 0 24px;color:#3A4356;font-size:14px;line-height:1.6;">
-         Revisamos tu perfil y quedó <strong>aprobado</strong>. Ya podés crear tu cuenta y ver las
-         habitaciones disponibles para tu búsqueda.
+         Hemos revisado tu perfil y ha quedado <strong>aprobado</strong>. Ya puedes crear tu cuenta y ver
+         las habitaciones disponibles para tu búsqueda.
        </p>
        <a href="${signupUrl}" style="display:inline-block;background:#22D3AA;color:#0B1B3B;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
          Crear mi cuenta
@@ -55,7 +55,7 @@ export function moreInfoEmailTemplate(name: string, uploadUrl: string) {
       `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">Hola ${safeName},</p>
        <p style="margin:0 0 24px;color:#3A4356;font-size:14px;line-height:1.6;">
          Antes de seguir con tu solicitud necesitamos que nos envíes tu <strong>seguro de impago</strong>
-         y tu <strong>nómina</strong>. Podés subirlos de forma segura desde este enlace:
+         y tu <strong>nómina</strong>. Puedes subirlos de forma segura desde este enlace:
        </p>
        <a href="${uploadUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
          Subir documentación

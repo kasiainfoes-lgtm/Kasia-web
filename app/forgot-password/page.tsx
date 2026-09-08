@@ -33,11 +33,11 @@ export default function ForgotPasswordPage() {
   if (status === 'sent') {
     return (
       <section className="mx-auto max-w-md px-6 py-20 text-center">
-        <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Revisá tu email</p>
-        <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink">Te mandamos un link</h1>
+        <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Revisa tu email</p>
+        <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink">Te hemos enviado un enlace</h1>
         <p className="mt-3 text-sm text-vivi-muted">
-          Si <strong>{email}</strong> tiene una cuenta, te va a llegar un email con un link para elegir
-          una contraseña nueva. Revisá también la carpeta de spam.
+          Si <strong>{email}</strong> tiene una cuenta, te llegará un email con un enlace para elegir
+          una contraseña nueva. Revisa también la carpeta de spam.
         </p>
         <Link
           href="/login"
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
       <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Recuperar acceso</p>
       <h1 className="mt-2 text-3xl font-extrabold text-vivi-ink">¿Olvidaste tu contraseña?</h1>
       <p className="mt-3 text-sm text-vivi-muted">
-        Escribí tu email y te mandamos un link para elegir una contraseña nueva.
+        Escribe tu email y te enviaremos un enlace para elegir una contraseña nueva.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
           disabled={status === 'loading'}
           className="w-full rounded-xl bg-vivi-navy px-5 py-3 text-sm font-semibold text-white hover:bg-vivi-navyLight disabled:opacity-60"
         >
-          {status === 'loading' ? 'Enviando…' : 'Mandarme el link'}
+          {status === 'loading' ? 'Enviando…' : 'Enviarme el enlace'}
         </button>
       </form>
 
