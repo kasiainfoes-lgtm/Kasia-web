@@ -104,7 +104,7 @@ export default function ApplyWizard() {
       form.smoker !== null &&
       form.stayDurationMonths !== '' &&
       studentDocsReady,
-    form.name.trim() !== '' && /\S+@\S+\.\S+/.test(form.email),
+    form.name.trim() !== '' && /\S+@\S+\.\S+/.test(form.email) && form.phone.trim() !== '',
   ][step];
 
   async function handleSubmit() {
@@ -307,13 +307,16 @@ export default function ApplyWizard() {
                 className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
               />
             </Field>
-            <Field label="Teléfono (opcional)">
+            <Field label="Teléfono">
               <input
                 type="tel"
+                required
+                placeholder="+34 600 000 000"
                 value={form.phone}
                 onChange={(e) => update('phone', e.target.value)}
                 className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
               />
+              <p className="mt-1.5 text-xs text-vivi-muted">Incluye el prefijo del país (ej: +34).</p>
             </Field>
             {error && <p className="text-sm text-red-600">{error}</p>}
           </div>

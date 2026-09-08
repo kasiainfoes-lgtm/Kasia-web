@@ -46,6 +46,37 @@ export function approvedEmailTemplate(name: string, signupUrl: string) {
   };
 }
 
+export function paymentConfirmedEmailTemplate(roomTitle: string, amount: number) {
+  const safeTitle = escapeHtml(roomTitle);
+  return {
+    subject: 'Confirmamos tu pago — Kasia',
+    html: wrapper(
+      'Pago confirmado',
+      `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">¡Gracias!</p>
+       <p style="margin:0;color:#3A4356;font-size:14px;line-height:1.6;">
+         Hemos recibido tu pago de <strong>${amount.toFixed(2)} €</strong> por la reserva de
+         <strong>${safeTitle}</strong>. En breve tu asesora se pondrá en contacto contigo para
+         coordinar la visita.
+       </p>`
+    ),
+  };
+}
+
+export function paymentNotificationEmailTemplate(roomTitle: string, customerEmail: string, amount: number) {
+  const safeTitle = escapeHtml(roomTitle);
+  const safeEmail = escapeHtml(customerEmail);
+  return {
+    subject: `Nuevo pago recibido — ${roomTitle}`,
+    html: wrapper(
+      'Nuevo pago recibido',
+      `<p style="margin:0;color:#3A4356;font-size:14px;line-height:1.6;">
+         <strong>${safeEmail}</strong> acaba de pagar <strong>${amount.toFixed(2)} €</strong> por
+         <strong>${safeTitle}</strong>. Puedes ver el detalle en el panel interno.
+       </p>`
+    ),
+  };
+}
+
 export function moreInfoEmailTemplate(name: string, uploadUrl: string) {
   const safeName = escapeHtml(name);
   return {

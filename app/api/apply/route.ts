@@ -7,6 +7,7 @@ import { APP_ID_COOKIE, APP_DEMO_STATUS_COOKIE, APP_COOKIE_MAX_AGE } from '@/lib
 const REQUIRED_FIELDS = [
   'name',
   'email',
+  'phone',
   'zone',
   'occupancyType',
   'occupationType',
