@@ -16,7 +16,7 @@ export default async function ApplyDocumentsPage({
       <section className="mx-auto max-w-md px-6 py-24 text-center">
         <h1 className="text-2xl font-extrabold text-vivi-ink">Enlace inválido</h1>
         <p className="mt-3 text-sm text-vivi-muted">
-          Este enlace no es válido. Si necesitás ayuda, respondé al email que te enviamos.
+          Este enlace no es válido. Si necesitas ayuda, responde al email que te enviamos.
         </p>
       </section>
     );

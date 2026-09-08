@@ -14,7 +14,7 @@ export default function AdminGateMessage({
           <p className="text-lg font-bold text-vivi-ink">No autorizado</p>
           <p className="mt-2 text-sm text-vivi-muted">
             {email ? `Tu cuenta (${email})` : 'Tu cuenta'} no está en la lista de administradores.
-            Agregala a la variable de entorno ADMIN_EMAILS (ver SETUP.md).
+            Añádela a la variable de entorno ADMIN_EMAILS (ver SETUP.md).
           </p>
         </>
       )}

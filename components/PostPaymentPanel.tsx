@@ -57,7 +57,7 @@ function PostPaymentPanelInner({ room }: { room: Room }) {
   return (
     <div className="mt-8 grid gap-6 text-left sm:grid-cols-2">
       <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <p className="text-sm font-bold text-vivi-ink">Contactá a tu asesora</p>
+        <p className="text-sm font-bold text-vivi-ink">Contacta a tu asesora</p>
         <div className="mt-3 flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-full bg-vivi-mintLight font-bold text-emerald-700">
             {room.manager.charAt(0)}
@@ -87,7 +87,7 @@ function PostPaymentPanelInner({ room }: { room: Room }) {
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <p className="text-sm font-bold text-vivi-ink">Agendá tu visita</p>
+        <p className="text-sm font-bold text-vivi-ink">Agenda tu visita</p>
         {scheduled ? (
           <p className="mt-3 text-sm text-emerald-700">
             ✓ Visita agendada para {new Date(visitAt).toLocaleString('es-ES')}

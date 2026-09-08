@@ -15,7 +15,7 @@ export default async function AdminIntegrationsPage() {
       <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink sm:text-3xl">Integraciones</h1>
       <AdminTabs active="/admin/integraciones" />
       <p className="-mt-4 mb-6 text-sm text-vivi-muted">
-        Cargá tus claves acá directamente — no hace falta tocar variables de entorno ni redesplegar
+        Carga tus claves aquí directamente — no hace falta tocar variables de entorno ni redesplegar
         el sitio.
       </p>
       <IntegrationsForm />

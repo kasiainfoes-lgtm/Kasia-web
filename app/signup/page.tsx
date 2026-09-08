@@ -22,16 +22,16 @@ export default async function SignupPage({ searchParams }: { searchParams: { app
       <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Crear cuenta</p>
       <h1 className="mt-2 text-3xl font-extrabold text-vivi-ink">Ya casi estás, {application.name}</h1>
       <p className="mt-3 text-sm text-vivi-muted">
-        Elegí una contraseña para tu cuenta Kasia y entrá directo al catálogo de habitaciones
+        Elige una contraseña para tu cuenta Kasia y entra directo al catálogo de habitaciones
         disponibles para tu búsqueda.
       </p>
 
       <CreateAccountForm email={application.email} appId={application.id} />
 
       <p className="mt-6 text-center text-sm text-vivi-muted">
-        ¿Ya tenés cuenta?{' '}
+        ¿Ya tienes cuenta?{' '}
         <Link href="/login?next=/rooms" className="font-semibold text-vivi-navy">
-          Iniciá sesión
+          Inicia sesión
         </Link>
       </p>
     </section>

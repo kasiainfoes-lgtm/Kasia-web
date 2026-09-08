@@ -54,7 +54,7 @@ export default function DocumentsUploadForm({ applicationId }: { applicationId: 
       setSubmitState('done');
     } catch {
       setSubmitState('error');
-      setError('No pudimos enviar los documentos. Intentá de nuevo en un momento.');
+      setError('No pudimos enviar los documentos. Inténtalo de nuevo en un momento.');
     }
   }
 

@@ -48,7 +48,7 @@ export async function POST(request: Request) {
   });
 
   if (error) {
-    return NextResponse.json({ error: 'No pudimos subir el archivo. Intentá de nuevo.' }, { status: 500 });
+    return NextResponse.json({ error: 'No pudimos subir el archivo. Inténtalo de nuevo.' }, { status: 500 });
   }
 
   return NextResponse.json({ path });

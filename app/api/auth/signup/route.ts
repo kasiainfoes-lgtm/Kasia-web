@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   // "aprobado", que puede abrirse días después y en otro dispositivo).
   const appId = cookies().get(APP_ID_COOKIE)?.value || body?.appId;
   if (!appId) {
-    return NextResponse.json({ error: 'No encontramos tu solicitud. Volvé a /apply.' }, { status: 400 });
+    return NextResponse.json({ error: 'No encontramos tu solicitud. Vuelve a /apply.' }, { status: 400 });
   }
 
   const application = await getApplicationById(appId);
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     .maybeSingle();
   if (existingProfile) {
     return NextResponse.json(
-      { error: 'Esta solicitud ya se usó para crear una cuenta. Iniciá sesión.' },
+      { error: 'Esta solicitud ya se usó para crear una cuenta. Inicia sesión.' },
       { status: 409 }
     );
   }

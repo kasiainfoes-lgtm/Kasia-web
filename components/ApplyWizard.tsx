@@ -119,7 +119,7 @@ export default function ApplyWizard() {
       if (!res.ok) throw new Error();
       router.push('/apply/result');
     } catch {
-      setError('No pudimos procesar tu solicitud. Intentá de nuevo en un momento.');
+      setError('No pudimos procesar tu solicitud. Inténtalo de nuevo en un momento.');
       setStep(3);
     }
   }
@@ -149,7 +149,7 @@ export default function ApplyWizard() {
                 className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
               >
                 <option value="" disabled>
-                  Elegí una zona
+                  Elige una zona
                 </option>
                 {ZONES.map((z) => (
                   <option key={z} value={z}>
@@ -199,7 +199,7 @@ export default function ApplyWizard() {
             <Field label="¿Hay menores de edad?">
               <YesNo value={form.hasMinors} onChange={(v) => update('hasMinors', v)} />
             </Field>
-            <Field label="¿Tenés mascota?">
+            <Field label="¿Tienes mascota?">
               <YesNo
                 value={form.hasPet}
                 onChange={(v) => {
@@ -234,7 +234,7 @@ export default function ApplyWizard() {
 
         {step === 2 && (
           <div className="space-y-6">
-            <Field label="¿Sos trabajador/a o estudiante?">
+            <Field label="¿Eres trabajador/a o estudiante?">
               <div className="flex gap-3">
                 <ChoiceCard
                   label="Trabajador/a"
@@ -265,10 +265,10 @@ export default function ApplyWizard() {
                 />
               </div>
             )}
-            <Field label="¿Fumás?">
+            <Field label="¿Fumas?">
               <YesNo value={form.smoker} onChange={(v) => update('smoker', v)} />
             </Field>
-            <Field label="¿Durante cuánto tiempo querés alquilar?">
+            <Field label="¿Durante cuánto tiempo quieres alquilar?">
               <div className="flex flex-wrap gap-2">
                 {DURATIONS.map((m) => (
                   <button

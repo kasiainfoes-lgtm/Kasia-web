@@ -46,7 +46,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
             Valencia · vivienda habitual · mínimo 6 meses
           </span>
           <h1 className="mt-3 max-w-xl text-2xl font-extrabold leading-tight text-white sm:text-3xl">
-            Encontrá tu próxima habitación, verificada y reservable desde el móvil.
+            Encuentra tu próxima habitación, verificada y reservable desde el móvil.
           </h1>
 
           <div className="mt-6 grid gap-2 rounded-2xl bg-white p-2 shadow-xl sm:grid-cols-[1fr_1fr_1.4fr_auto]">
@@ -170,7 +170,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
           ))}
           {filtered.length === 0 && (
             <p className="col-span-full rounded-xl border border-dashed border-slate-300 p-10 text-center text-sm text-vivi-muted">
-              No hay habitaciones que coincidan con esta búsqueda. Probá ampliando el presupuesto o
+              No hay habitaciones que coincidan con esta búsqueda. Prueba ampliando el presupuesto o
               cambiando de zona.
             </p>
           )}

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 
 const INVALID_LINK_MESSAGE =
-  'Este link ya venció o no es válido. Pedí uno nuevo desde "¿Olvidaste tu contraseña?".';
+  'Este enlace ha caducado o no es válido. Pide uno nuevo desde "¿Olvidaste tu contraseña?".';
 
 export default function ResetPasswordPage() {
   const supabase = createClient();
@@ -71,7 +71,7 @@ export default function ResetPasswordPage() {
       <section className="mx-auto max-w-md px-6 py-20 text-center">
         <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Listo</p>
         <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink">Contraseña actualizada</h1>
-        <p className="mt-3 text-sm text-vivi-muted">Ya podés iniciar sesión con tu nueva contraseña.</p>
+        <p className="mt-3 text-sm text-vivi-muted">Ya puedes iniciar sesión con tu nueva contraseña.</p>
         <Link
           href="/login"
           className="mt-8 inline-block rounded-xl bg-vivi-navy px-6 py-3 text-sm font-bold text-white hover:bg-vivi-navyLight"
@@ -85,7 +85,7 @@ export default function ResetPasswordPage() {
   if (status === 'checking') {
     return (
       <section className="mx-auto max-w-md px-6 py-20 text-center">
-        <p className="text-sm text-vivi-muted">Comprobando tu link…</p>
+        <p className="text-sm text-vivi-muted">Comprobando tu enlace…</p>
       </section>
     );
   }
@@ -94,13 +94,13 @@ export default function ResetPasswordPage() {
     return (
       <section className="mx-auto max-w-md px-6 py-20 text-center">
         <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Recuperar acceso</p>
-        <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink">Link no válido</h1>
+        <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink">Enlace no válido</h1>
         <p className="mt-3 text-sm text-vivi-muted">{INVALID_LINK_MESSAGE}</p>
         <Link
           href="/forgot-password"
           className="mt-8 inline-block rounded-xl bg-vivi-navy px-6 py-3 text-sm font-bold text-white hover:bg-vivi-navyLight"
         >
-          Pedir un link nuevo
+          Pedir un enlace nuevo
         </Link>
       </section>
     );
@@ -109,7 +109,7 @@ export default function ResetPasswordPage() {
   return (
     <section className="mx-auto max-w-md px-6 py-20">
       <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Recuperar acceso</p>
-      <h1 className="mt-2 text-3xl font-extrabold text-vivi-ink">Elegí una contraseña nueva</h1>
+      <h1 className="mt-2 text-3xl font-extrabold text-vivi-ink">Elige una contraseña nueva</h1>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
