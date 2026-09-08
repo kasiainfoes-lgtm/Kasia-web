@@ -57,15 +57,42 @@ El catálogo real (`/rooms`) ya no es público. El flujo es:
 
 **Para ajustar las reglas de aprobación:** están todas en
 `lib/application-scoring.ts`, en un solo lugar, con comentarios explicando cada
-una (estancia mínima, mascota, menores, presupuesto, si hay habitaciones que
-matcheen zona/presupuesto/ocupación, fumador, y un margen de presupuesto muy
-ajustado que manda a revisión manual).
+una (estancia mínima, tipo de mascota, menores, presupuesto, si hay habitaciones
+que matcheen zona/presupuesto/ocupación, fumador, estudiante, y un margen de
+presupuesto muy ajustado que manda a revisión manual).
+
+**Mascotas:** el formulario pregunta el tipo (perro / gato / otro). Por el
+momento ninguna habitación admite perros, así que quedan descalificados con
+el mismo mensaje genérico que el resto de los casos sin disponibilidad; gatos
+y otras mascotas siguen el flujo normal.
+
+**Estudiantes:** además de las preguntas del formulario, tienen que subir
+comprobante de solvencia económica y seguro de impago (bucket privado
+`application-documents` en Supabase Storage, creado por `supabase/schema.sql`).
+La cuenta no se rechaza automáticamente por ser estudiante, pero queda en
+estado `REVIEW` hasta que alguien del equipo revise esos documentos a mano.
 
 **Anti-reintentos:** si alguien vuelve a mandar el formulario con el mismo
 email o teléfono antes de que pasen `APPLICATION_COOLDOWN_DAYS` días (30 por
 defecto), se le devuelve el mismo resultado ya guardado sin volver a evaluar
 las respuestas nuevas — así no se puede ir probando combinaciones para
 adivinar las reglas.
+
+**Revisión manual (estado REVIEW):** en **Panel interno → Solicitudes**
+(`/admin/solicitudes`) aparecen todas las solicitudes con sus respuestas y,
+para cada una en estado `REVIEW`, dos botones:
+
+- **Aprobar:** pasa la solicitud a `APPROVED` y le manda un email a la
+  persona con un link para crear su cuenta (`/signup?app=<id>`, funciona
+  aunque lo abra en otro dispositivo o días después).
+- **Pedir más información:** le manda un email con un link a
+  `/apply/documents?app=<id>`, donde puede subir su seguro de impago y su
+  nómina sin necesitar cuenta todavía. Una vez subidos, aparecen como links
+  para verlos en la misma fila de `/admin/solicitudes` (usan un link firmado
+  de Supabase Storage que expira a los 5 minutos, nunca se expone la ruta
+  cruda del archivo).
+
+Para que estos emails salgan, hace falta configurar Resend — ver el punto 4.
 
 ## 3. Agregar o editar habitaciones — sin código
 
@@ -81,10 +108,18 @@ podés:
 desde Dashboard → Table Editor, pero ya no hace falta — el panel de `/admin` es más
 simple.)
 
-## 4. Stripe y Didit — desde el panel, sin tocar variables de entorno
+## 4. Stripe, Didit y Resend — desde el panel, sin tocar variables de entorno
 
 Andá a **Panel interno → Integraciones**:
 
+- **Email (Resend):** los dos emails que salen desde **Panel interno →
+  Solicitudes** (el de "aprobado" y el de "necesitamos más información")
+  usan [Resend](https://resend.com). Creá una cuenta gratis (el plan free
+  alcanza para empezar), verificá tu dominio ahí, y pegá en el panel tu
+  **API key** y el **remitente** (ej: `Kasia <hola@tudominio.com>` — tiene
+  que ser un email de ese dominio verificado). Sin esto configurado, aprobar
+  o pedir más información igual actualiza la solicitud, pero el email no
+  sale (el panel te avisa si pasó eso).
 - **Stripe** (cobro de fianza + comisión): creá una cuenta en
   [stripe.com](https://stripe.com), Dashboard → Developers → API keys → copiá la
   **Secret key** (empezá con la de modo test, `sk_test_...`) y pegala en el panel.
