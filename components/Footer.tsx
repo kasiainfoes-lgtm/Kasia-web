@@ -10,6 +10,7 @@ export default function Footer() {
           Vivienda habitual · estancia mínima 6 meses. Fianza equivalente a una mensualidad + comisión
           fija de servicio de 50 €.
         </p>
+        <p className="mt-2 text-xs text-slate-500">© {new Date().getFullYear()} Kasia Inmobiliaria</p>
       </div>
     </footer>
   );
