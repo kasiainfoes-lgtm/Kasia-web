@@ -32,10 +32,6 @@ const CHEAPEST_ROOM_FLOOR = 600; // por debajo de esto no hay inventario en ning
 // Reglas internas de compatibilidad. Nunca se exponen al usuario ni sus
 // motivos exactos — solo el estado final (APPROVED / REVIEW / NOT_ELIGIBLE).
 export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): ScoringResult {
-  if (answers.stayDurationMonths < MINIMUM_STAY_MONTHS) {
-    return { status: 'NOT_ELIGIBLE', internalReason: 'MIN_STAY_NOT_MET' };
-  }
-
   // Por el momento ninguna habitación admite perros. Gatos u otras mascotas
   // sí pueden seguir el flujo normal.
   if (answers.petType === 'perro') {
@@ -65,6 +61,10 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
   // llegue hasta acá queda en revisión manual para que alguien del equipo
   // decida en /admin/solicitudes si aprobarlo o pedir más información. El
   // motivo interno solo sirve de contexto, nunca cambia el estado.
+  if (answers.stayDurationMonths < MINIMUM_STAY_MONTHS) {
+    return { status: 'REVIEW', internalReason: 'MIN_STAY_NOT_MET' };
+  }
+
   if (answers.smoker) {
     return { status: 'REVIEW', internalReason: 'SMOKING_POLICY_MISMATCH' };
   }
