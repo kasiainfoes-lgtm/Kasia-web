@@ -8,6 +8,7 @@ export type Room = {
   individualOrPareja: 'individual' | 'pareja' | 'ambos';
   workerOrStudent: 'trabajador' | 'estudiante' | 'ambos';
   photos: number;
+  photoUrls: string[];
   colorFrom: string;
   colorTo: string;
   amenities: string[];
@@ -35,6 +36,7 @@ export const mockRooms: Room[] = [
     individualOrPareja: 'ambos',
     workerOrStudent: 'ambos',
     photos: 12,
+    photoUrls: [],
     colorFrom: '#BFD9FF',
     colorTo: '#DCE9FF',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Escritorio', 'Lavadora', 'Ascensor', 'Balcón propio'],
@@ -55,6 +57,7 @@ export const mockRooms: Room[] = [
     individualOrPareja: 'individual',
     workerOrStudent: 'estudiante',
     photos: 9,
+    photoUrls: [],
     colorFrom: '#E4D9FF',
     colorTo: '#F0E9FF',
     amenities: ['WiFi de 300Mb', 'Escritorio', 'Lavadora', 'Terraza compartida'],
@@ -75,6 +78,7 @@ export const mockRooms: Room[] = [
     individualOrPareja: 'pareja',
     workerOrStudent: 'trabajador',
     photos: 10,
+    photoUrls: [],
     colorFrom: '#BFEBE0',
     colorTo: '#DFF7EF',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Lavadora', 'Ascensor'],
@@ -95,6 +99,7 @@ export const mockRooms: Room[] = [
     individualOrPareja: 'ambos',
     workerOrStudent: 'ambos',
     photos: 14,
+    photoUrls: [],
     colorFrom: '#FFD9CF',
     colorTo: '#FFEAE4',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Escritorio', 'Balcón propio', 'Ascensor'],
@@ -115,6 +120,7 @@ export const mockRooms: Room[] = [
     individualOrPareja: 'individual',
     workerOrStudent: 'ambos',
     photos: 8,
+    photoUrls: [],
     colorFrom: '#D9E8FF',
     colorTo: '#EAF2FF',
     amenities: ['WiFi de 300Mb', 'Escritorio', 'Lavadora', 'Calefacción'],
@@ -135,6 +141,7 @@ export const mockRooms: Room[] = [
     individualOrPareja: 'pareja',
     workerOrStudent: 'trabajador',
     photos: 11,
+    photoUrls: [],
     colorFrom: '#FFE3B0',
     colorTo: '#FFF1D6',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Lavadora', 'Terraza compartida', 'Ascensor'],
@@ -155,6 +162,7 @@ export const mockRooms: Room[] = [
     individualOrPareja: 'individual',
     workerOrStudent: 'ambos',
     photos: 7,
+    photoUrls: [],
     colorFrom: '#D6F0E0',
     colorTo: '#EAF8EF',
     amenities: ['WiFi de 300Mb', 'Lavadora', 'Calefacción'],
@@ -175,6 +183,7 @@ export const mockRooms: Room[] = [
     individualOrPareja: 'individual',
     workerOrStudent: 'estudiante',
     photos: 9,
+    photoUrls: [],
     colorFrom: '#E8DBFF',
     colorTo: '#F3ECFF',
     amenities: ['WiFi de 300Mb', 'Escritorio', 'Aire acondicionado', 'Ascensor'],
@@ -195,6 +204,7 @@ export const mockRooms: Room[] = [
     individualOrPareja: 'pareja',
     workerOrStudent: 'trabajador',
     photos: 13,
+    photoUrls: [],
     colorFrom: '#C9EAFB',
     colorTo: '#E3F5FD',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Balcón propio', 'Lavadora'],

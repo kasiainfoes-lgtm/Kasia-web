@@ -13,6 +13,7 @@ create table if not exists public.properties (
   individual_or_pareja text not null default 'ambos', -- 'individual' | 'pareja' | 'ambos'
   worker_or_student text not null default 'ambos',    -- 'trabajador' | 'estudiante' | 'ambos'
   photos int not null default 1,
+  photo_urls text[] not null default '{}', -- fotos reales, subidas desde /admin/propiedades
   color_from text not null default '#BFD9FF',
   color_to text not null default '#DCE9FF',
   amenities text[] not null default '{}',
@@ -190,6 +191,17 @@ create policy "users read their own profile"
 -- alter table public.applications add column if not exists documents_submitted_at timestamptz;
 -- alter table public.app_settings add column if not exists resend_api_key text;
 -- alter table public.app_settings add column if not exists email_from text;
+-- alter table public.properties add column if not exists photo_urls text[] not null default '{}';
+
+-- ============================================================================
+-- Fotos de propiedades: se suben desde /admin/propiedades (crear o editar
+-- habitación) y quedan en este bucket público — cualquiera puede verlas (son
+-- fotos de un catálogo, no hace falta que estén protegidas), pero solo se
+-- puede subir/borrar desde rutas de servidor con la service_role key.
+-- ============================================================================
+insert into storage.buckets (id, name, public)
+values ('property-photos', 'property-photos', true)
+on conflict (id) do nothing;
 
 -- ============================================================================
 -- Documentos del formulario de compatibilidad: cuando alguien contesta que es

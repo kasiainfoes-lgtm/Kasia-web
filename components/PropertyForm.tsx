@@ -29,6 +29,9 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
   const [individualOrPareja, setIndividualOrPareja] = useState(initial?.individualOrPareja ?? 'ambos');
   const [workerOrStudent, setWorkerOrStudent] = useState(initial?.workerOrStudent ?? 'ambos');
   const [photos, setPhotos] = useState(initial?.photos ?? 5);
+  const [photoUrls, setPhotoUrls] = useState<string[]>(initial?.photoUrls ?? []);
+  const [uploadingPhotos, setUploadingPhotos] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
   const [colorFrom, setColorFrom] = useState(initial?.colorFrom ?? '#BFD9FF');
   const [colorTo, setColorTo] = useState(initial?.colorTo ?? '#DCE9FF');
   const [amenities, setAmenities] = useState(initial?.amenities.join(', ') ?? '');
@@ -40,6 +43,31 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function handlePhotoUpload(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setUploadingPhotos(true);
+    setPhotoError(null);
+    try {
+      const uploaded: string[] = [];
+      for (const file of Array.from(files)) {
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch('/api/admin/properties/photos', { method: 'POST', body: fd });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        uploaded.push(data.url);
+      }
+      setPhotoUrls((urls) => [...urls, ...uploaded]);
+    } catch {
+      setPhotoError('No pudimos subir alguna imagen. Probá de nuevo.');
+    }
+    setUploadingPhotos(false);
+  }
+
+  function removePhoto(url: string) {
+    setPhotoUrls((urls) => urls.filter((u) => u !== url));
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -56,6 +84,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
       individualOrPareja,
       workerOrStudent,
       photos: Number(photos),
+      photoUrls,
       colorFrom,
       colorTo,
       amenities: amenities
@@ -183,7 +212,39 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
             onChange={(e) => setPhotos(Number(e.target.value))}
             className={inputClass}
           />
+          <p className="mt-1.5 text-xs text-vivi-muted">Solo referencia, no hace falta que coincida.</p>
         </div>
+      </div>
+
+      <div>
+        <label className={labelClass}>Fotos de la habitación</label>
+        {photoUrls.length > 0 && (
+          <div className="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-4">
+            {photoUrls.map((url) => (
+              <div key={url} className="group relative h-24 overflow-hidden rounded-lg border border-slate-200">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="" className="h-full w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removePhoto(url)}
+                  className="absolute right-1 top-1 rounded-full bg-vivi-navy/70 px-1.5 py-0.5 text-xs font-bold text-white opacity-0 transition group-hover:opacity-100"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        <input
+          type="file"
+          multiple
+          accept="image/png,image/jpeg,image/webp"
+          disabled={uploadingPhotos}
+          onChange={(e) => handlePhotoUpload(e.target.files)}
+          className="mt-3 block w-full text-xs text-vivi-muted file:mr-3 file:rounded-lg file:border-0 file:bg-vivi-navy file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
+        />
+        {uploadingPhotos && <p className="mt-1.5 text-xs text-vivi-muted">Subiendo…</p>}
+        {photoError && <p className="mt-1.5 text-xs text-red-600">{photoError}</p>}
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
