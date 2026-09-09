@@ -25,7 +25,7 @@ export default function RoomCard({
           <p className="font-semibold text-vivi-ink">{room.title}</p>
           <p className="text-sm text-vivi-muted">{room.zone}</p>
         </div>
-        <span className="shrink-0 rounded-full bg-vivi-mintLight px-2.5 py-1 text-xs font-bold text-emerald-700">
+        <span className="shrink-0 rounded-full bg-vivi-mintLight px-2.5 py-1 text-xs font-bold text-red-700">
           {room.match}% match
         </span>
       </div>

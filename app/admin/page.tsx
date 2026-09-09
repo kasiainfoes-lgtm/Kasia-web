@@ -16,7 +16,7 @@ const STAGE_LABEL: Record<string, string> = {
 };
 
 const STAGE_COLOR: Record<string, string> = {
-  nuevo: '#22D3AA',
+  nuevo: '#E5484D',
   verificado: '#8B7CF6',
   pagado: '#FB7360',
 };
@@ -57,7 +57,7 @@ export default async function AdminPage() {
       <AdminTabs active="/admin" />
 
       <div className="grid gap-4 sm:grid-cols-4">
-        <StatCard label="Habitaciones activas" value={String(rooms.length)} accent="#22D3AA" />
+        <StatCard label="Habitaciones activas" value={String(rooms.length)} accent="#E5484D" />
         <StatCard label="Reservas pagadas" value={String(paid.length)} accent="#5B93F2" />
         <StatCard
           label="Comisión Kasia generada"
@@ -138,7 +138,7 @@ export default async function AdminPage() {
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-bold ${
                       b.status === 'pagado'
-                        ? 'bg-vivi-mintLight text-emerald-700'
+                        ? 'bg-vivi-mintLight text-red-700'
                         : b.status === 'verificado'
                           ? 'bg-indigo-50 text-indigo-600'
                           : 'bg-slate-100 text-vivi-muted'

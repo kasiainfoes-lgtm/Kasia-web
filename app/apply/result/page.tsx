@@ -50,7 +50,7 @@ export default async function ApplyResultPage() {
       <span
         className={`inline-block rounded-full px-4 py-1.5 text-xs font-bold ${
           status === 'APPROVED'
-            ? 'bg-vivi-mintLight text-emerald-700'
+            ? 'bg-vivi-mintLight text-red-700'
             : status === 'REVIEW'
               ? 'bg-indigo-50 text-indigo-600'
               : 'bg-slate-100 text-vivi-muted'

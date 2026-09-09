@@ -88,7 +88,7 @@ export default function IntegrationsForm() {
   return (
     <div className="space-y-8">
       {message && (
-        <p className="rounded-lg bg-vivi-mintLight px-4 py-2.5 text-sm font-medium text-emerald-700">
+        <p className="rounded-lg bg-vivi-mintLight px-4 py-2.5 text-sm font-medium text-red-700">
           {message}
         </p>
       )}
@@ -98,7 +98,7 @@ export default function IntegrationsForm() {
           <h2 className="text-sm font-bold text-vivi-ink">Stripe</h2>
           <span
             className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-              settings.stripeConfigured ? 'bg-vivi-mintLight text-emerald-700' : 'bg-slate-100 text-vivi-muted'
+              settings.stripeConfigured ? 'bg-vivi-mintLight text-red-700' : 'bg-slate-100 text-vivi-muted'
             }`}
           >
             {settings.stripeConfigured ? 'Conectado' : 'Sin conectar'}
@@ -132,7 +132,7 @@ export default function IntegrationsForm() {
           <h2 className="text-sm font-bold text-vivi-ink">Didit (verificación de identidad)</h2>
           <span
             className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-              settings.diditConfigured ? 'bg-vivi-mintLight text-emerald-700' : 'bg-slate-100 text-vivi-muted'
+              settings.diditConfigured ? 'bg-vivi-mintLight text-red-700' : 'bg-slate-100 text-vivi-muted'
             }`}
           >
             {settings.diditConfigured ? 'Conectado' : 'Sin conectar'}
@@ -173,7 +173,7 @@ export default function IntegrationsForm() {
           <h2 className="text-sm font-bold text-vivi-ink">Email (Resend)</h2>
           <span
             className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-              settings.emailConfigured ? 'bg-vivi-mintLight text-emerald-700' : 'bg-slate-100 text-vivi-muted'
+              settings.emailConfigured ? 'bg-vivi-mintLight text-red-700' : 'bg-slate-100 text-vivi-muted'
             }`}
           >
             {settings.emailConfigured ? 'Conectado' : 'Sin conectar'}

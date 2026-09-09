@@ -13,7 +13,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_COLOR: Record<string, string> = {
-  APPROVED: 'bg-vivi-mintLight text-emerald-700',
+  APPROVED: 'bg-vivi-mintLight text-red-700',
   REVIEW: 'bg-indigo-50 text-indigo-600',
   NOT_ELIGIBLE: 'bg-slate-100 text-vivi-muted',
 };

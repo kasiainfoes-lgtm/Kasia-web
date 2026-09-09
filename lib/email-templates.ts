@@ -14,7 +14,7 @@ function wrapper(title: string, bodyHtml: string): string {
     <table role="presentation" width="100%" style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;">
       <tr>
         <td style="background:#0B1B3B;padding:24px 32px;">
-          <span style="color:#22D3AA;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;">Kasia</span>
+          <span style="color:#E5484D;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;">Kasia</span>
         </td>
       </tr>
       <tr>
@@ -39,7 +39,7 @@ export function approvedEmailTemplate(name: string, signupUrl: string) {
          Hemos revisado tu perfil y ha quedado <strong>aprobado</strong>. Ya puedes crear tu cuenta y ver
          las habitaciones disponibles para tu búsqueda.
        </p>
-       <a href="${signupUrl}" style="display:inline-block;background:#22D3AA;color:#0B1B3B;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
+       <a href="${signupUrl}" style="display:inline-block;background:#E5484D;color:#0B1B3B;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
          Crear mi cuenta
        </a>`
     ),
