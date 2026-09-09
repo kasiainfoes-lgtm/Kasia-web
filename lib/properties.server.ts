@@ -12,6 +12,7 @@ function mapSupabaseRow(row: any): Room {
     individualOrPareja: row.individual_or_pareja ?? 'ambos',
     workerOrStudent: row.worker_or_student ?? 'ambos',
     photos: row.photos ?? 1,
+    photoUrls: row.photo_urls ?? [],
     colorFrom: row.color_from ?? '#BFD9FF',
     colorTo: row.color_to ?? '#DCE9FF',
     amenities: row.amenities ?? [],

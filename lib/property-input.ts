@@ -8,6 +8,7 @@ export type PropertyInput = {
   individualOrPareja: 'individual' | 'pareja' | 'ambos';
   workerOrStudent: 'trabajador' | 'estudiante' | 'ambos';
   photos: number;
+  photoUrls: string[];
   colorFrom: string;
   colorTo: string;
   amenities: string[];
@@ -29,6 +30,7 @@ export function toPropertyRow(input: PropertyInput) {
     individual_or_pareja: input.individualOrPareja,
     worker_or_student: input.workerOrStudent,
     photos: input.photos,
+    photo_urls: input.photoUrls,
     color_from: input.colorFrom,
     color_to: input.colorTo,
     amenities: input.amenities,

@@ -34,11 +34,39 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
       </div>
 
       <div className="mt-6 grid gap-1.5 overflow-hidden rounded-2xl sm:h-96 sm:grid-cols-3 sm:grid-rows-2">
-        <div className="h-56 sm:col-span-1 sm:row-span-2 sm:h-full" style={{ background: gradient }} />
-        <div className="hidden h-full sm:block" style={{ background: gradientAlt }} />
-        <div className="hidden h-full sm:block" style={{ background: gradient }} />
-        <div className="hidden h-full sm:block" style={{ background: gradientAlt }} />
-        <div className="hidden h-full sm:block" style={{ background: gradient }} />
+        <div
+          className="h-56 sm:col-span-1 sm:row-span-2 sm:h-full"
+          style={room.photoUrls[0] ? undefined : { background: gradient }}
+        >
+          {room.photoUrls[0] && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={room.photoUrls[0]} alt={room.title} className="h-full w-full object-cover" />
+          )}
+        </div>
+        <div className="hidden h-full sm:block" style={room.photoUrls[1] ? undefined : { background: gradientAlt }}>
+          {room.photoUrls[1] && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={room.photoUrls[1]} alt={room.title} className="h-full w-full object-cover" />
+          )}
+        </div>
+        <div className="hidden h-full sm:block" style={room.photoUrls[2] ? undefined : { background: gradient }}>
+          {room.photoUrls[2] && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={room.photoUrls[2]} alt={room.title} className="h-full w-full object-cover" />
+          )}
+        </div>
+        <div className="hidden h-full sm:block" style={room.photoUrls[3] ? undefined : { background: gradientAlt }}>
+          {room.photoUrls[3] && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={room.photoUrls[3]} alt={room.title} className="h-full w-full object-cover" />
+          )}
+        </div>
+        <div className="hidden h-full sm:block" style={room.photoUrls[4] ? undefined : { background: gradient }}>
+          {room.photoUrls[4] && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={room.photoUrls[4]} alt={room.title} className="h-full w-full object-cover" />
+          )}
+        </div>
       </div>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
