@@ -155,7 +155,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
               onClick={() => setShowFavOnly((s) => !s)}
               className={`rounded-full border px-3 py-1.5 text-xs font-bold ${
                 showFavOnly
-                  ? 'border-vivi-mint bg-vivi-mintLight text-emerald-700'
+                  ? 'border-vivi-mint bg-vivi-mintLight text-red-700'
                   : 'border-slate-300 text-vivi-ink hover:border-vivi-navy'
               }`}
             >

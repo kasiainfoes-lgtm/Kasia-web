@@ -8,8 +8,10 @@ const config: Config = {
         vivi: {
           navy: '#0B1524',
           navyLight: '#152238',
-          mint: '#22D3AA',
-          mintLight: '#D6F7EA',
+          // Nombres "mint" heredados del diseño original: el acento
+          // principal del sitio es rojo, no verde.
+          mint: '#E5484D',
+          mintLight: '#FBE3E1',
           coral: '#FB7360',
           purple: '#8B7CF6',
           blue: '#5B93F2',

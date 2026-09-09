@@ -13,7 +13,7 @@ export default async function ReservaExitoPage({ params }: { params: { id: strin
 
   return (
     <section className="mx-auto max-w-2xl px-6 py-20 text-center">
-      <span className="inline-block rounded-full bg-vivi-mintLight px-4 py-1.5 text-xs font-bold text-emerald-700">
+      <span className="inline-block rounded-full bg-vivi-mintLight px-4 py-1.5 text-xs font-bold text-red-700">
         Reserva confirmada
       </span>
       <h1 className="mt-4 text-2xl font-extrabold text-vivi-ink">Pago recibido</h1>

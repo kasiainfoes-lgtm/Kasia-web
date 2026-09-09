@@ -126,7 +126,7 @@ export default async function HomePage() {
 function Step({ n, title, desc }: { n: number; title: string; desc: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 p-6">
-      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-vivi-mintLight text-sm font-bold text-emerald-700">
+      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-vivi-mintLight text-sm font-bold text-red-700">
         {n}
       </span>
       <p className="mt-4 font-bold text-vivi-ink">{title}</p>

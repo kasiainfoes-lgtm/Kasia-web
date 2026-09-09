@@ -60,7 +60,7 @@ export default function DocumentsUploadForm({ applicationId }: { applicationId: 
 
   if (submitState === 'done') {
     return (
-      <p className="mt-8 rounded-xl bg-vivi-mintLight px-4 py-3 text-sm font-medium text-emerald-700">
+      <p className="mt-8 rounded-xl bg-vivi-mintLight px-4 py-3 text-sm font-medium text-red-700">
         ¡Listo! Recibimos tus documentos. Te avisamos por email en cuanto los revisemos.
       </p>
     );

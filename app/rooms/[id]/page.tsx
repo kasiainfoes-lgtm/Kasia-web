@@ -26,7 +26,7 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
           <p className="mt-1 text-sm text-vivi-muted">{room.zone} · Valencia</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-vivi-mintLight px-3 py-1 text-xs font-bold text-emerald-700">
+          <span className="rounded-full bg-vivi-mintLight px-3 py-1 text-xs font-bold text-red-700">
             {room.match}% compatible
           </span>
           <FavoriteButton roomId={room.id} variant="inline" />
@@ -53,7 +53,7 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
           </div>
 
           <div className="flex items-center gap-3 border-b border-slate-200 py-6">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-vivi-mintLight font-bold text-emerald-700">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-vivi-mintLight font-bold text-red-700">
               {room.manager.charAt(0)}
             </div>
             <div>
@@ -69,14 +69,14 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
           <div className="grid grid-cols-2 gap-3 py-6 sm:grid-cols-3">
             {room.amenities.map((a) => (
               <div key={a} className="flex items-center gap-2 text-sm text-vivi-ink">
-                <span className="font-bold text-emerald-700">✓</span> {a}
+                <span className="font-bold text-red-700">✓</span> {a}
               </div>
             ))}
           </div>
         </div>
 
         <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-6">
-          <span className="inline-block rounded-full bg-vivi-mintLight px-3 py-1 text-xs font-bold text-emerald-700">
+          <span className="inline-block rounded-full bg-vivi-mintLight px-3 py-1 text-xs font-bold text-red-700">
             Vivienda habitual · mínimo 6 meses
           </span>
           <p className="mt-4 text-xl font-extrabold text-vivi-ink">

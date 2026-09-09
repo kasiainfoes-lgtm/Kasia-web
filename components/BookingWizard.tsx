@@ -96,7 +96,7 @@ export default function BookingWizard({ room }: { room: Room }) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
       <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <span className="inline-block rounded-full bg-vivi-mintLight px-3 py-1 text-xs font-bold text-emerald-700">
+        <span className="inline-block rounded-full bg-vivi-mintLight px-3 py-1 text-xs font-bold text-red-700">
           Vivienda habitual · mínimo 6 meses
         </span>
 
@@ -143,7 +143,7 @@ export default function BookingWizard({ room }: { room: Room }) {
         {step === 2 && (
           <div className="mt-6 rounded-xl bg-slate-50 p-4">
             {kycVerified ? (
-              <p className="text-sm font-semibold text-emerald-700">✓ Identidad verificada</p>
+              <p className="text-sm font-semibold text-red-700">✓ Identidad verificada</p>
             ) : (
               <>
                 <p className="text-sm text-vivi-muted">
@@ -187,7 +187,7 @@ export default function BookingWizard({ room }: { room: Room }) {
             {payError && <p className="self-center text-xs text-vivi-muted">{payError}</p>}
           </div>
         ) : (
-          <div className="mt-8 rounded-xl bg-vivi-mintLight p-6 text-emerald-800">
+          <div className="mt-8 rounded-xl bg-vivi-mintLight p-6 text-red-800">
             <p className="font-bold">Reserva confirmada</p>
             <p className="mt-2 text-sm">
               Pago recibido. El asesor y la agenda de visitas ya están disponibles, junto con
