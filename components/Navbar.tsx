@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { isAdminEmail } from '@/lib/admin-auth';
 import AuthButton from '@/components/AuthButton';
+import MobileMenu from '@/components/MobileMenu';
 
 export default async function Navbar() {
   const supabase = createClient();
@@ -22,7 +23,7 @@ export default async function Navbar() {
   const catalogLabel = approved ? 'Ver habitaciones' : 'Encontrar habitación';
 
   return (
-    <header className="border-b border-slate-200/70 bg-white/80 backdrop-blur sticky top-0 z-40">
+    <header className="relative border-b border-slate-200/70 bg-white/80 backdrop-blur sticky top-0 z-40">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-baseline gap-2">
           <span className="text-2xl font-black tracking-tight text-vivi-navy">Kasia</span>
@@ -49,6 +50,12 @@ export default async function Navbar() {
           >
             {catalogLabel}
           </Link>
+          <MobileMenu
+            catalogHref={catalogHref}
+            catalogNavLabel={approved ? 'Catálogo' : 'Encontrar habitación'}
+            catalogCtaLabel={catalogLabel}
+            showAdminLink={showAdminLink}
+          />
         </div>
       </div>
     </header>
