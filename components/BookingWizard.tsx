@@ -4,15 +4,23 @@ import { useEffect, useState } from 'react';
 import type { Room } from '@/lib/rooms';
 import { calculateBookingTotal } from '@/lib/rooms';
 import { createClient } from '@/lib/supabase/client';
+import type { BookingStatus } from '@/lib/bookings.server';
 
 const steps = ['Comprobación de identidad', 'Aceptar condiciones', 'Pagar'];
 
-export default function BookingWizard({ room }: { room: Room }) {
+export default function BookingWizard({
+  room,
+  initialBookingStatus,
+}: {
+  room: Room;
+  initialBookingStatus: BookingStatus | null;
+}) {
   const supabase = createClient();
-  const [step, setStep] = useState(0);
-  const [confirmed, setConfirmed] = useState(false);
+  const alreadyVerified = initialBookingStatus === 'verificado' || initialBookingStatus === 'pagado';
+  const [step, setStep] = useState(initialBookingStatus === 'pagado' ? steps.length - 1 : alreadyVerified ? 1 : 0);
+  const [confirmed, setConfirmed] = useState(initialBookingStatus === 'pagado');
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [kycVerified, setKycVerified] = useState(false);
+  const [kycVerified, setKycVerified] = useState(alreadyVerified);
   const [kycNote, setKycNote] = useState<string | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
@@ -22,13 +30,15 @@ export default function BookingWizard({ room }: { room: Room }) {
     supabase?.auth.getUser().then(({ data }) => setUserEmail(data.user?.email ?? null));
   }, [supabase]);
 
-  // Solo queremos registrar la etapa 'nuevo' una vez cuando detectamos sesión,
-  // no en cada render (upsertStage se recrea cada vez).
+  // Solo registra la etapa 'nuevo' si todavía no existe ninguna reserva para
+  // esta persona y habitación — si ya había una más avanzada (verificado,
+  // pagado) del lado del servidor, esto la pisaba de vuelta a 'nuevo' cada
+  // vez que la página se recargaba (por ejemplo, al volver de Didit).
   useEffect(() => {
-    if (!userEmail) return;
+    if (!userEmail || initialBookingStatus) return;
     upsertStage('nuevo');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userEmail]);
+  }, [userEmail, initialBookingStatus]);
 
   const isLastStep = step === steps.length - 1;
   const kycRequired = step === 0 && !kycVerified;

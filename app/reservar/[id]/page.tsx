@@ -1,14 +1,21 @@
 import { notFound } from 'next/navigation';
 import { fetchRoomById } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
+import { getOwnBookingStatus } from '@/lib/bookings.server';
 import BookingWizard from '@/components/BookingWizard';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ReservarPage({ params }: { params: { id: string } }) {
-  await requireApprovedAccess(`/reservar/${params.id}`);
+  const { userId } = await requireApprovedAccess(`/reservar/${params.id}`);
   const room = await fetchRoomById(params.id);
   if (!room) return notFound();
+
+  // Didit redirige de vuelta a esta misma página tras el KYC, recargándola
+  // por completo — sin esto, el wizard perdía el progreso guardado en
+  // BookingWizard (estado de React, no sobrevive un reload) y volvía a pedir
+  // verificar desde cero aunque ya había quedado registrado en el servidor.
+  const bookingStatus = await getOwnBookingStatus(userId, room.id);
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-16">
@@ -22,7 +29,7 @@ export default async function ReservarPage({ params }: { params: { id: string } 
       </p>
 
       <div className="mt-10">
-        <BookingWizard room={room} />
+        <BookingWizard room={room} initialBookingStatus={bookingStatus} />
       </div>
     </section>
   );
