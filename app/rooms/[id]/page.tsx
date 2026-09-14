@@ -3,7 +3,10 @@ import { notFound } from 'next/navigation';
 import { fetchRoomById } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
 import { isVideoUrl } from '@/lib/rooms';
+import { getRoomReviews, canReviewRoom } from '@/lib/reviews.server';
 import FavoriteButton from '@/components/FavoriteButton';
+import AmenityIcon from '@/components/AmenityIcon';
+import ReviewsSection from '@/components/ReviewsSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,12 +27,18 @@ function GalleryMedia({ url, alt, priority }: { url: string; alt: string; priori
 }
 
 export default async function RoomDetailPage({ params }: { params: { id: string } }) {
-  await requireApprovedAccess(`/rooms/${params.id}`);
+  const { userId } = await requireApprovedAccess(`/rooms/${params.id}`);
   const room = await fetchRoomById(params.id);
   if (!room) return notFound();
 
+  const [reviews, canReview] = await Promise.all([
+    getRoomReviews(room.id),
+    canReviewRoom(userId, room.id),
+  ]);
+
   const gradient = `linear-gradient(135deg, ${room.colorFrom}, ${room.colorTo})`;
   const gradientAlt = `linear-gradient(200deg, ${room.colorTo}, ${room.colorFrom})`;
+  const media = room.photoUrls;
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-10">
@@ -50,26 +59,66 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
         </div>
       </div>
 
-      <div className="mt-6 grid gap-1.5 overflow-hidden rounded-2xl sm:h-96 sm:grid-cols-3 sm:grid-rows-2">
-        <div
-          className="h-56 sm:col-span-1 sm:row-span-2 sm:h-full"
-          style={room.photoUrls[0] ? undefined : { background: gradient }}
-        >
-          {room.photoUrls[0] && <GalleryMedia url={room.photoUrls[0]} alt={room.title} priority />}
+      {media.length === 0 ? (
+        <div className="mt-6 grid gap-1.5 overflow-hidden rounded-2xl sm:h-96 sm:grid-cols-3 sm:grid-rows-2">
+          <div className="h-56 sm:col-span-1 sm:row-span-2 sm:h-full" style={{ background: gradient }} />
+          <div className="hidden h-full sm:block" style={{ background: gradientAlt }} />
+          <div className="hidden h-full sm:block" style={{ background: gradient }} />
+          <div className="hidden h-full sm:block" style={{ background: gradientAlt }} />
+          <div className="hidden h-full sm:block" style={{ background: gradient }} />
         </div>
-        <div className="hidden h-full sm:block" style={room.photoUrls[1] ? undefined : { background: gradientAlt }}>
-          {room.photoUrls[1] && <GalleryMedia url={room.photoUrls[1]} alt={room.title} />}
+      ) : media.length === 1 ? (
+        <div className="mt-6 h-72 overflow-hidden rounded-2xl sm:h-96">
+          <GalleryMedia url={media[0]} alt={room.title} priority />
         </div>
-        <div className="hidden h-full sm:block" style={room.photoUrls[2] ? undefined : { background: gradient }}>
-          {room.photoUrls[2] && <GalleryMedia url={room.photoUrls[2]} alt={room.title} />}
+      ) : media.length === 2 ? (
+        <div className="mt-6 grid gap-1.5 overflow-hidden rounded-2xl sm:h-96 sm:grid-cols-2">
+          <div className="h-56 sm:h-full">
+            <GalleryMedia url={media[0]} alt={room.title} priority />
+          </div>
+          <div className="hidden h-full sm:block">
+            <GalleryMedia url={media[1]} alt={room.title} />
+          </div>
         </div>
-        <div className="hidden h-full sm:block" style={room.photoUrls[3] ? undefined : { background: gradientAlt }}>
-          {room.photoUrls[3] && <GalleryMedia url={room.photoUrls[3]} alt={room.title} />}
+      ) : media.length === 3 ? (
+        <div className="mt-6 grid gap-1.5 overflow-hidden rounded-2xl sm:h-96 sm:grid-cols-2 sm:grid-rows-2">
+          <div className="h-56 sm:col-span-1 sm:row-span-2 sm:h-full">
+            <GalleryMedia url={media[0]} alt={room.title} priority />
+          </div>
+          <div className="hidden h-full sm:block">
+            <GalleryMedia url={media[1]} alt={room.title} />
+          </div>
+          <div className="hidden h-full sm:block">
+            <GalleryMedia url={media[2]} alt={room.title} />
+          </div>
         </div>
-        <div className="hidden h-full sm:block" style={room.photoUrls[4] ? undefined : { background: gradient }}>
-          {room.photoUrls[4] && <GalleryMedia url={room.photoUrls[4]} alt={room.title} />}
+      ) : media.length === 4 ? (
+        <div className="mt-6 grid gap-1.5 overflow-hidden rounded-2xl sm:h-96 sm:grid-cols-3 sm:grid-rows-2">
+          <div className="h-56 sm:col-span-1 sm:row-span-2 sm:h-full">
+            <GalleryMedia url={media[0]} alt={room.title} priority />
+          </div>
+          <div className="hidden h-full sm:col-span-2 sm:block">
+            <GalleryMedia url={media[1]} alt={room.title} />
+          </div>
+          <div className="hidden h-full sm:block">
+            <GalleryMedia url={media[2]} alt={room.title} />
+          </div>
+          <div className="hidden h-full sm:block">
+            <GalleryMedia url={media[3]} alt={room.title} />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="mt-6 grid gap-1.5 overflow-hidden rounded-2xl sm:h-96 sm:grid-cols-3 sm:grid-rows-2">
+          <div className="h-56 sm:col-span-1 sm:row-span-2 sm:h-full">
+            <GalleryMedia url={media[0]} alt={room.title} priority />
+          </div>
+          {media.slice(1, 5).map((url) => (
+            <div key={url} className="hidden h-full sm:block">
+              <GalleryMedia url={url} alt={room.title} />
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
         <div>
@@ -96,13 +145,16 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
             {room.description}
           </p>
 
-          <div className="grid grid-cols-2 gap-3 py-6 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 border-b border-slate-200 py-6 sm:grid-cols-3">
             {room.amenities.map((a) => (
               <div key={a} className="flex items-center gap-2 text-sm text-vivi-ink">
-                <span className="font-bold text-red-700">✓</span> {a}
+                <AmenityIcon label={a} className="h-4 w-4 shrink-0 text-red-700" />
+                {a}
               </div>
             ))}
           </div>
+
+          <ReviewsSection roomId={room.id} reviews={reviews} canReview={canReview} />
         </div>
 
         <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-6">
