@@ -1,9 +1,19 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import type { Room } from '@/lib/rooms';
 import { getFavorites } from '@/lib/favorites';
 import RoomCard from '@/components/RoomCard';
+
+const RoomsMap = dynamic(() => import('@/components/RoomsMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-[600px] items-center justify-center rounded-xl border border-slate-200 bg-vivi-bg text-sm text-vivi-muted">
+      Cargando mapa…
+    </div>
+  ),
+});
 
 function parseDMY(s: string): Date {
   const [d, m, y] = s.split('/').map(Number);
@@ -20,6 +30,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [showFavOnly, setShowFavOnly] = useState(false);
   const [favVersion, setFavVersion] = useState(0);
+  const [view, setView] = useState<'lista' | 'mapa'>('lista');
 
   // favVersion forces a re-read of localStorage after a heart toggle elsewhere in the grid.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -161,20 +172,42 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
             >
               ❤ Guardados ({favIds.size})
             </button>
+            <div className="flex overflow-hidden rounded-full border border-slate-300">
+              <button
+                onClick={() => setView('lista')}
+                className={`px-3 py-1.5 text-xs font-bold ${
+                  view === 'lista' ? 'bg-vivi-navy text-white' : 'text-vivi-ink hover:bg-vivi-bg'
+                }`}
+              >
+                ☰ Lista
+              </button>
+              <button
+                onClick={() => setView('mapa')}
+                className={`px-3 py-1.5 text-xs font-bold ${
+                  view === 'mapa' ? 'bg-vivi-navy text-white' : 'text-vivi-ink hover:bg-vivi-bg'
+                }`}
+              >
+                🗺 Mapa
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((room) => (
-            <RoomCard key={room.id} room={room} onToggleFavorite={() => setFavVersion((v) => v + 1)} />
-          ))}
-          {filtered.length === 0 && (
-            <p className="col-span-full rounded-xl border border-dashed border-slate-300 p-10 text-center text-sm text-vivi-muted">
-              No hay habitaciones que coincidan con esta búsqueda. Prueba ampliando el presupuesto o
-              cambiando de zona.
-            </p>
-          )}
-        </div>
+        {view === 'mapa' ? (
+          <RoomsMap rooms={filtered} />
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((room) => (
+              <RoomCard key={room.id} room={room} onToggleFavorite={() => setFavVersion((v) => v + 1)} />
+            ))}
+            {filtered.length === 0 && (
+              <p className="col-span-full rounded-xl border border-dashed border-slate-300 p-10 text-center text-sm text-vivi-muted">
+                No hay habitaciones que coincidan con esta búsqueda. Prueba ampliando el presupuesto o
+                cambiando de zona.
+              </p>
+            )}
+          </div>
+        )}
       </section>
     </>
   );

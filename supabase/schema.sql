@@ -15,6 +15,8 @@ create table if not exists public.properties (
   accepts_smokers boolean not null default true,
   accepts_pets boolean not null default true,
   accepts_dogs boolean not null default false, -- solo importa si accepts_pets = true
+  lat numeric,  -- si se deja vacío, el mapa usa el centro aproximado del barrio (zone)
+  lng numeric,
   photos int not null default 1,
   photo_urls text[] not null default '{}', -- fotos reales, subidas desde /admin/propiedades
   color_from text not null default '#BFD9FF',
@@ -198,6 +200,8 @@ create policy "users read their own profile"
 -- alter table public.properties add column if not exists accepts_smokers boolean not null default true;
 -- alter table public.properties add column if not exists accepts_pets boolean not null default true;
 -- alter table public.properties add column if not exists accepts_dogs boolean not null default false;
+-- alter table public.properties add column if not exists lat numeric;
+-- alter table public.properties add column if not exists lng numeric;
 
 -- ============================================================================
 -- Fotos de propiedades: se suben desde /admin/propiedades (crear o editar

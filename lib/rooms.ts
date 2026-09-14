@@ -10,6 +10,8 @@ export type Room = {
   acceptsSmokers: boolean;
   acceptsPets: boolean;
   acceptsDogs: boolean;
+  lat: number;
+  lng: number;
   photos: number;
   photoUrls: string[];
   colorFrom: string;
@@ -24,6 +26,28 @@ export type Room = {
 
 export const MINIMUM_STAY_MONTHS = 6;
 export const VIVI_COMMISSION_EUR = 50;
+
+// Centro aproximado de cada barrio de Valencia. Se usa como ubicación por
+// defecto en el mapa cuando una propiedad no tiene lat/lng propios cargados.
+export const ZONE_COORDINATES: Record<string, { lat: number; lng: number }> = {
+  Ruzafa: { lat: 39.4622, lng: -0.376 },
+  Benimaclet: { lat: 39.486, lng: -0.3642 },
+  Mestalla: { lat: 39.475, lng: -0.358 },
+  'El Carmen': { lat: 39.4796, lng: -0.376 },
+  Extramurs: { lat: 39.4743, lng: -0.386 },
+  'Camins al Grau': { lat: 39.4683, lng: -0.3387 },
+  Patraix: { lat: 39.4607, lng: -0.4003 },
+  Algirós: { lat: 39.4773, lng: -0.3457 },
+  Malvarrosa: { lat: 39.4753, lng: -0.3257 },
+};
+
+// Centro de Valencia, por si una zona no está en ZONE_COORDINATES.
+const VALENCIA_CENTER = { lat: 39.4699, lng: -0.3763 };
+
+export function roomCoordinates(room: Pick<Room, 'lat' | 'lng' | 'zone'>): { lat: number; lng: number } {
+  if (room.lat && room.lng) return { lat: room.lat, lng: room.lng };
+  return ZONE_COORDINATES[room.zone] ?? VALENCIA_CENTER;
+}
 
 // Se usan mientras no haya una tabla `properties` en Supabase configurada
 // (o como semilla para cargarlas ahí). Ver SETUP.md para subir las tuyas
@@ -41,6 +65,8 @@ export const mockRooms: Room[] = [
     acceptsSmokers: true,
     acceptsPets: true,
     acceptsDogs: false,
+    lat: 39.4622,
+    lng: -0.376,
     photos: 12,
     photoUrls: [],
     colorFrom: '#BFD9FF',
@@ -65,6 +91,8 @@ export const mockRooms: Room[] = [
     acceptsSmokers: true,
     acceptsPets: true,
     acceptsDogs: false,
+    lat: 39.486,
+    lng: -0.3642,
     photos: 9,
     photoUrls: [],
     colorFrom: '#E4D9FF',
@@ -89,6 +117,8 @@ export const mockRooms: Room[] = [
     acceptsSmokers: true,
     acceptsPets: true,
     acceptsDogs: false,
+    lat: 39.475,
+    lng: -0.358,
     photos: 10,
     photoUrls: [],
     colorFrom: '#BFEBE0',
@@ -113,6 +143,8 @@ export const mockRooms: Room[] = [
     acceptsSmokers: true,
     acceptsPets: true,
     acceptsDogs: false,
+    lat: 39.4796,
+    lng: -0.376,
     photos: 14,
     photoUrls: [],
     colorFrom: '#FFD9CF',
@@ -137,6 +169,8 @@ export const mockRooms: Room[] = [
     acceptsSmokers: true,
     acceptsPets: true,
     acceptsDogs: false,
+    lat: 39.4743,
+    lng: -0.386,
     photos: 8,
     photoUrls: [],
     colorFrom: '#D9E8FF',
@@ -161,6 +195,8 @@ export const mockRooms: Room[] = [
     acceptsSmokers: true,
     acceptsPets: true,
     acceptsDogs: false,
+    lat: 39.4683,
+    lng: -0.3387,
     photos: 11,
     photoUrls: [],
     colorFrom: '#FFE3B0',
@@ -185,6 +221,8 @@ export const mockRooms: Room[] = [
     acceptsSmokers: true,
     acceptsPets: true,
     acceptsDogs: false,
+    lat: 39.4607,
+    lng: -0.4003,
     photos: 7,
     photoUrls: [],
     colorFrom: '#D6F0E0',
@@ -209,6 +247,8 @@ export const mockRooms: Room[] = [
     acceptsSmokers: true,
     acceptsPets: true,
     acceptsDogs: false,
+    lat: 39.4773,
+    lng: -0.3457,
     photos: 9,
     photoUrls: [],
     colorFrom: '#E8DBFF',
@@ -233,6 +273,8 @@ export const mockRooms: Room[] = [
     acceptsSmokers: true,
     acceptsPets: true,
     acceptsDogs: false,
+    lat: 39.4753,
+    lng: -0.3257,
     photos: 13,
     photoUrls: [],
     colorFrom: '#C9EAFB',

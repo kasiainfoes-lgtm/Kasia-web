@@ -31,6 +31,8 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
   const [acceptsSmokers, setAcceptsSmokers] = useState(initial?.acceptsSmokers ?? true);
   const [acceptsPets, setAcceptsPets] = useState(initial?.acceptsPets ?? true);
   const [acceptsDogs, setAcceptsDogs] = useState(initial?.acceptsDogs ?? false);
+  const [lat, setLat] = useState(initial?.lat != null ? String(initial.lat) : '');
+  const [lng, setLng] = useState(initial?.lng != null ? String(initial.lng) : '');
   const [photos, setPhotos] = useState(initial?.photos ?? 5);
   const [photoUrls, setPhotoUrls] = useState<string[]>(initial?.photoUrls ?? []);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
@@ -94,6 +96,8 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
       acceptsSmokers,
       acceptsPets,
       acceptsDogs,
+      lat: lat.trim() ? Number(lat) : null,
+      lng: lng.trim() ? Number(lng) : null,
       photos: Number(photos),
       photoUrls,
       colorFrom,
@@ -145,6 +149,34 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         <div>
           <label className={labelClass}>Zona / barrio</label>
           <input required value={zone} onChange={(e) => setZone(e.target.value)} className={inputClass} />
+        </div>
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label className={labelClass}>Latitud (opcional)</label>
+          <input
+            type="number"
+            step="any"
+            value={lat}
+            onChange={(e) => setLat(e.target.value)}
+            placeholder="ej: 39.4622"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Longitud (opcional)</label>
+          <input
+            type="number"
+            step="any"
+            value={lng}
+            onChange={(e) => setLng(e.target.value)}
+            placeholder="ej: -0.3760"
+            className={inputClass}
+          />
+          <p className="mt-1.5 text-xs text-vivi-muted">
+            Si lo dejás vacío, en el mapa aparece en el centro del barrio (zona).
+          </p>
         </div>
       </div>
 
