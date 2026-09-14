@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { adminPageGate } from '@/lib/admin-page-gate.server';
 import { fetchRooms } from '@/lib/properties.server';
+import { firstImageUrl } from '@/lib/rooms';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
 import DeletePropertyButton from '@/components/DeletePropertyButton';
@@ -30,12 +31,14 @@ export default async function AdminPropertiesPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {rooms.map((room) => (
+        {rooms.map((room) => {
+          const thumbnail = firstImageUrl(room.photoUrls);
+          return (
           <div key={room.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-            {room.photoUrls[0] ? (
+            {thumbnail ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={room.photoUrls[0]}
+                src={thumbnail}
                 alt={room.title}
                 loading="lazy"
                 decoding="async"
@@ -62,7 +65,8 @@ export default async function AdminPropertiesPage() {
               <DeletePropertyButton id={room.id} title={room.title} />
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

@@ -2,9 +2,26 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fetchRoomById } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
+import { isVideoUrl } from '@/lib/rooms';
 import FavoriteButton from '@/components/FavoriteButton';
 
 export const dynamic = 'force-dynamic';
+
+function GalleryMedia({ url, alt, priority }: { url: string; alt: string; priority?: boolean }) {
+  if (isVideoUrl(url)) {
+    return <video src={url} controls className="h-full w-full object-cover" />;
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={url}
+      alt={alt}
+      loading={priority ? undefined : 'lazy'}
+      decoding={priority ? undefined : 'async'}
+      className="h-full w-full object-cover"
+    />
+  );
+}
 
 export default async function RoomDetailPage({ params }: { params: { id: string } }) {
   await requireApprovedAccess(`/rooms/${params.id}`);
@@ -38,58 +55,19 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
           className="h-56 sm:col-span-1 sm:row-span-2 sm:h-full"
           style={room.photoUrls[0] ? undefined : { background: gradient }}
         >
-          {room.photoUrls[0] && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={room.photoUrls[0]} alt={room.title} className="h-full w-full object-cover" />
-          )}
+          {room.photoUrls[0] && <GalleryMedia url={room.photoUrls[0]} alt={room.title} priority />}
         </div>
         <div className="hidden h-full sm:block" style={room.photoUrls[1] ? undefined : { background: gradientAlt }}>
-          {room.photoUrls[1] && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={room.photoUrls[1]}
-              alt={room.title}
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
-          )}
+          {room.photoUrls[1] && <GalleryMedia url={room.photoUrls[1]} alt={room.title} />}
         </div>
         <div className="hidden h-full sm:block" style={room.photoUrls[2] ? undefined : { background: gradient }}>
-          {room.photoUrls[2] && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={room.photoUrls[2]}
-              alt={room.title}
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
-          )}
+          {room.photoUrls[2] && <GalleryMedia url={room.photoUrls[2]} alt={room.title} />}
         </div>
         <div className="hidden h-full sm:block" style={room.photoUrls[3] ? undefined : { background: gradientAlt }}>
-          {room.photoUrls[3] && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={room.photoUrls[3]}
-              alt={room.title}
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
-          )}
+          {room.photoUrls[3] && <GalleryMedia url={room.photoUrls[3]} alt={room.title} />}
         </div>
         <div className="hidden h-full sm:block" style={room.photoUrls[4] ? undefined : { background: gradient }}>
-          {room.photoUrls[4] && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={room.photoUrls[4]}
-              alt={room.title}
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover"
-            />
-          )}
+          {room.photoUrls[4] && <GalleryMedia url={room.photoUrls[4]} alt={room.title} />}
         </div>
       </div>
 

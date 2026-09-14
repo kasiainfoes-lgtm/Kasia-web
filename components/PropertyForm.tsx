@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Room } from '@/lib/rooms';
+import { isVideoUrl, type Room } from '@/lib/rooms';
 
 function toDateInput(dmy: string): string {
   const [d, m, y] = dmy.split('/');
@@ -65,7 +65,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
       }
       setPhotoUrls((urls) => [...urls, ...uploaded]);
     } catch {
-      setPhotoError('No pudimos subir alguna imagen. Probá de nuevo.');
+      setPhotoError('No pudimos subir alguno de los archivos. Probá de nuevo.');
     }
     setUploadingPhotos(false);
   }
@@ -292,13 +292,17 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
       </div>
 
       <div>
-        <label className={labelClass}>Fotos de la habitación</label>
+        <label className={labelClass}>Fotos y videos de la habitación</label>
         {photoUrls.length > 0 && (
           <div className="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-4">
             {photoUrls.map((url) => (
               <div key={url} className="group relative h-24 overflow-hidden rounded-lg border border-slate-200">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt="" className="h-full w-full object-cover" />
+                {isVideoUrl(url) ? (
+                  <video src={url} muted playsInline controls className="h-full w-full object-cover" />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={url} alt="" className="h-full w-full object-cover" />
+                )}
                 <button
                   type="button"
                   onClick={() => removePhoto(url)}
@@ -313,11 +317,12 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         <input
           type="file"
           multiple
-          accept="image/png,image/jpeg,image/webp"
+          accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime,video/webm"
           disabled={uploadingPhotos}
           onChange={(e) => handlePhotoUpload(e.target.files)}
           className="mt-3 block w-full text-xs text-vivi-muted file:mr-3 file:rounded-lg file:border-0 file:bg-vivi-navy file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
         />
+        <p className="mt-1.5 text-xs text-vivi-muted">Fotos hasta 8 MB, videos hasta 50 MB.</p>
         {uploadingPhotos && <p className="mt-1.5 text-xs text-vivi-muted">Subiendo…</p>}
         {photoError && <p className="mt-1.5 text-xs text-red-600">{photoError}</p>}
       </div>
