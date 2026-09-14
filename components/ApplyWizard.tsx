@@ -34,7 +34,8 @@ type FormState = {
   occupationType: 'trabajador' | 'estudiante' | '';
   smoker: boolean | null;
   stayDurationMonths: number | '';
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
   financialProofPath: string | null;
@@ -62,7 +63,8 @@ export default function ApplyWizard() {
     occupationType: '',
     smoker: null,
     stayDurationMonths: '',
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     financialProofPath: null,
@@ -104,7 +106,10 @@ export default function ApplyWizard() {
       form.smoker !== null &&
       form.stayDurationMonths !== '' &&
       studentDocsReady,
-    form.name.trim() !== '' && /\S+@\S+\.\S+/.test(form.email) && form.phone.trim() !== '',
+    form.firstName.trim() !== '' &&
+      form.lastName.trim() !== '' &&
+      /\S+@\S+\.\S+/.test(form.email) &&
+      form.phone.trim() !== '',
   ][step];
 
   async function handleSubmit() {
@@ -114,7 +119,11 @@ export default function ApplyWizard() {
       const res = await fetch('/api/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, petType: form.hasPet ? form.petType : 'ninguno' }),
+        body: JSON.stringify({
+          ...form,
+          name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
+          petType: form.hasPet ? form.petType : 'ninguno',
+        }),
       });
       if (!res.ok) throw new Error();
       router.push('/apply/result');
@@ -291,14 +300,24 @@ export default function ApplyWizard() {
 
         {step === 3 && (
           <div className="space-y-6">
-            <Field label="Nombre">
-              <input
-                type="text"
-                value={form.name}
-                onChange={(e) => update('name', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
-              />
-            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Nombre">
+                <input
+                  type="text"
+                  value={form.firstName}
+                  onChange={(e) => update('firstName', e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
+                />
+              </Field>
+              <Field label="Apellido">
+                <input
+                  type="text"
+                  value={form.lastName}
+                  onChange={(e) => update('lastName', e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
+                />
+              </Field>
+            </div>
             <Field label="Email">
               <input
                 type="email"

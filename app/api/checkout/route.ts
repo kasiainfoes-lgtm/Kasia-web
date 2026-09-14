@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Habitación no encontrada' }, { status: 404 });
   }
 
-  const { deposit, commission } = calculateBookingTotal(room.price);
+  const { deposit } = calculateBookingTotal(room.price);
   const origin = resolveSiteUrl(request);
 
   const stripe = new Stripe(secretKey);
@@ -32,14 +32,6 @@ export async function POST(request: Request) {
           currency: 'eur',
           unit_amount: Math.round(deposit * 100),
           product_data: { name: `Fianza · ${room.title}` },
-        },
-        quantity: 1,
-      },
-      {
-        price_data: {
-          currency: 'eur',
-          unit_amount: Math.round(commission * 100),
-          product_data: { name: 'Comisión de servicio Kasia' },
         },
         quantity: 1,
       },

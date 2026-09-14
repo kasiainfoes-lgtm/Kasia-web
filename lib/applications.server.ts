@@ -8,6 +8,7 @@ export type Application = {
   email: string;
   phone: string | null;
   status: ApplicationStatus;
+  isNew?: boolean;
 };
 
 export type ApplicationDocumentsState = {
@@ -78,6 +79,7 @@ export async function submitApplication(
       email: existing.email,
       phone: existing.phone,
       status: existing.status as ApplicationStatus,
+      isNew: false,
     };
   }
 
@@ -114,6 +116,7 @@ export async function submitApplication(
     email: data.email,
     phone: data.phone,
     status: data.status as ApplicationStatus,
+    isNew: true,
   };
 }
 

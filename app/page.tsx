@@ -88,8 +88,7 @@ export default async function HomePage() {
           <div className="rounded-2xl border border-slate-200 bg-white p-6">
             <p className="font-bold text-vivi-ink">¿Qué pago al reservar?</p>
             <p className="mt-2 text-sm text-vivi-muted">
-              Una fianza equivalente a una mensualidad más una comisión fija de servicio de 50 €, en
-              un único pago.
+              Una fianza equivalente a una mensualidad, en un único pago.
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-6">

@@ -105,7 +105,7 @@ export default function IntegrationsForm() {
           </span>
         </div>
         <p className="mt-2 text-sm text-vivi-muted">
-          Cobra la fianza + comisión al reservar. Saca tu clave en Stripe → Developers → API keys.
+          Cobra la fianza al reservar. Saca tu clave en Stripe → Developers → API keys.
         </p>
         {settings.stripeKeyMasked && (
           <p className="mt-2 text-xs text-vivi-muted">Clave actual: {settings.stripeKeyMasked}</p>

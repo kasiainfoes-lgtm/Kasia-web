@@ -3,6 +3,9 @@ import { submitApplication } from '@/lib/applications.server';
 import { scoreApplication, type ApplicationAnswers } from '@/lib/application-scoring';
 import { fetchRooms } from '@/lib/properties.server';
 import { APP_ID_COOKIE, APP_DEMO_STATUS_COOKIE, APP_COOKIE_MAX_AGE } from '@/lib/apply-session';
+import { sendEmail } from '@/lib/email.server';
+import { newApplicationNotificationEmailTemplate } from '@/lib/email-templates';
+import { resolveSiteUrl } from '@/lib/site-url';
 
 const REQUIRED_FIELDS = [
   'name',
@@ -77,6 +80,27 @@ export async function POST(request: Request) {
   };
 
   if (application) {
+    // Best-effort: si Resend falla, la solicitud ya quedó guardada igual.
+    if (application.isNew && application.status === 'REVIEW') {
+      try {
+        const adminEmails = (process.env.ADMIN_EMAILS ?? '')
+          .split(',')
+          .map((e) => e.trim())
+          .filter(Boolean);
+        if (adminEmails.length > 0) {
+          const siteUrl = resolveSiteUrl(request);
+          const { subject, html } = newApplicationNotificationEmailTemplate(
+            application.name,
+            application.email,
+            `${siteUrl}/admin/solicitudes`
+          );
+          await sendEmail({ to: adminEmails, subject, html });
+        }
+      } catch {
+        // best-effort, ver comentario arriba
+      }
+    }
+
     const response = NextResponse.json({ status: application.status });
     response.cookies.set(APP_ID_COOKIE, application.id, cookieBase);
     return response;

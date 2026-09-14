@@ -12,7 +12,7 @@ export default async function ReservaExitoPage({ params }: { params: { id: strin
   const room = await fetchRoomById(params.id);
   if (!room) return notFound();
 
-  const { deposit, commission, total } = calculateBookingTotal(room.price);
+  const { deposit, total } = calculateBookingTotal(room.price);
 
   return (
     <section className="mx-auto max-w-2xl px-6 py-20 text-center">
@@ -29,10 +29,6 @@ export default async function ReservaExitoPage({ params }: { params: { id: strin
         <div className="flex justify-between">
           <dt className="text-vivi-muted">Fianza (1 mensualidad)</dt>
           <dd className="font-bold text-vivi-ink">{deposit.toFixed(2)} €</dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-vivi-muted">Comisión Kasia (fija)</dt>
-          <dd className="font-bold text-vivi-ink">{commission.toFixed(2)} €</dd>
         </div>
         <div className="flex justify-between border-t border-slate-200 pt-2 text-base">
           <dt className="font-bold text-vivi-ink">TOTAL PAGADO</dt>
