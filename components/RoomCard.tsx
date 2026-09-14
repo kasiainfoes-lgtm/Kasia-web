@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { Room } from '@/lib/rooms';
+import { firstImageUrl, type Room } from '@/lib/rooms';
 import FavoriteButton from '@/components/FavoriteButton';
 
 export default function RoomCard({
@@ -9,13 +9,14 @@ export default function RoomCard({
   room: Room;
   onToggleFavorite?: () => void;
 }) {
+  const thumbnail = firstImageUrl(room.photoUrls);
   return (
     <Link href={`/rooms/${room.id}`} className="group block">
       <div className="relative overflow-hidden rounded-2xl">
-        {room.photoUrls[0] ? (
+        {thumbnail ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={room.photoUrls[0]}
+            src={thumbnail}
             alt={room.title}
             loading="lazy"
             decoding="async"

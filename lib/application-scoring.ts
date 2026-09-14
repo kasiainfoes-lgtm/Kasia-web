@@ -27,8 +27,7 @@ export type ApplicationAnswers = {
 
 export type ScoringResult = { status: ApplicationStatus; internalReason: InternalReason };
 
-const CHEAPEST_ROOM_FLOOR = 600; // por debajo de esto no hay inventario en ninguna zona
-const BUDGET_TOLERANCE = 0.1; // un presupuesto hasta un 10% por debajo del precio igual cuenta como match
+const BUDGET_TOLERANCE_EUR = 100; // un presupuesto hasta 100€ por debajo del precio igual cuenta como match
 
 // Reglas internas de compatibilidad. Nunca se exponen al usuario ni sus
 // motivos exactos — solo el estado final (APPROVED / REVIEW / NOT_ELIGIBLE).
@@ -41,24 +40,27 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
     return { status: 'NOT_ELIGIBLE', internalReason: 'OCCUPANCY_MISMATCH' };
   }
 
-  if (answers.budget < CHEAPEST_ROOM_FLOOR) {
-    return { status: 'NOT_ELIGIBLE', internalReason: 'BUDGET_MISMATCH' };
-  }
-
-  const matchingRooms = rooms.filter((room) => {
+  // El presupuesto nunca descalifica una solicitud por sí solo: solo se usa
+  // para decidir si hay inventario que encaje (zona/ocupación/política), sin
+  // filtrar por precio. Habitaciones más baratas que el presupuesto siempre
+  // cuentan como match — el "<=" nunca las excluye.
+  const profileRooms = rooms.filter((room) => {
     const zoneOk = answers.zone === 'Cualquier zona' || room.zone === answers.zone;
     const occupancyOk =
       answers.occupancyType === 'pareja' ? room.individualOrPareja !== 'individual' : true;
-    return (
-      zoneOk &&
-      occupancyOk &&
-      room.price <= answers.budget * (1 + BUDGET_TOLERANCE) &&
-      roomAcceptsProfile(room, { smoker: answers.smoker, petType: answers.petType })
-    );
+    return zoneOk && occupancyOk && roomAcceptsProfile(room, { smoker: answers.smoker, petType: answers.petType });
   });
 
-  if (matchingRooms.length === 0) {
+  if (profileRooms.length === 0) {
     return { status: 'NOT_ELIGIBLE', internalReason: 'NO_MATCHING_INVENTORY' };
+  }
+
+  // Si hay inventario para su perfil pero ninguna a su presupuesto (+100€ de
+  // margen), igual queda en revisión manual en vez de rechazarse: el equipo
+  // decide si ofrecerle algo de todas formas.
+  const withinBudget = profileRooms.some((room) => room.price <= answers.budget + BUDGET_TOLERANCE_EUR);
+  if (!withinBudget) {
+    return { status: 'REVIEW', internalReason: 'BUDGET_MISMATCH' };
   }
 
   // Nada de lo que sigue descalifica sola una solicitud: cualquier perfil que

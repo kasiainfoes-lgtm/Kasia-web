@@ -300,6 +300,21 @@ export function calculateBookingTotal(monthlyPrice: number) {
 // perfil de quien pregunta. Se usa tanto para calcular si hay disponibilidad
 // real al completar /apply como para filtrar qué habitaciones ve cada
 // usuario ya aprobado en /rooms.
+const VIDEO_EXTENSIONS = new Set(['mp4', 'mov', 'webm']);
+
+// photoUrls puede mezclar fotos y videos subidos desde /admin/propiedades —
+// se distinguen por extensión para saber si renderizar <img> o <video>.
+export function isVideoUrl(url: string): boolean {
+  const extension = url.split('?')[0].split('.').pop()?.toLowerCase();
+  return !!extension && VIDEO_EXTENSIONS.has(extension);
+}
+
+// Para miniaturas (tarjeta de catálogo, listado de admin) que solo pueden
+// mostrar una imagen fija: la primera foto real, saltando los videos.
+export function firstImageUrl(urls: string[]): string | undefined {
+  return urls.find((url) => !isVideoUrl(url));
+}
+
 export function roomAcceptsProfile(
   room: Room,
   profile: { smoker: boolean; petType: 'ninguno' | 'perro' | 'gato' | 'otro' }
