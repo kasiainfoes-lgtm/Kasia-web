@@ -5,13 +5,7 @@ import type { Room } from '@/lib/rooms';
 import { calculateBookingTotal } from '@/lib/rooms';
 import { createClient } from '@/lib/supabase/client';
 
-const steps = [
-  'Elegir habitación',
-  'Iniciar sesión',
-  'Filtro + KYC',
-  'Aceptar condiciones',
-  'Pagar fianza',
-];
+const steps = ['Comprobación de identidad', 'Aceptar condiciones', 'Pagar'];
 
 export default function BookingWizard({ room }: { room: Room }) {
   const supabase = createClient();
@@ -37,8 +31,7 @@ export default function BookingWizard({ room }: { room: Room }) {
   }, [userEmail]);
 
   const isLastStep = step === steps.length - 1;
-  const authRequired = step === 1 && !userEmail;
-  const kycRequired = step === 2 && !kycVerified;
+  const kycRequired = step === 0 && !kycVerified;
 
   function upsertStage(status: 'nuevo' | 'verificado') {
     fetch('/api/bookings/upsert', {
@@ -128,19 +121,7 @@ export default function BookingWizard({ room }: { room: Room }) {
           })}
         </ol>
 
-        {authRequired && (
-          <div className="mt-6 rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
-            Necesitas iniciar sesión para continuar con la reserva.
-            <a
-              href={`/login?next=/reservar/${room.id}`}
-              className="mt-3 block rounded-lg bg-vivi-navy px-4 py-2 text-center text-sm font-semibold text-white"
-            >
-              Iniciar sesión
-            </a>
-          </div>
-        )}
-
-        {step === 2 && (
+        {step === 0 && (
           <div className="mt-6 rounded-xl bg-slate-50 p-4">
             {kycVerified ? (
               <p className="text-sm font-semibold text-red-700">✓ Identidad verificada</p>
@@ -172,7 +153,7 @@ export default function BookingWizard({ room }: { room: Room }) {
               </button>
             )}
             <button
-              disabled={authRequired || kycRequired || paying}
+              disabled={kycRequired || paying}
               onClick={() => {
                 if (isLastStep) {
                   handlePay();
