@@ -25,7 +25,6 @@ export type Room = {
 };
 
 export const MINIMUM_STAY_MONTHS = 6;
-export const VIVI_COMMISSION_EUR = 50;
 
 // Centro aproximado de cada barrio de Valencia. Se usa como ubicación por
 // defecto en el mapa cuando una propiedad no tiene lat/lng propios cargados.
@@ -291,9 +290,7 @@ export const mockRooms: Room[] = [
 
 export function calculateBookingTotal(monthlyPrice: number) {
   const deposit = monthlyPrice;
-  const commission = VIVI_COMMISSION_EUR;
-  const total = Math.round((deposit + commission) * 100) / 100;
-  return { deposit, commission, total };
+  return { deposit, total: deposit };
 }
 
 // Compara la política de una habitación (fumadores/mascotas/perros) contra el

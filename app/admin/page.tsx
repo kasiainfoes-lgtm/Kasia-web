@@ -1,7 +1,6 @@
 import { adminPageGate } from '@/lib/admin-page-gate.server';
 import { fetchAllBookings } from '@/lib/admin.server';
 import { fetchRooms } from '@/lib/properties.server';
-import { VIVI_COMMISSION_EUR } from '@/lib/rooms';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
 import AdminVisitAction from '@/components/AdminVisitAction';
@@ -34,7 +33,7 @@ export default async function AdminPage() {
     (b) => b.visitStatus === 'agendada' || b.visitStatus === 'hecha'
   );
   const visitDone = bookings.filter((b) => b.visitStatus === 'hecha');
-  const commissionRevenue = paid.length * VIVI_COMMISSION_EUR;
+  const depositRevenue = paid.reduce((sum, b) => sum + (b.amount ?? 0), 0);
   const stageCounts = STAGE_ORDER.map((stage) => ({
     stage,
     count: bookings.filter((b) => b.status === stage).length,
@@ -60,8 +59,8 @@ export default async function AdminPage() {
         <StatCard label="Habitaciones activas" value={String(rooms.length)} accent="#E5484D" />
         <StatCard label="Reservas pagadas" value={String(paid.length)} accent="#5B93F2" />
         <StatCard
-          label="Comisión Kasia generada"
-          value={`${commissionRevenue.toLocaleString('es-ES')} €`}
+          label="Fianzas cobradas"
+          value={`${depositRevenue.toLocaleString('es-ES')} €`}
           accent="#8B7CF6"
         />
         <StatCard label="Visitas agendadas" value={String(visitScheduledOrDone.length)} accent="#FB7360" />

@@ -10,7 +10,7 @@ const steps = [
   'Iniciar sesión',
   'Filtro + KYC',
   'Aceptar condiciones',
-  'Pagar fianza + comisión',
+  'Pagar fianza',
 ];
 
 export default function BookingWizard({ room }: { room: Room }) {
@@ -22,7 +22,7 @@ export default function BookingWizard({ room }: { room: Room }) {
   const [kycNote, setKycNote] = useState<string | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
-  const { deposit, commission, total } = calculateBookingTotal(room.price);
+  const { deposit, total } = calculateBookingTotal(room.price);
 
   useEffect(() => {
     supabase?.auth.getUser().then(({ data }) => setUserEmail(data.user?.email ?? null));
@@ -213,10 +213,6 @@ export default function BookingWizard({ room }: { room: Room }) {
               <div className="flex justify-between">
                 <dt className="text-vivi-muted">Fianza (1 mensualidad)</dt>
                 <dd className="font-bold text-vivi-ink">{deposit.toFixed(2)} €</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-vivi-muted">Comisión Kasia (fija)</dt>
-                <dd className="font-bold text-vivi-ink">{commission.toFixed(2)} €</dd>
               </div>
               <div className="flex justify-between border-t border-slate-200 pt-3 text-base">
                 <dt className="font-bold text-vivi-ink">TOTAL PAGADO</dt>

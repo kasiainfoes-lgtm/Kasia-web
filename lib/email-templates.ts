@@ -62,6 +62,24 @@ export function paymentConfirmedEmailTemplate(roomTitle: string, amount: number)
   };
 }
 
+export function newApplicationNotificationEmailTemplate(name: string, email: string, reviewUrl: string) {
+  const safeName = escapeHtml(name);
+  const safeEmail = escapeHtml(email);
+  return {
+    subject: `Nueva solicitud para revisar — ${name}`,
+    html: wrapper(
+      'Nueva solicitud para revisar',
+      `<p style="margin:0 0 24px;color:#3A4356;font-size:14px;line-height:1.6;">
+         <strong>${safeName}</strong> (${safeEmail}) completó su perfil de búsqueda y está esperando
+         revisión en el panel interno.
+       </p>
+       <a href="${reviewUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
+         Revisar solicitud
+       </a>`
+    ),
+  };
+}
+
 export function paymentNotificationEmailTemplate(roomTitle: string, customerEmail: string, amount: number) {
   const safeTitle = escapeHtml(roomTitle);
   const safeEmail = escapeHtml(customerEmail);
