@@ -7,8 +7,7 @@ export default function Footer() {
           <p>Alquiler residencial, verificado y reservable desde el móvil.</p>
         </div>
         <p className="mt-4 text-xs text-slate-500">
-          Vivienda habitual · estancia mínima 6 meses. Fianza equivalente a una mensualidad + comisión
-          fija de servicio de 50 €.
+          Vivienda habitual · estancia mínima 6 meses. Fianza equivalente a una mensualidad.
         </p>
         <p className="mt-2 text-xs text-slate-500">© {new Date().getFullYear()} Kasia Inmobiliaria</p>
       </div>

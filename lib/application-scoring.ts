@@ -28,6 +28,7 @@ export type ApplicationAnswers = {
 export type ScoringResult = { status: ApplicationStatus; internalReason: InternalReason };
 
 const CHEAPEST_ROOM_FLOOR = 600; // por debajo de esto no hay inventario en ninguna zona
+const BUDGET_TOLERANCE = 0.1; // un presupuesto hasta un 10% por debajo del precio igual cuenta como match
 
 // Reglas internas de compatibilidad. Nunca se exponen al usuario ni sus
 // motivos exactos — solo el estado final (APPROVED / REVIEW / NOT_ELIGIBLE).
@@ -51,7 +52,7 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
     return (
       zoneOk &&
       occupancyOk &&
-      room.price <= answers.budget &&
+      room.price <= answers.budget * (1 + BUDGET_TOLERANCE) &&
       roomAcceptsProfile(room, { smoker: answers.smoker, petType: answers.petType })
     );
   });
