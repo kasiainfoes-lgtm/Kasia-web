@@ -7,6 +7,9 @@ export type Room = {
   available: string;
   individualOrPareja: 'individual' | 'pareja' | 'ambos';
   workerOrStudent: 'trabajador' | 'estudiante' | 'ambos';
+  acceptsSmokers: boolean;
+  acceptsPets: boolean;
+  acceptsDogs: boolean;
   photos: number;
   photoUrls: string[];
   colorFrom: string;
@@ -35,6 +38,9 @@ export const mockRooms: Room[] = [
     available: '01/10/2026',
     individualOrPareja: 'ambos',
     workerOrStudent: 'ambos',
+    acceptsSmokers: true,
+    acceptsPets: true,
+    acceptsDogs: false,
     photos: 12,
     photoUrls: [],
     colorFrom: '#BFD9FF',
@@ -56,6 +62,9 @@ export const mockRooms: Room[] = [
     available: '15/10/2026',
     individualOrPareja: 'individual',
     workerOrStudent: 'estudiante',
+    acceptsSmokers: true,
+    acceptsPets: true,
+    acceptsDogs: false,
     photos: 9,
     photoUrls: [],
     colorFrom: '#E4D9FF',
@@ -77,6 +86,9 @@ export const mockRooms: Room[] = [
     available: '01/11/2026',
     individualOrPareja: 'pareja',
     workerOrStudent: 'trabajador',
+    acceptsSmokers: true,
+    acceptsPets: true,
+    acceptsDogs: false,
     photos: 10,
     photoUrls: [],
     colorFrom: '#BFEBE0',
@@ -98,6 +110,9 @@ export const mockRooms: Room[] = [
     available: '01/10/2026',
     individualOrPareja: 'ambos',
     workerOrStudent: 'ambos',
+    acceptsSmokers: true,
+    acceptsPets: true,
+    acceptsDogs: false,
     photos: 14,
     photoUrls: [],
     colorFrom: '#FFD9CF',
@@ -119,6 +134,9 @@ export const mockRooms: Room[] = [
     available: '01/10/2026',
     individualOrPareja: 'individual',
     workerOrStudent: 'ambos',
+    acceptsSmokers: true,
+    acceptsPets: true,
+    acceptsDogs: false,
     photos: 8,
     photoUrls: [],
     colorFrom: '#D9E8FF',
@@ -140,6 +158,9 @@ export const mockRooms: Room[] = [
     available: '20/10/2026',
     individualOrPareja: 'pareja',
     workerOrStudent: 'trabajador',
+    acceptsSmokers: true,
+    acceptsPets: true,
+    acceptsDogs: false,
     photos: 11,
     photoUrls: [],
     colorFrom: '#FFE3B0',
@@ -161,6 +182,9 @@ export const mockRooms: Room[] = [
     available: '05/11/2026',
     individualOrPareja: 'individual',
     workerOrStudent: 'ambos',
+    acceptsSmokers: true,
+    acceptsPets: true,
+    acceptsDogs: false,
     photos: 7,
     photoUrls: [],
     colorFrom: '#D6F0E0',
@@ -182,6 +206,9 @@ export const mockRooms: Room[] = [
     available: '01/10/2026',
     individualOrPareja: 'individual',
     workerOrStudent: 'estudiante',
+    acceptsSmokers: true,
+    acceptsPets: true,
+    acceptsDogs: false,
     photos: 9,
     photoUrls: [],
     colorFrom: '#E8DBFF',
@@ -203,6 +230,9 @@ export const mockRooms: Room[] = [
     available: '10/10/2026',
     individualOrPareja: 'pareja',
     workerOrStudent: 'trabajador',
+    acceptsSmokers: true,
+    acceptsPets: true,
+    acceptsDogs: false,
     photos: 13,
     photoUrls: [],
     colorFrom: '#C9EAFB',
@@ -222,4 +252,18 @@ export function calculateBookingTotal(monthlyPrice: number) {
   const commission = VIVI_COMMISSION_EUR;
   const total = Math.round((deposit + commission) * 100) / 100;
   return { deposit, commission, total };
+}
+
+// Compara la política de una habitación (fumadores/mascotas/perros) contra el
+// perfil de quien pregunta. Se usa tanto para calcular si hay disponibilidad
+// real al completar /apply como para filtrar qué habitaciones ve cada
+// usuario ya aprobado en /rooms.
+export function roomAcceptsProfile(
+  room: Room,
+  profile: { smoker: boolean; petType: 'ninguno' | 'perro' | 'gato' | 'otro' }
+): boolean {
+  if (profile.smoker && !room.acceptsSmokers) return false;
+  if (profile.petType !== 'ninguno' && !room.acceptsPets) return false;
+  if (profile.petType === 'perro' && !room.acceptsDogs) return false;
+  return true;
 }

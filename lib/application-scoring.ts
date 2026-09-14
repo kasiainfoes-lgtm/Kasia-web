@@ -1,4 +1,4 @@
-import { MINIMUM_STAY_MONTHS, type Room } from '@/lib/rooms';
+import { MINIMUM_STAY_MONTHS, roomAcceptsProfile, type Room } from '@/lib/rooms';
 
 export type ApplicationStatus = 'APPROVED' | 'REVIEW' | 'NOT_ELIGIBLE';
 
@@ -36,12 +36,6 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
     return { status: 'NOT_ELIGIBLE', internalReason: 'MIN_STAY_NOT_MET' };
   }
 
-  // Por el momento ninguna habitación admite perros. Gatos u otras mascotas
-  // sí pueden seguir el flujo normal.
-  if (answers.petType === 'perro') {
-    return { status: 'NOT_ELIGIBLE', internalReason: 'PET_POLICY_MISMATCH' };
-  }
-
   if (answers.hasMinors) {
     return { status: 'NOT_ELIGIBLE', internalReason: 'OCCUPANCY_MISMATCH' };
   }
@@ -54,7 +48,12 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
     const zoneOk = answers.zone === 'Cualquier zona' || room.zone === answers.zone;
     const occupancyOk =
       answers.occupancyType === 'pareja' ? room.individualOrPareja !== 'individual' : true;
-    return zoneOk && occupancyOk && room.price <= answers.budget;
+    return (
+      zoneOk &&
+      occupancyOk &&
+      room.price <= answers.budget &&
+      roomAcceptsProfile(room, { smoker: answers.smoker, petType: answers.petType })
+    );
   });
 
   if (matchingRooms.length === 0) {

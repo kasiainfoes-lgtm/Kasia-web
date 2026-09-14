@@ -28,6 +28,9 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
   const [available, setAvailable] = useState(initial ? toDateInput(initial.available) : '');
   const [individualOrPareja, setIndividualOrPareja] = useState(initial?.individualOrPareja ?? 'ambos');
   const [workerOrStudent, setWorkerOrStudent] = useState(initial?.workerOrStudent ?? 'ambos');
+  const [acceptsSmokers, setAcceptsSmokers] = useState(initial?.acceptsSmokers ?? true);
+  const [acceptsPets, setAcceptsPets] = useState(initial?.acceptsPets ?? true);
+  const [acceptsDogs, setAcceptsDogs] = useState(initial?.acceptsDogs ?? false);
   const [photos, setPhotos] = useState(initial?.photos ?? 5);
   const [photoUrls, setPhotoUrls] = useState<string[]>(initial?.photoUrls ?? []);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
@@ -69,6 +72,11 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
     setPhotoUrls((urls) => urls.filter((u) => u !== url));
   }
 
+  function handleAcceptsPetsChange(checked: boolean) {
+    setAcceptsPets(checked);
+    if (!checked) setAcceptsDogs(false);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -83,6 +91,9 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
       available: toDMY(available),
       individualOrPareja,
       workerOrStudent,
+      acceptsSmokers,
+      acceptsPets,
+      acceptsDogs,
       photos: Number(photos),
       photoUrls,
       colorFrom,
@@ -214,6 +225,38 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
           />
           <p className="mt-1.5 text-xs text-vivi-muted">Solo referencia, no hace falta que coincida.</p>
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-x-6 gap-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <label className="flex items-center gap-2 text-sm font-medium text-vivi-navy">
+          <input
+            type="checkbox"
+            checked={acceptsSmokers}
+            onChange={(e) => setAcceptsSmokers(e.target.checked)}
+            className="h-4 w-4 rounded border-slate-300"
+          />
+          Acepta fumadores
+        </label>
+        <label className="flex items-center gap-2 text-sm font-medium text-vivi-navy">
+          <input
+            type="checkbox"
+            checked={acceptsPets}
+            onChange={(e) => handleAcceptsPetsChange(e.target.checked)}
+            className="h-4 w-4 rounded border-slate-300"
+          />
+          Acepta mascotas
+        </label>
+        {acceptsPets && (
+          <label className="flex items-center gap-2 text-sm font-medium text-vivi-navy">
+            <input
+              type="checkbox"
+              checked={acceptsDogs}
+              onChange={(e) => setAcceptsDogs(e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300"
+            />
+            Acepta perros
+          </label>
+        )}
       </div>
 
       <div>
