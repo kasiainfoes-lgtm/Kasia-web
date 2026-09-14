@@ -180,20 +180,28 @@ export async function getApplicationById(id: string): Promise<Application | null
   const admin = createAdminClient();
   if (!admin) return null;
 
-  const { data, error } = await admin
-    .from('applications')
-    .select('id, name, email, phone, status')
-    .eq('id', id)
-    .single();
+  // /signup?app=<id> puede abrirse días después desde el email de "aprobado",
+  // así que esto es una ruta bastante transitada — un problema de red pasajero
+  // acá no debería tirar abajo la página con un 500 en blanco, solo tratarse
+  // como "no encontrado" (ver app/error.tsx para cualquier otro caso).
+  try {
+    const { data, error } = await admin
+      .from('applications')
+      .select('id, name, email, phone, status')
+      .eq('id', id)
+      .single();
 
-  if (error || !data) return null;
-  return {
-    id: data.id,
-    name: data.name,
-    email: data.email,
-    phone: data.phone,
-    status: data.status as ApplicationStatus,
-  };
+    if (error || !data) return null;
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      status: data.status as ApplicationStatus,
+    };
+  } catch {
+    return null;
+  }
 }
 
 // Para /apply/documents: además de los datos básicos, necesita saber si ya
