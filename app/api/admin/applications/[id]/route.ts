@@ -3,8 +3,11 @@ import { getAdminUser } from '@/lib/require-admin.server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getApplicationById } from '@/lib/applications.server';
 import { sendEmail } from '@/lib/email.server';
-import { approvedEmailTemplate, moreInfoEmailTemplate } from '@/lib/email-templates';
+import { approvedEmailTemplate, documentsRejectedEmailTemplate, moreInfoEmailTemplate } from '@/lib/email-templates';
 import { resolveSiteUrl } from '@/lib/site-url';
+
+const ACTIONS = ['approve', 'request-info', 'approve-documents', 'reject-documents'] as const;
+type Action = (typeof ACTIONS)[number];
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   const user = await getAdminUser();
@@ -14,8 +17,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
   if (!admin) return NextResponse.json({ error: 'Supabase no está configurado.' }, { status: 501 });
 
   const body = await request.json().catch(() => null);
-  const action = body?.action;
-  if (action !== 'approve' && action !== 'request-info') {
+  const action = body?.action as Action;
+  if (!ACTIONS.includes(action)) {
     return NextResponse.json({ error: 'Acción inválida.' }, { status: 400 });
   }
 
@@ -32,6 +35,44 @@ export async function POST(request: Request, { params }: { params: { id: string 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
     const { subject, html } = approvedEmailTemplate(application.name, `${siteUrl}/signup?app=${application.id}`);
+    const sent = await sendEmail({ to: application.email, subject, html });
+    return NextResponse.json({ ok: true, emailSent: sent.ok, emailError: sent.error });
+  }
+
+  if (action === 'approve-documents') {
+    const { error } = await admin
+      .from('applications')
+      .update({
+        documents_approved_at: new Date().toISOString(),
+        documents_rejected_at: null,
+        documents_rejection_note: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', application.id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true });
+  }
+
+  if (action === 'reject-documents') {
+    const note = typeof body?.note === 'string' ? body.note.trim() : '';
+    if (!note) return NextResponse.json({ error: 'Escribe una nota explicando qué corregir.' }, { status: 400 });
+
+    const { error } = await admin
+      .from('applications')
+      .update({
+        documents_rejected_at: new Date().toISOString(),
+        documents_rejection_note: note,
+        documents_approved_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', application.id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    const { subject, html } = documentsRejectedEmailTemplate(
+      application.name,
+      note,
+      `${siteUrl}/apply/documents?app=${application.id}`
+    );
     const sent = await sendEmail({ to: application.email, subject, html });
     return NextResponse.json({ ok: true, emailSent: sent.ok, emailError: sent.error });
   }

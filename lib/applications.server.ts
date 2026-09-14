@@ -10,6 +10,16 @@ export type Application = {
   status: ApplicationStatus;
 };
 
+export type ApplicationDocumentsState = {
+  financialProofPath: string | null;
+  unpaidRentInsurancePath: string | null;
+  documentsRequestedAt: string | null;
+  documentsSubmittedAt: string | null;
+  documentsRejectedAt: string | null;
+  documentsRejectionNote: string | null;
+  documentsApprovedAt: string | null;
+};
+
 export type AdminApplication = {
   id: string;
   name: string;
@@ -20,12 +30,8 @@ export type AdminApplication = {
   petType: PetType;
   budget: number;
   status: ApplicationStatus;
-  financialProofPath: string | null;
-  unpaidRentInsurancePath: string | null;
-  documentsRequestedAt: string | null;
-  documentsSubmittedAt: string | null;
   createdAt: string;
-};
+} & ApplicationDocumentsState;
 
 const DEFAULT_COOLDOWN_DAYS = 30;
 
@@ -118,7 +124,7 @@ export async function fetchAllApplications(): Promise<AdminApplication[]> {
   const { data, error } = await admin
     .from('applications')
     .select(
-      'id, name, email, phone, zone, occupation_type, pet_type, budget, status, financial_proof_path, unpaid_rent_insurance_path, documents_requested_at, documents_submitted_at, created_at'
+      'id, name, email, phone, zone, occupation_type, pet_type, budget, status, financial_proof_path, unpaid_rent_insurance_path, documents_requested_at, documents_submitted_at, documents_rejected_at, documents_rejection_note, documents_approved_at, created_at'
     )
     .order('created_at', { ascending: false });
 
@@ -138,6 +144,9 @@ export async function fetchAllApplications(): Promise<AdminApplication[]> {
     unpaidRentInsurancePath: row.unpaid_rent_insurance_path,
     documentsRequestedAt: row.documents_requested_at,
     documentsSubmittedAt: row.documents_submitted_at,
+    documentsRejectedAt: row.documents_rejected_at,
+    documentsRejectionNote: row.documents_rejection_note,
+    documentsApprovedAt: row.documents_approved_at,
     createdAt: row.created_at,
   }));
 }
@@ -181,5 +190,36 @@ export async function getApplicationById(id: string): Promise<Application | null
     email: data.email,
     phone: data.phone,
     status: data.status as ApplicationStatus,
+  };
+}
+
+// Para /apply/documents: además de los datos básicos, necesita saber si ya
+// hay documentos pedidos/subidos/rechazados para decidir si mostrar el
+// formulario de subida o un mensaje de estado.
+export async function getApplicationForDocuments(
+  id: string
+): Promise<(Pick<Application, 'id' | 'name'> & ApplicationDocumentsState) | null> {
+  const admin = createAdminClient();
+  if (!admin) return null;
+
+  const { data, error } = await admin
+    .from('applications')
+    .select(
+      'id, name, financial_proof_path, unpaid_rent_insurance_path, documents_requested_at, documents_submitted_at, documents_rejected_at, documents_rejection_note, documents_approved_at'
+    )
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return {
+    id: data.id,
+    name: data.name,
+    financialProofPath: data.financial_proof_path,
+    unpaidRentInsurancePath: data.unpaid_rent_insurance_path,
+    documentsRequestedAt: data.documents_requested_at,
+    documentsSubmittedAt: data.documents_submitted_at,
+    documentsRejectedAt: data.documents_rejected_at,
+    documentsRejectionNote: data.documents_rejection_note,
+    documentsApprovedAt: data.documents_approved_at,
   };
 }

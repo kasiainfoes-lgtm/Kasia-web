@@ -155,6 +155,10 @@ create table if not exists public.applications (
   unpaid_rent_insurance_path text,
   documents_requested_at timestamptz, -- cuándo se pidió más documentación desde /admin
   documents_submitted_at timestamptz, -- cuándo se subieron los documentos pedidos
+  documents_rejected_at timestamptz,  -- si está seteado, el admin rechazó lo subido y /apply/documents
+                                       -- vuelve a mostrar el formulario hasta el próximo reenvío
+  documents_rejection_note text,      -- por qué se rechazó, se le muestra a la persona al reenviar
+  documents_approved_at timestamptz,  -- cuándo el admin dio por buenos los documentos
   status text not null default 'REVIEW',  -- 'APPROVED' | 'REVIEW' | 'NOT_ELIGIBLE'
   internal_reason text,               -- nunca se muestra al usuario
   created_at timestamptz not null default now(),
@@ -194,6 +198,9 @@ create policy "users read their own profile"
 -- alter table public.applications add column if not exists unpaid_rent_insurance_path text;
 -- alter table public.applications add column if not exists documents_requested_at timestamptz;
 -- alter table public.applications add column if not exists documents_submitted_at timestamptz;
+-- alter table public.applications add column if not exists documents_rejected_at timestamptz;
+-- alter table public.applications add column if not exists documents_rejection_note text;
+-- alter table public.applications add column if not exists documents_approved_at timestamptz;
 -- alter table public.app_settings add column if not exists resend_api_key text;
 -- alter table public.app_settings add column if not exists email_from text;
 -- alter table public.properties add column if not exists photo_urls text[] not null default '{}';

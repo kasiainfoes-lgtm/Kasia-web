@@ -1,8 +1,9 @@
 import { adminPageGate } from '@/lib/admin-page-gate.server';
-import { fetchAllApplications } from '@/lib/applications.server';
+import { fetchAllApplications, type AdminApplication } from '@/lib/applications.server';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
 import AdminApplicationActions from '@/components/AdminApplicationActions';
+import AdminDocumentsActions from '@/components/AdminDocumentsActions';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +20,20 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 const PET_LABEL: Record<string, string> = { ninguno: '—', perro: 'Perro', gato: 'Gato', otro: 'Otro' };
+
+type DocumentsPhase = 'approved' | 'rejected' | 'pending-review' | 'requested' | 'not-requested';
+
+// Un rechazo se limpia apenas la persona reenvía (ver /api/apply/documents/submit),
+// así que si documentsRejectedAt sigue seteado es porque todavía está esperando
+// ese reenvío — tiene prioridad sobre los paths, que pueden ser los de la subida
+// que se rechazó.
+function documentsPhase(a: AdminApplication): DocumentsPhase {
+  if (a.documentsApprovedAt) return 'approved';
+  if (a.documentsRejectedAt) return 'rejected';
+  if (a.financialProofPath && a.unpaidRentInsurancePath) return 'pending-review';
+  if (a.documentsRequestedAt) return 'requested';
+  return 'not-requested';
+}
 
 export default async function AdminSolicitudesPage() {
   const gate = await adminPageGate('/admin/solicitudes');
@@ -62,30 +77,62 @@ export default async function AdminSolicitudesPage() {
                   </p>
                 </td>
                 <td className="px-4 py-3">
-                  {a.financialProofPath && a.unpaidRentInsurancePath ? (
-                    <div className="flex flex-col gap-1">
-                      <a
-                        href={`/api/admin/applications/${a.id}/documents/financial-proof`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs font-semibold text-vivi-navy hover:underline"
-                      >
-                        Ver nómina / solvencia
-                      </a>
-                      <a
-                        href={`/api/admin/applications/${a.id}/documents/unpaid-rent-insurance`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs font-semibold text-vivi-navy hover:underline"
-                      >
-                        Ver seguro de impago
-                      </a>
-                    </div>
-                  ) : a.documentsRequestedAt ? (
-                    <p className="text-xs text-vivi-muted">Pedidos, esperando…</p>
-                  ) : (
-                    <p className="text-xs text-vivi-muted">No pedidos</p>
-                  )}
+                  {(() => {
+                    const phase = documentsPhase(a);
+                    const viewLinks = (
+                      <div className="flex flex-col gap-1">
+                        <a
+                          href={`/api/admin/applications/${a.id}/documents/financial-proof`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs font-semibold text-vivi-navy hover:underline"
+                        >
+                          Ver nómina / solvencia
+                        </a>
+                        <a
+                          href={`/api/admin/applications/${a.id}/documents/unpaid-rent-insurance`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs font-semibold text-vivi-navy hover:underline"
+                        >
+                          Ver seguro de impago
+                        </a>
+                      </div>
+                    );
+
+                    if (phase === 'approved') {
+                      return (
+                        <div className="flex flex-col gap-1.5">
+                          {viewLinks}
+                          <span className="w-fit rounded-full bg-vivi-mintLight px-2 py-0.5 text-xs font-bold text-red-700">
+                            Aprobados
+                          </span>
+                        </div>
+                      );
+                    }
+                    if (phase === 'rejected') {
+                      return (
+                        <div className="max-w-[200px]">
+                          <p className="text-xs font-semibold text-red-600">Rechazados, esperando reenvío</p>
+                          {a.documentsRejectionNote && (
+                            <p className="mt-1 text-xs text-vivi-muted">{a.documentsRejectionNote}</p>
+                          )}
+                        </div>
+                      );
+                    }
+                    if (phase === 'pending-review') {
+                      return (
+                        <div className="flex flex-col gap-1.5">
+                          {viewLinks}
+                          <AdminDocumentsActions id={a.id} />
+                        </div>
+                      );
+                    }
+                    if (phase === 'requested') {
+                      return <p className="text-xs text-vivi-muted">Pedidos, esperando…</p>;
+                    }
+                    return <p className="text-xs text-vivi-muted">No pedidos</p>;
+                  })()}
                 </td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${STATUS_COLOR[a.status]}`}>
