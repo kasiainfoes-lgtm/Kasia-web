@@ -7,9 +7,12 @@ import { roomAcceptsProfile } from '@/lib/rooms';
 export const dynamic = 'force-dynamic';
 
 export default async function RoomsPage() {
-  const { userId } = await requireApprovedAccess('/rooms');
-  const rooms = await fetchRooms();
-  const ownAnswers = await getOwnApplicationAnswers(userId);
+  const { applicationId } = await requireApprovedAccess('/rooms');
+
+  const [rooms, ownAnswers] = await Promise.all([
+    fetchRooms(),
+    applicationId ? getOwnApplicationAnswers(applicationId) : Promise.resolve(null),
+  ]);
 
   const visibleRooms = ownAnswers
     ? rooms.filter((room) => roomAcceptsProfile(room, ownAnswers))

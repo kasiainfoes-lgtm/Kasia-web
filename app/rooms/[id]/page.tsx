@@ -46,25 +46,49 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
         <div className="hidden h-full sm:block" style={room.photoUrls[1] ? undefined : { background: gradientAlt }}>
           {room.photoUrls[1] && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={room.photoUrls[1]} alt={room.title} className="h-full w-full object-cover" />
+            <img
+              src={room.photoUrls[1]}
+              alt={room.title}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
           )}
         </div>
         <div className="hidden h-full sm:block" style={room.photoUrls[2] ? undefined : { background: gradient }}>
           {room.photoUrls[2] && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={room.photoUrls[2]} alt={room.title} className="h-full w-full object-cover" />
+            <img
+              src={room.photoUrls[2]}
+              alt={room.title}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
           )}
         </div>
         <div className="hidden h-full sm:block" style={room.photoUrls[3] ? undefined : { background: gradientAlt }}>
           {room.photoUrls[3] && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={room.photoUrls[3]} alt={room.title} className="h-full w-full object-cover" />
+            <img
+              src={room.photoUrls[3]}
+              alt={room.title}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
           )}
         </div>
         <div className="hidden h-full sm:block" style={room.photoUrls[4] ? undefined : { background: gradient }}>
           {room.photoUrls[4] && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={room.photoUrls[4]} alt={room.title} className="h-full w-full object-cover" />
+            <img
+              src={room.photoUrls[4]}
+              alt={room.title}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
           )}
         </div>
       </div>

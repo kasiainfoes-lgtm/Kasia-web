@@ -17,6 +17,8 @@ export default function RoomCard({
           <img
             src={room.photoUrls[0]}
             alt={room.title}
+            loading="lazy"
+            decoding="async"
             className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (

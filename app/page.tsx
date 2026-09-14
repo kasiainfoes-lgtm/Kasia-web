@@ -1,30 +1,19 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { getSessionUser, getOwnProfile } from '@/lib/supabase/session.server';
 import PublicShowcase from '@/components/PublicShowcase';
 
 // Depende de la sesión (redirige a /rooms si ya está aprobado): nunca cachear.
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const supabase = createClient();
   let pendingReview = false;
 
-  if (supabase) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('application_status')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.application_status === 'APPROVED') redirect('/rooms');
-      pendingReview = !!profile;
-    }
+  const user = await getSessionUser();
+  if (user) {
+    const profile = await getOwnProfile(user.id);
+    if (profile?.applicationStatus === 'APPROVED') redirect('/rooms');
+    pendingReview = !!profile;
   }
 
   return (

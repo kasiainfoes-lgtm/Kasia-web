@@ -144,26 +144,19 @@ export async function fetchAllApplications(): Promise<AdminApplication[]> {
 
 // Trae la política de fumador/mascota que la persona ya aprobada declaró en
 // /apply, para poder mostrarle en /rooms solo las habitaciones que aceptan
-// su perfil. Usa el cliente admin porque `applications` no tiene policy de
-// lectura para usuarios normales.
+// su perfil. Recibe el application_id ya resuelto (ver requireApprovedAccess)
+// para no repetir la consulta a `profiles`. Usa el cliente admin porque
+// `applications` no tiene policy de lectura para usuarios normales.
 export async function getOwnApplicationAnswers(
-  userId: string
+  applicationId: string
 ): Promise<{ smoker: boolean; petType: PetType } | null> {
   const admin = createAdminClient();
   if (!admin) return null;
 
-  const { data: profile } = await admin
-    .from('profiles')
-    .select('application_id')
-    .eq('id', userId)
-    .maybeSingle();
-
-  if (!profile?.application_id) return null;
-
   const { data: application } = await admin
     .from('applications')
     .select('smoker, pet_type')
-    .eq('id', profile.application_id)
+    .eq('id', applicationId)
     .maybeSingle();
 
   if (!application) return null;

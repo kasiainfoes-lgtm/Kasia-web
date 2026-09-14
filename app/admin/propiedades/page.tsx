@@ -34,7 +34,13 @@ export default async function AdminPropertiesPage() {
           <div key={room.id} className="rounded-2xl border border-slate-200 bg-white p-4">
             {room.photoUrls[0] ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={room.photoUrls[0]} alt={room.title} className="h-28 w-full rounded-xl object-cover" />
+              <img
+                src={room.photoUrls[0]}
+                alt={room.title}
+                loading="lazy"
+                decoding="async"
+                className="h-28 w-full rounded-xl object-cover"
+              />
             ) : (
               <div
                 className="h-28 rounded-xl"
