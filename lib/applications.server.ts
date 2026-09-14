@@ -40,9 +40,13 @@ function cooldownDays(): number {
   return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_COOLDOWN_DAYS;
 }
 
-// Evita que alguien reenvíe el formulario una y otra vez para "tantear" las
-// reglas: si ya hay una solicitud reciente con el mismo email o teléfono,
+// Evita que alguien reenvíe el formulario una y otra vez con el mismo email
+// para "tantear" las reglas: si ya hay una solicitud reciente con ese email,
 // se devuelve ese mismo resultado sin volver a evaluar las respuestas nuevas.
+// Ojo: antes esto también miraba el teléfono (email O teléfono), lo que
+// hacía que dos solicitudes de la misma persona con distinto email (pero el
+// mismo teléfono) devolvieran la solicitud vieja con su email viejo pegado,
+// en vez de evaluar la nueva — confuso y directamente incorrecto.
 export async function submitApplication(
   answers: ApplicationAnswers & {
     name: string;
@@ -59,18 +63,14 @@ export async function submitApplication(
   const since = new Date(Date.now() - cooldownDays() * 24 * 60 * 60 * 1000).toISOString();
   const email = answers.email.trim().toLowerCase();
 
-  let existingQuery = admin
+  const { data: existing } = await admin
     .from('applications')
     .select('id, name, email, phone, status')
+    .eq('email', email)
     .gte('created_at', since)
     .order('created_at', { ascending: false })
-    .limit(1);
-
-  existingQuery = answers.phone
-    ? existingQuery.or(`email.eq.${email},phone.eq.${answers.phone}`)
-    : existingQuery.eq('email', email);
-
-  const { data: existing } = await existingQuery.maybeSingle();
+    .limit(1)
+    .maybeSingle();
   if (existing) {
     return {
       id: existing.id,
