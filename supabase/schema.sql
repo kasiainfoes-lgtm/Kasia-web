@@ -12,6 +12,11 @@ create table if not exists public.properties (
   available text not null,             -- formato dd/mm/aaaa, ej: 01/10/2026
   individual_or_pareja text not null default 'ambos', -- 'individual' | 'pareja' | 'ambos'
   worker_or_student text not null default 'ambos',    -- 'trabajador' | 'estudiante' | 'ambos'
+  accepts_smokers boolean not null default true,
+  accepts_pets boolean not null default true,
+  accepts_dogs boolean not null default false, -- solo importa si accepts_pets = true
+  lat numeric,  -- si se deja vacío, el mapa usa el centro aproximado del barrio (zone)
+  lng numeric,
   photos int not null default 1,
   photo_urls text[] not null default '{}', -- fotos reales, subidas desde /admin/propiedades
   color_from text not null default '#BFD9FF',
@@ -192,6 +197,11 @@ create policy "users read their own profile"
 -- alter table public.app_settings add column if not exists resend_api_key text;
 -- alter table public.app_settings add column if not exists email_from text;
 -- alter table public.properties add column if not exists photo_urls text[] not null default '{}';
+-- alter table public.properties add column if not exists accepts_smokers boolean not null default true;
+-- alter table public.properties add column if not exists accepts_pets boolean not null default true;
+-- alter table public.properties add column if not exists accepts_dogs boolean not null default false;
+-- alter table public.properties add column if not exists lat numeric;
+-- alter table public.properties add column if not exists lng numeric;
 
 -- ============================================================================
 -- Fotos de propiedades: se suben desde /admin/propiedades (crear o editar

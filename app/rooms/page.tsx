@@ -1,12 +1,22 @@
 import Catalog from '@/components/Catalog';
 import { fetchRooms } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
+import { getOwnApplicationAnswers } from '@/lib/applications.server';
+import { roomAcceptsProfile } from '@/lib/rooms';
 
 export const dynamic = 'force-dynamic';
 
 export default async function RoomsPage() {
-  await requireApprovedAccess('/rooms');
-  const rooms = await fetchRooms();
+  const { applicationId } = await requireApprovedAccess('/rooms');
 
-  return <Catalog rooms={rooms} />;
+  const [rooms, ownAnswers] = await Promise.all([
+    fetchRooms(),
+    applicationId ? getOwnApplicationAnswers(applicationId) : Promise.resolve(null),
+  ]);
+
+  const visibleRooms = ownAnswers
+    ? rooms.filter((room) => roomAcceptsProfile(room, ownAnswers))
+    : rooms;
+
+  return <Catalog rooms={visibleRooms} />;
 }

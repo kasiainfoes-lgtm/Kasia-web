@@ -7,6 +7,11 @@ export type PropertyInput = {
   available: string;
   individualOrPareja: 'individual' | 'pareja' | 'ambos';
   workerOrStudent: 'trabajador' | 'estudiante' | 'ambos';
+  acceptsSmokers: boolean;
+  acceptsPets: boolean;
+  acceptsDogs: boolean;
+  lat: number | null;
+  lng: number | null;
   photos: number;
   photoUrls: string[];
   colorFrom: string;
@@ -29,6 +34,11 @@ export function toPropertyRow(input: PropertyInput) {
     available: input.available,
     individual_or_pareja: input.individualOrPareja,
     worker_or_student: input.workerOrStudent,
+    accepts_smokers: input.acceptsSmokers,
+    accepts_pets: input.acceptsPets,
+    accepts_dogs: input.acceptsDogs,
+    lat: input.lat,
+    lng: input.lng,
     photos: input.photos,
     photo_urls: input.photoUrls,
     color_from: input.colorFrom,

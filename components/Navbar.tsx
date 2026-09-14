@@ -1,23 +1,15 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
+import { getSessionUser, getOwnProfile } from '@/lib/supabase/session.server';
 import { isAdminEmail } from '@/lib/admin-auth';
 import AuthButton from '@/components/AuthButton';
 import MobileMenu from '@/components/MobileMenu';
 
 export default async function Navbar() {
-  const supabase = createClient();
-  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+  const user = await getSessionUser();
   const showAdminLink = isAdminEmail(user?.email);
 
-  let approved = false;
-  if (supabase && user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('application_status')
-      .eq('id', user.id)
-      .single();
-    approved = profile?.application_status === 'APPROVED';
-  }
+  const profile = user ? await getOwnProfile(user.id) : null;
+  const approved = profile?.applicationStatus === 'APPROVED';
 
   const catalogHref = approved ? '/rooms' : '/apply';
   const catalogLabel = approved ? 'Ver habitaciones' : 'Encontrar habitación';

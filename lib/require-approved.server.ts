@@ -1,28 +1,21 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { getSessionUser, getOwnProfile } from '@/lib/supabase/session.server';
 
-export type ApprovedAccess = { userId: string; email: string | null };
+export type ApprovedAccess = { userId: string; email: string | null; applicationId: string | null };
 
 // Protege /rooms, /rooms/[id] y /reservar/[id] en el servidor: hace falta
 // estar logueado Y tener un perfil con application_status = 'APPROVED'.
 // No es un chequeo de frontend — si Supabase no está configurado, esto
 // redirige a /apply en vez de "fallar abierto" y mostrar el catálogo.
 export async function requireApprovedAccess(nextPath: string): Promise<ApprovedAccess> {
-  const supabase = createClient();
-  if (!supabase) redirect('/apply');
+  if (!createClient()) redirect('/apply');
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getSessionUser();
   if (!user) redirect(`/login?next=${encodeURIComponent(nextPath)}`);
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('application_status')
-    .eq('id', user.id)
-    .single();
+  const profile = await getOwnProfile(user.id);
+  if (profile?.applicationStatus !== 'APPROVED') redirect('/apply');
 
-  if (profile?.application_status !== 'APPROVED') redirect('/apply');
-
-  return { userId: user.id, email: user.email ?? null };
+  return { userId: user.id, email: user.email ?? null, applicationId: profile.applicationId };
 }

@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
-import { mockRooms, type Room } from '@/lib/rooms';
+import { mockRooms, roomCoordinates, type Room } from '@/lib/rooms';
 
 function mapSupabaseRow(row: any): Room {
+  const { lat, lng } = roomCoordinates({ lat: row.lat, lng: row.lng, zone: row.zone });
   return {
     id: row.id,
     zone: row.zone,
@@ -11,6 +12,11 @@ function mapSupabaseRow(row: any): Room {
     available: row.available,
     individualOrPareja: row.individual_or_pareja ?? 'ambos',
     workerOrStudent: row.worker_or_student ?? 'ambos',
+    acceptsSmokers: row.accepts_smokers ?? true,
+    acceptsPets: row.accepts_pets ?? true,
+    acceptsDogs: row.accepts_dogs ?? false,
+    lat,
+    lng,
     photos: row.photos ?? 1,
     photoUrls: row.photo_urls ?? [],
     colorFrom: row.color_from ?? '#BFD9FF',
