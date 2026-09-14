@@ -84,6 +84,9 @@ create table if not exists public.bookings (
   visit_status text not null default 'pendiente', -- 'pendiente' | 'agendada' | 'hecha'
   visit_at timestamptz,
   final_choice_room_id text references public.properties(id),
+  paid_at timestamptz, -- cuándo se confirmó el pago; updated_at se sigue tocando después
+                        -- (agendar visita, etc.), así que no sirve para esto
+  review_reminder_sent_at timestamptz, -- evita mandar el recordatorio de reseña más de una vez
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (room_id, user_id)
@@ -243,6 +246,8 @@ create policy "users read their own profile"
 -- alter table public.properties add column if not exists accepts_dogs boolean not null default false;
 -- alter table public.properties add column if not exists lat numeric;
 -- alter table public.properties add column if not exists lng numeric;
+-- alter table public.bookings add column if not exists paid_at timestamptz;
+-- alter table public.bookings add column if not exists review_reminder_sent_at timestamptz;
 
 -- ============================================================================
 -- Fotos de propiedades: se suben desde /admin/propiedades (crear o editar

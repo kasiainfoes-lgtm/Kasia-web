@@ -43,6 +43,7 @@ export async function POST(request: Request) {
       status: 'pagado',
       amount,
       stripe_session_id: sessionId,
+      paid_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
     { onConflict: 'room_id,user_id' }
