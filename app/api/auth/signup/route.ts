@@ -1,9 +1,27 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getApplicationById } from '@/lib/applications.server';
 import { APP_ID_COOKIE } from '@/lib/apply-session';
+
+// Busca un usuario de Supabase Auth por email. La API admin no ofrece un
+// filtro por email en esta versión del SDK (solo pagina por page/perPage), así
+// que recorremos las páginas y comparamos nosotros — un volumen totalmente
+// razonable para el tamaño de este proyecto.
+async function findAuthUserByEmail(admin: SupabaseClient, email: string) {
+  const target = email.trim().toLowerCase();
+  const perPage = 1000;
+  for (let page = 1; page <= 10; page++) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage });
+    if (error || !data?.users?.length) return null;
+    const match = data.users.find((u) => u.email?.toLowerCase() === target);
+    if (match) return match;
+    if (data.users.length < perPage) return null;
+  }
+  return null;
+}
 
 // La cuenta se crea SIEMPRE del lado del servidor, nunca con supabase.auth.signUp()
 // directo desde el navegador: así el email viene de la solicitud ya verificada
@@ -31,77 +49,92 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Tu solicitud todavía no está aprobada.' }, { status: 403 });
   }
 
-  const { data: existingProfile } = await admin
-    .from('profiles')
-    .select('id')
-    .eq('application_id', appId)
-    .maybeSingle();
-  if (existingProfile) {
-    return NextResponse.json(
-      { error: 'Esta solicitud ya se usó para crear una cuenta. Inicia sesión.' },
-      { status: 409 }
-    );
-  }
-
   const password = body?.password;
   if (!password || String(password).length < 6) {
     return NextResponse.json({ error: 'La contraseña debe tener al menos 6 caracteres.' }, { status: 400 });
   }
 
-  const { data: created, error: createError } = await admin.auth.admin.createUser({
-    email: application.email,
-    password,
-    email_confirm: true,
-  });
-  if (createError || !created.user) {
-    // Pasa seguido: alguien vuelve a pasar por /apply más adelante (otra
-    // búsqueda), queda aprobado de nuevo, y ya tiene una cuenta de una
-    // aprobación anterior con ese mismo email. Sin esto quedaba trabado con
-    // un "usuario ya existe" sin forma de acceder a la solicitud nueva.
-    // Buscamos su perfil por el email de sus solicitudes anteriores y lo
-    // re-vinculamos a esta solicitud (la nueva, ya aprobada) en vez de fallar.
-    const alreadyExists =
-      createError?.code === 'email_exists' ||
-      createError?.code === 'user_already_exists' ||
-      /already (been )?registered|already exists/i.test(createError?.message ?? '');
+  // Puede pasar que la misma persona vuelva a pasar por /apply más adelante
+  // (otra búsqueda), quede aprobada de nuevo, y ya tenga una cuenta de una
+  // aprobación anterior (de esta misma solicitud, o con el mismo email desde
+  // otra). En vez de trabarla con un "usuario ya existe" sin salida, en
+  // cualquiera de esos casos re-vinculamos su cuenta existente a esta
+  // solicitud y le seteamos la contraseña que acaba de elegir, para que entre
+  // directo sin tener que recordar una contraseña vieja.
+  const { data: existingProfileForApp } = await admin
+    .from('profiles')
+    .select('id')
+    .eq('application_id', appId)
+    .maybeSingle();
 
-    if (alreadyExists) {
-      const { data: existingProfile } = await admin
+  let authUserId: string;
+
+  if (existingProfileForApp) {
+    const { error: updateError } = await admin.auth.admin.updateUserById(existingProfileForApp.id, { password });
+    if (updateError) return NextResponse.json({ error: updateError.message }, { status: 400 });
+    authUserId = existingProfileForApp.id;
+  } else {
+    const { data: created, error: createError } = await admin.auth.admin.createUser({
+      email: application.email,
+      password,
+      email_confirm: true,
+    });
+
+    if (created?.user) {
+      authUserId = created.user.id;
+      const { error: profileError } = await admin.from('profiles').insert({
+        id: authUserId,
+        application_id: appId,
+        application_status: application.status,
+      });
+      if (profileError) return NextResponse.json({ error: profileError.message }, { status: 500 });
+    } else {
+      const alreadyExists =
+        createError?.code === 'email_exists' ||
+        createError?.code === 'user_already_exists' ||
+        /already (been )?registered|already exists/i.test(createError?.message ?? '');
+      if (!alreadyExists) {
+        return NextResponse.json(
+          { error: createError?.message ?? 'No pudimos crear la cuenta.' },
+          { status: 400 }
+        );
+      }
+
+      const existingAuthUser = await findAuthUserByEmail(admin, application.email);
+      if (!existingAuthUser) {
+        return NextResponse.json(
+          { error: createError?.message ?? 'No pudimos crear la cuenta.' },
+          { status: 400 }
+        );
+      }
+
+      const { error: updateError } = await admin.auth.admin.updateUserById(existingAuthUser.id, { password });
+      if (updateError) return NextResponse.json({ error: updateError.message }, { status: 400 });
+      authUserId = existingAuthUser.id;
+
+      const { data: existingProfileForUser } = await admin
         .from('profiles')
-        .select('id, applications!inner(email)')
-        .eq('applications.email', application.email)
+        .select('id')
+        .eq('id', authUserId)
         .maybeSingle();
 
-      if (existingProfile) {
+      if (existingProfileForUser) {
         await admin
           .from('profiles')
           .update({ application_id: appId, application_status: application.status })
-          .eq('id', existingProfile.id);
-
-        return NextResponse.json(
-          {
-            error:
-              'Ya tienes una cuenta con este correo. Actualizamos tu perfil — inicia sesión para ver las habitaciones disponibles.',
-          },
-          { status: 409 }
-        );
+          .eq('id', authUserId);
+      } else {
+        const { error: profileError } = await admin.from('profiles').insert({
+          id: authUserId,
+          application_id: appId,
+          application_status: application.status,
+        });
+        if (profileError) return NextResponse.json({ error: profileError.message }, { status: 500 });
       }
     }
-
-    return NextResponse.json(
-      { error: createError?.message ?? 'No pudimos crear la cuenta.' },
-      { status: 400 }
-    );
   }
 
-  const { error: profileError } = await admin.from('profiles').insert({
-    id: created.user.id,
-    application_id: appId,
-    application_status: application.status,
-  });
-  if (profileError) {
-    return NextResponse.json({ error: profileError.message }, { status: 500 });
-  }
+  await admin.from('profiles').update({ application_status: application.status }).eq('id', authUserId);
 
   const { error: signInError } = await supabase.auth.signInWithPassword({
     email: application.email,
