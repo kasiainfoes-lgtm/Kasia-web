@@ -10,7 +10,12 @@ import { roomCoordinates, type Room } from '@/lib/rooms';
 function priceIcon(price: number): L.DivIcon {
   return L.divIcon({
     className: '',
-    html: `<div style="transform:translate(-50%,-50%);background:#E5484D;color:#fff;font-weight:700;font-size:12px;padding:6px 10px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,0.3);white-space:nowrap;border:2px solid #fff;">${price} €</div>`,
+    html: `
+      <div style="transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;">
+        <div style="background:#E5484D;color:#fff;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.3);">${price} €</div>
+        <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid #E5484D;"></div>
+      </div>
+    `,
     iconSize: [0, 0],
     iconAnchor: [0, 0],
   });
@@ -51,9 +56,12 @@ export default function RoomsMap({ rooms }: { rooms: Room[] }) {
       style={{ height: '600px', width: '100%', borderRadius: '1rem' }}
       scrollWheelZoom
     >
+      {/* CartoDB Positron: mismo mapa gratis sin API key que antes, pero en
+          un estilo minimalista — calles, barrios y agua, sin los íconos de
+          comercios/parques/puntos de interés del estilo estándar de OSM. */}
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
       <FitBounds rooms={rooms} />
       {rooms.map((room) => {
