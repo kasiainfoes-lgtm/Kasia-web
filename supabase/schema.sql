@@ -101,6 +101,40 @@ create policy "users manage their own bookings"
 -- que no pasa por RLS, así que no hace falta una policy extra para eso.
 
 -- ============================================================================
+-- Reseñas: solo puede dejar una quien tenga una reserva pagada de esa
+-- habitación (se valida en la policy de insert, no en el código), una por
+-- persona y habitación. Se muestran públicamente en /rooms/[id].
+-- ============================================================================
+create table if not exists public.reviews (
+  id uuid primary key default gen_random_uuid(),
+  room_id text not null references public.properties(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  reviewer_name text not null,
+  rating int not null check (rating between 1 and 5),
+  comment text,
+  created_at timestamptz not null default now(),
+  unique (room_id, user_id)
+);
+
+alter table public.reviews enable row level security;
+
+create policy "reviews are publicly readable"
+  on public.reviews for select
+  using (true);
+
+create policy "users review rooms they booked and paid for"
+  on public.reviews for insert
+  with check (
+    auth.uid() = user_id
+    and exists (
+      select 1 from public.bookings b
+      where b.room_id = reviews.room_id
+        and b.user_id = auth.uid()
+        and b.status = 'pagado'
+    )
+  );
+
+-- ============================================================================
 -- Integraciones: acá se guardan las claves de Stripe y Didit cuando las cargás
 -- desde /admin/integraciones en vez de configurarlas como variables de entorno.
 -- Es una sola fila (id=1). No tiene ninguna policy de RLS a propósito: ni
