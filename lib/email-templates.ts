@@ -150,3 +150,22 @@ export function moreInfoEmailTemplate(name: string, uploadUrl: string) {
     ),
   };
 }
+
+export function reviewRequestEmailTemplate(roomTitle: string, roomUrl: string) {
+  const safeTitle = escapeHtml(roomTitle);
+  return {
+    subject: `¿Cómo te está yendo en ${roomTitle}? — Kasia`,
+    html: wrapper(
+      '¿Nos contás cómo te fue?',
+      `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">¡Hola!</p>
+       <p style="margin:0 0 24px;color:#3A4356;font-size:14px;line-height:1.6;">
+         Ya pasaron un par de meses desde que te mudaste a <strong>${safeTitle}</strong>. Nos
+         ayudaría mucho que dejes una reseña contando cómo fue tu experiencia — le sirve a otras
+         personas que están buscando alojamiento.
+       </p>
+       <a href="${roomUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
+         Dejar mi reseña
+       </a>`
+    ),
+  };
+}
