@@ -4,6 +4,15 @@ on:
   push:
     branches: [main]
 
+# Dos pushes seguidos a main (ej: mergear dos PRs con segundos de diferencia)
+# disparaban dos deploys en paralelo, y ambos corrían `npm run build` al mismo
+# tiempo sobre la misma carpeta .next en el VPS, chocando entre sí (ENOTEMPTY
+# al limpiar .next/export). Con esto, un push nuevo espera a que el deploy en
+# curso termine en vez de correr al mismo tiempo.
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
