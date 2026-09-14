@@ -1,15 +1,20 @@
-// Resuelve la URL pública del sitio para armar links de retorno (Stripe, Didit).
-// Antes solo mirábamos el header Origin, que el navegador no siempre manda —
-// si faltaba, la URL de vuelta quedaba relativa ("/reservar/...") y Stripe la
-// rechazaba. request.url siempre trae el host real que recibió la petición.
+// Resuelve la URL pública del sitio para armar links de retorno (Stripe, Didit,
+// emails). NEXT_PUBLIC_SITE_URL va primero porque detrás de un reverse proxy
+// (nginx -> pm2 en el VPS) que no reenvía el Host original, request.url termina
+// apuntando al host interno (localhost:3000) en vez del dominio público — eso
+// es lo que rompía los links "localhost:3000/..." en los emails y hubiera roto
+// también los redirects de Stripe. Si la variable de entorno no está seteada,
+// caemos al Origin del navegador y, como último recurso, al host de la request.
 export function resolveSiteUrl(request: Request): string {
-  try {
-    const fromRequest = new URL(request.url).origin;
-    if (fromRequest) return fromRequest;
-  } catch {
-    // sigue al siguiente fallback
-  }
+  const fromEnv = (process.env.NEXT_PUBLIC_SITE_URL ?? '').replace(/\/$/, '');
+  if (fromEnv) return fromEnv;
+
   const origin = request.headers.get('origin');
   if (origin) return origin;
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? '').replace(/\/$/, '');
+
+  try {
+    return new URL(request.url).origin;
+  } catch {
+    return '';
+  }
 }
