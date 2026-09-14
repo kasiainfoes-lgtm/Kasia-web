@@ -54,6 +54,40 @@ export async function POST(request: Request) {
     email_confirm: true,
   });
   if (createError || !created.user) {
+    // Pasa seguido: alguien vuelve a pasar por /apply más adelante (otra
+    // búsqueda), queda aprobado de nuevo, y ya tiene una cuenta de una
+    // aprobación anterior con ese mismo email. Sin esto quedaba trabado con
+    // un "usuario ya existe" sin forma de acceder a la solicitud nueva.
+    // Buscamos su perfil por el email de sus solicitudes anteriores y lo
+    // re-vinculamos a esta solicitud (la nueva, ya aprobada) en vez de fallar.
+    const alreadyExists =
+      createError?.code === 'email_exists' ||
+      createError?.code === 'user_already_exists' ||
+      /already (been )?registered|already exists/i.test(createError?.message ?? '');
+
+    if (alreadyExists) {
+      const { data: existingProfile } = await admin
+        .from('profiles')
+        .select('id, applications!inner(email)')
+        .eq('applications.email', application.email)
+        .maybeSingle();
+
+      if (existingProfile) {
+        await admin
+          .from('profiles')
+          .update({ application_id: appId, application_status: application.status })
+          .eq('id', existingProfile.id);
+
+        return NextResponse.json(
+          {
+            error:
+              'Ya tienes una cuenta con este correo. Actualizamos tu perfil — inicia sesión para ver las habitaciones disponibles.',
+          },
+          { status: 409 }
+        );
+      }
+    }
+
     return NextResponse.json(
       { error: createError?.message ?? 'No pudimos crear la cuenta.' },
       { status: 400 }
