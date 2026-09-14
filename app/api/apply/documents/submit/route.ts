@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendEmail } from '@/lib/email.server';
+import { documentsSubmittedNotificationEmailTemplate } from '@/lib/email-templates';
+import { resolveSiteUrl } from '@/lib/site-url';
 
 // Guarda en la solicitud los documentos que la persona sube desde
 // /apply/documents (tanto el paso de estudiante en /apply como el enlace que
@@ -25,7 +28,7 @@ export async function POST(request: Request) {
 
   const { data: application } = await admin
     .from('applications')
-    .select('id')
+    .select('id, name')
     .eq('id', applicationId)
     .maybeSingle();
   if (!application) return NextResponse.json({ error: 'Solicitud no encontrada.' }, { status: 404 });
@@ -36,10 +39,33 @@ export async function POST(request: Request) {
       financial_proof_path: financialProofPath,
       unpaid_rent_insurance_path: unpaidRentInsurancePath,
       documents_submitted_at: new Date().toISOString(),
+      // Un reenvío siempre supera un rechazo anterior: limpiamos la nota para
+      // que no quede pegada a los documentos nuevos.
+      documents_rejected_at: null,
+      documents_rejection_note: null,
       updated_at: new Date().toISOString(),
     })
     .eq('id', application.id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Best-effort: si Resend falla, los documentos ya quedaron guardados igual.
+  try {
+    const adminEmails = (process.env.ADMIN_EMAILS ?? '')
+      .split(',')
+      .map((e) => e.trim())
+      .filter(Boolean);
+    if (adminEmails.length > 0) {
+      const siteUrl = resolveSiteUrl(request);
+      const { subject, html } = documentsSubmittedNotificationEmailTemplate(
+        application.name,
+        `${siteUrl}/admin/solicitudes`
+      );
+      await sendEmail({ to: adminEmails, subject, html });
+    }
+  } catch {
+    // best-effort, ver comentario arriba
+  }
+
   return NextResponse.json({ ok: true });
 }

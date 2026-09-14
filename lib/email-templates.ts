@@ -77,6 +77,44 @@ export function paymentNotificationEmailTemplate(roomTitle: string, customerEmai
   };
 }
 
+export function documentsSubmittedNotificationEmailTemplate(name: string, reviewUrl: string) {
+  const safeName = escapeHtml(name);
+  return {
+    subject: `${name} subió documentación — Kasia`,
+    html: wrapper(
+      'Nueva documentación para revisar',
+      `<p style="margin:0 0 24px;color:#3A4356;font-size:14px;line-height:1.6;">
+         <strong>${safeName}</strong> acaba de subir su documentación. Revísala y apruébala o pídele
+         una corrección desde el panel interno.
+       </p>
+       <a href="${reviewUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
+         Revisar documentos
+       </a>`
+    ),
+  };
+}
+
+export function documentsRejectedEmailTemplate(name: string, note: string, uploadUrl: string) {
+  const safeName = escapeHtml(name);
+  const safeNote = escapeHtml(note);
+  return {
+    subject: 'Necesitamos que corrijas tu documentación — Kasia',
+    html: wrapper(
+      'Necesitamos que corrijas algo',
+      `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">Hola ${safeName},</p>
+       <p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">
+         Revisamos los documentos que enviaste y necesitamos que corrijas esto antes de seguir:
+       </p>
+       <p style="margin:0 0 24px;padding:12px 16px;background:#FEF2F2;border-radius:12px;color:#B91C1C;font-size:14px;line-height:1.6;">
+         ${safeNote}
+       </p>
+       <a href="${uploadUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
+         Volver a subir documentación
+       </a>`
+    ),
+  };
+}
+
 export function moreInfoEmailTemplate(name: string, uploadUrl: string) {
   const safeName = escapeHtml(name);
   return {
