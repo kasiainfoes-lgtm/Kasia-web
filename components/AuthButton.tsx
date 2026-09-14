@@ -21,7 +21,6 @@ export default function AuthButton({ email }: { email: string | null }) {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="hidden text-sm text-vivi-muted sm:inline">{email}</span>
       <button
         onClick={async () => {
           await supabase?.auth.signOut();
