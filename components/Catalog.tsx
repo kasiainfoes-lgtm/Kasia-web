@@ -65,8 +65,9 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
   return (
     <>
       <section className="relative overflow-hidden bg-vivi-navy">
-        <div className="absolute right-[14%] top-5 h-20 w-20 rounded-full bg-vivi-mint/90" />
-        <div className="absolute bottom-5 left-[8%] h-24 w-24 rounded-full bg-vivi-coral/90" />
+        {/* Ver comentario en app/page.tsx: tapaban el texto en móvil. */}
+        <div className="absolute right-[14%] top-5 hidden h-20 w-20 rounded-full bg-vivi-mint/90 sm:block" />
+        <div className="absolute bottom-5 left-[8%] hidden h-24 w-24 rounded-full bg-vivi-coral/90 sm:block" />
         <div className="relative mx-auto max-w-6xl px-6 py-10 sm:py-12">
           <span className="text-xs font-bold uppercase tracking-wide text-vivi-mint">
             Valencia · vivienda habitual · mínimo 6 meses

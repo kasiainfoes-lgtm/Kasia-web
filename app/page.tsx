@@ -19,8 +19,10 @@ export default async function HomePage() {
   return (
     <>
       <section className="relative overflow-hidden bg-vivi-navy">
-        <div className="absolute right-[14%] top-8 h-20 w-20 rounded-full bg-vivi-mint/90" />
-        <div className="absolute bottom-8 left-[8%] h-24 w-24 rounded-full bg-vivi-coral/90" />
+        {/* Decorativos: en móvil no hay ancho libre y quedaban justo encima del
+            badge y del botón, que son del mismo rojo, así que tapaban el texto. */}
+        <div className="absolute right-[14%] top-8 hidden h-20 w-20 rounded-full bg-vivi-mint/90 sm:block" />
+        <div className="absolute bottom-8 left-[8%] hidden h-24 w-24 rounded-full bg-vivi-coral/90 sm:block" />
         <div className="relative mx-auto max-w-6xl px-6 py-20 sm:py-28">
           <span className="inline-block rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-vivi-mint">
             Valencia · vivienda habitual · mínimo 6 meses
