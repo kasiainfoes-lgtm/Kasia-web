@@ -130,7 +130,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
             onClick={() => setShowMoreFilters((s) => !s)}
             className="mt-3 text-sm text-slate-300 underline underline-offset-4 hover:text-white"
           >
-            {showMoreFilters ? 'Ocultar filtros' : 'Más filtros (pareja, mascotas, fumadores)'}
+            {showMoreFilters ? 'Ocultar filtros' : 'Más filtros'}
           </button>
           {showMoreFilters && (
             <div className="mt-3 flex flex-wrap gap-3">
