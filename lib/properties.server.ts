@@ -30,6 +30,10 @@ function mapSupabaseRow(row: any): Room {
   };
 }
 
+// mockRooms son datos de demostración con asesoras y teléfonos inventados, así
+// que solo se usan cuando Supabase todavía no está configurado. Con Supabase
+// conectado, una tabla vacía significa "no hay habitaciones", no "mostrá las de
+// ejemplo": si no, borrar el catálogo hacía reaparecer las falsas.
 export async function fetchRooms(): Promise<Room[]> {
   const supabase = createClient();
   if (!supabase) return mockRooms;
@@ -39,7 +43,7 @@ export async function fetchRooms(): Promise<Room[]> {
     .select('*')
     .order('created_at', { ascending: true });
 
-  if (error || !data || data.length === 0) return mockRooms;
+  if (error || !data) return [];
   return data.map(mapSupabaseRow);
 }
 
@@ -48,6 +52,6 @@ export async function fetchRoomById(id: string): Promise<Room | undefined> {
   if (!supabase) return mockRooms.find((room) => room.id === id);
 
   const { data, error } = await supabase.from('properties').select('*').eq('id', id).single();
-  if (error || !data) return mockRooms.find((room) => room.id === id);
+  if (error || !data) return undefined;
   return mapSupabaseRow(data);
 }

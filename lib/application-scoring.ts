@@ -9,6 +9,7 @@ export type InternalReason =
   | 'PET_POLICY_MISMATCH'
   | 'SMOKING_POLICY_MISMATCH'
   | 'NO_MATCHING_INVENTORY'
+  | 'NO_INVENTORY_LOADED'
   | 'DOCUMENTATION_REVIEW'
   | null;
 
@@ -38,6 +39,14 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
 
   if (answers.hasMinors) {
     return { status: 'NOT_ELIGIBLE', internalReason: 'OCCUPANCY_MISMATCH' };
+  }
+
+  // Catálogo vacío (todavía sin cargar, o en medio de un recambio) no es un
+  // motivo para rechazar a nadie: "no elegible" además dispara el bloqueo de
+  // APPLICATION_COOLDOWN_DAYS, así que quedarían fuera un mes por algo que no
+  // depende de ellos. Va a revisión manual.
+  if (rooms.length === 0) {
+    return { status: 'REVIEW', internalReason: 'NO_INVENTORY_LOADED' };
   }
 
   // El presupuesto nunca descalifica una solicitud por sí solo: solo se usa
