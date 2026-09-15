@@ -13,6 +13,7 @@ export default async function Navbar() {
 
   const catalogHref = approved ? '/rooms' : '/apply';
   const catalogLabel = approved ? 'Ver habitaciones' : 'Encontrar habitación';
+  const faqHref = approved ? '/rooms#faq' : '/#faq';
 
   return (
     <header className="relative border-b border-slate-200/70 bg-white/80 backdrop-blur sticky top-0 z-40">
@@ -25,7 +26,7 @@ export default async function Navbar() {
           <Link href={catalogHref} className="hover:text-vivi-navy">
             {approved ? 'Catálogo' : 'Encontrar habitación'}
           </Link>
-          <Link href="/#faq" className="hover:text-vivi-navy">
+          <Link href={faqHref} className="hover:text-vivi-navy">
             Preguntas frecuentes
           </Link>
           {showAdminLink && (
@@ -46,6 +47,7 @@ export default async function Navbar() {
             catalogHref={catalogHref}
             catalogNavLabel={approved ? 'Catálogo' : 'Encontrar habitación'}
             catalogCtaLabel={catalogLabel}
+            faqHref={faqHref}
             showAdminLink={showAdminLink}
           />
         </div>

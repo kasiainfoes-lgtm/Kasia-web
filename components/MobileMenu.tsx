@@ -7,11 +7,13 @@ export default function MobileMenu({
   catalogHref,
   catalogNavLabel,
   catalogCtaLabel,
+  faqHref,
   showAdminLink,
 }: {
   catalogHref: string;
   catalogNavLabel: string;
   catalogCtaLabel: string;
+  faqHref: string;
   showAdminLink: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -42,7 +44,7 @@ export default function MobileMenu({
             <Link href={catalogHref} onClick={() => setOpen(false)}>
               {catalogNavLabel}
             </Link>
-            <Link href="/#faq" onClick={() => setOpen(false)}>
+            <Link href={faqHref} onClick={() => setOpen(false)}>
               Preguntas frecuentes
             </Link>
             {showAdminLink && (
