@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { Room } from '@/lib/rooms';
 import { calculateBookingTotal } from '@/lib/rooms';
 import { createClient } from '@/lib/supabase/client';
+import BookingTerms from '@/components/BookingTerms';
 import type { BookingStatus } from '@/lib/bookings.server';
 
 const steps = ['Comprobación de identidad', 'Aceptar condiciones', 'Pagar'];
@@ -21,6 +22,7 @@ export default function BookingWizard({
   const [confirmed, setConfirmed] = useState(initialBookingStatus === 'pagado');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [kycVerified, setKycVerified] = useState(alreadyVerified);
+  const [termsAccepted, setTermsAccepted] = useState(initialBookingStatus === 'pagado');
   const [kycNote, setKycNote] = useState<string | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
@@ -42,12 +44,13 @@ export default function BookingWizard({
 
   const isLastStep = step === steps.length - 1;
   const kycRequired = step === 0 && !kycVerified;
+  const termsRequired = step === 1 && !termsAccepted;
 
-  function upsertStage(status: 'nuevo' | 'verificado') {
+  function upsertStage(status: 'nuevo' | 'verificado', termsAcceptedNow = false) {
     fetch('/api/bookings/upsert', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomId: room.id, status }),
+      body: JSON.stringify({ roomId: room.id, status, termsAccepted: termsAcceptedNow }),
     }).catch(() => {
       // El seguimiento en el panel interno es best-effort: si Supabase no está
       // configurado todavía, la reserva sigue funcionando igual.
@@ -164,6 +167,17 @@ export default function BookingWizard({
           </div>
         )}
 
+        {step === 1 && (
+          <BookingTerms
+            roomTitle={room.title}
+            zone={room.zone}
+            price={room.price}
+            deposit={deposit}
+            accepted={termsAccepted}
+            onAcceptedChange={setTermsAccepted}
+          />
+        )}
+
         {!confirmed ? (
           <div className="mt-8 flex gap-3">
             {step > 0 && (
@@ -175,11 +189,13 @@ export default function BookingWizard({
               </button>
             )}
             <button
-              disabled={kycRequired || paying}
+              disabled={kycRequired || termsRequired || paying}
               onClick={() => {
                 if (isLastStep) {
                   handlePay();
                 } else {
+                  // Deja constancia de cuándo aceptó las condiciones, antes de pagar.
+                  if (step === 1) upsertStage('verificado', true);
                   setStep((s) => s + 1);
                 }
               }}

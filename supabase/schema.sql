@@ -87,6 +87,7 @@ create table if not exists public.bookings (
   paid_at timestamptz, -- cuándo se confirmó el pago; updated_at se sigue tocando después
                         -- (agendar visita, etc.), así que no sirve para esto
   review_reminder_sent_at timestamptz, -- evita mandar el recordatorio de reseña más de una vez
+  terms_accepted_at timestamptz, -- cuándo aceptó las condiciones de reserva, siempre antes de pagar
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (room_id, user_id)
@@ -257,6 +258,7 @@ create policy "users read their own profile"
 -- alter table public.bookings add column if not exists review_reminder_sent_at timestamptz;
 -- create unique index if not exists bookings_stripe_session_id_key
 --   on public.bookings (stripe_session_id) where stripe_session_id is not null;
+-- alter table public.bookings add column if not exists terms_accepted_at timestamptz;
 
 -- ============================================================================
 -- Fotos de propiedades: se suben desde /admin/propiedades (crear o editar

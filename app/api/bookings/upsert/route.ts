@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No autenticado' }, { status: 401 });
   }
 
-  const { roomId, status } = await request.json();
+  const { roomId, status, termsAccepted } = await request.json();
   if (!ALLOWED_CLIENT_STATUSES.includes(status)) {
     return NextResponse.json({ error: 'Estado inválido' }, { status: 400 });
   }
@@ -27,6 +27,9 @@ export async function POST(request: Request) {
       user_id: user.id,
       user_email: user.email,
       status,
+      // Queda registrada la fecha en que aceptó las condiciones, para poder
+      // acreditar después que las leyó antes de pagar.
+      ...(termsAccepted === true ? { terms_accepted_at: new Date().toISOString() } : {}),
       updated_at: new Date().toISOString(),
     },
     { onConflict: 'room_id,user_id' }
