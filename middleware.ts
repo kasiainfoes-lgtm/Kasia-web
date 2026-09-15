@@ -43,6 +43,12 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
+// Cada paso por el middleware hace una llamada a Supabase para resolver la
+// sesión, así que las peticiones de archivos estáticos (fotos de las
+// habitaciones, iconos, fuentes) no tienen por qué pasar por acá: no hay
+// ninguna sesión que refrescar y solo agregan latencia a cada imagen.
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|mp4|webm|woff|woff2)$).*)',
+  ],
 };

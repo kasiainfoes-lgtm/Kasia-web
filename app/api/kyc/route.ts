@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server';
 import { resolveDiditConfig } from '@/lib/settings.server';
 import { resolveSiteUrl } from '@/lib/site-url';
+import { getApprovedUser } from '@/lib/require-approved.server';
 
 // Integración con Didit (verificación de identidad). Confirmá el endpoint exacto,
 // el nombre del header de API key y la forma de la respuesta contra la documentación
 // vigente de Didit antes de pasar a producción: https://docs.didit.me
 export async function POST(request: Request) {
+  const access = await getApprovedUser();
+  if (!access) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  }
+
   const { apiKey, workflowId } = await resolveDiditConfig();
   if (!apiKey || !workflowId) {
     return NextResponse.json(

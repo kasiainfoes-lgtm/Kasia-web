@@ -4,8 +4,14 @@ import { calculateBookingTotal } from '@/lib/rooms';
 import { fetchRoomById } from '@/lib/properties.server';
 import { resolveStripeSecretKey } from '@/lib/settings.server';
 import { resolveSiteUrl } from '@/lib/site-url';
+import { getApprovedUser } from '@/lib/require-approved.server';
 
 export async function POST(request: Request) {
+  const access = await getApprovedUser();
+  if (!access) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  }
+
   const secretKey = await resolveStripeSecretKey();
   if (!secretKey) {
     return NextResponse.json(
@@ -36,7 +42,9 @@ export async function POST(request: Request) {
         quantity: 1,
       },
     ],
-    metadata: { roomId },
+    // userId queda grabado en la sesión de Stripe para que /api/bookings/confirm-payment
+    // pueda comprobar que quien la reclama es quien la pagó.
+    metadata: { roomId, userId: access.userId },
     success_url: `${origin}/reservar/${roomId}/exito?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/reservar/${roomId}`,
   });

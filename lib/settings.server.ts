@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export type AppSettings = {
@@ -11,7 +12,11 @@ export type AppSettings = {
 // Las claves se pueden cargar desde /admin/integraciones (quedan en la tabla
 // app_settings) o como variables de entorno de siempre — lo que esté cargado
 // en la base de datos gana, así el equipo no depende de tocar Netlify/Vercel.
-export async function getAppSettings(): Promise<AppSettings> {
+//
+// Memoizado por request: confirmar un pago resolvía la clave de Stripe y
+// después la de Resend una vez por email enviado, repitiendo la misma consulta
+// a app_settings tres o cuatro veces seguidas.
+export const getAppSettings = cache(async function getAppSettings(): Promise<AppSettings> {
   const admin = createAdminClient();
   if (!admin) {
     return { stripeSecretKey: null, diditApiKey: null, diditWorkflowId: null, resendApiKey: null, emailFrom: null };
@@ -25,7 +30,7 @@ export async function getAppSettings(): Promise<AppSettings> {
     resendApiKey: data?.resend_api_key || null,
     emailFrom: data?.email_from || null,
   };
-}
+});
 
 export async function resolveStripeSecretKey(): Promise<string | null> {
   const settings = await getAppSettings();

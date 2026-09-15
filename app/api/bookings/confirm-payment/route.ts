@@ -29,7 +29,14 @@ export async function POST(request: Request) {
   const stripe = new Stripe(secretKey);
   const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-  if (session.payment_status !== 'paid' || session.metadata?.roomId !== roomId) {
+  // El session_id viaja en la URL de la página de éxito, así que hay que tratarlo
+  // como público: sin comprobar que la sesión se creó para ESTE usuario, cualquiera
+  // con ese id podía marcarse como "pagado" sin haber pagado nada.
+  if (
+    session.payment_status !== 'paid' ||
+    session.metadata?.roomId !== roomId ||
+    session.metadata?.userId !== user.id
+  ) {
     return NextResponse.json({ error: 'El pago no pudo verificarse.' }, { status: 402 });
   }
 
@@ -50,6 +57,11 @@ export async function POST(request: Request) {
   );
 
   if (error) {
+    // 23505 = el índice único de stripe_session_id: esa sesión ya la reclamó
+    // otra reserva, así que no se puede volver a canjear.
+    if (error.code === '23505') {
+      return NextResponse.json({ error: 'Este pago ya fue registrado.' }, { status: 409 });
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
