@@ -92,6 +92,13 @@ create table if not exists public.bookings (
   unique (room_id, user_id)
 );
 
+-- Una sesión de pago de Stripe solo se puede canjear una vez. El session_id
+-- viaja en la URL de la página de éxito, así que sin esto alguien que
+-- consiguiera un session_id ajeno podía registrarse como "pagado" sin pagar.
+create unique index if not exists bookings_stripe_session_id_key
+  on public.bookings (stripe_session_id)
+  where stripe_session_id is not null;
+
 alter table public.bookings enable row level security;
 
 -- Cada usuario ve y actualiza únicamente sus propias reservas.
@@ -248,6 +255,8 @@ create policy "users read their own profile"
 -- alter table public.properties add column if not exists lng numeric;
 -- alter table public.bookings add column if not exists paid_at timestamptz;
 -- alter table public.bookings add column if not exists review_reminder_sent_at timestamptz;
+-- create unique index if not exists bookings_stripe_session_id_key
+--   on public.bookings (stripe_session_id) where stripe_session_id is not null;
 
 -- ============================================================================
 -- Fotos de propiedades: se suben desde /admin/propiedades (crear o editar

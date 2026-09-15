@@ -69,7 +69,13 @@ export default function BookingWizard({
         return;
       }
     }
-    // Didit todavía no está conectado: dejamos avanzar en modo demo.
+    // 501 es el único caso en que el servidor dice "Didit no está configurado".
+    // Cualquier otro error es real: dar por verificada la identidad ahí sería
+    // saltarse el KYC por una caída de red.
+    if (res.status !== 501) {
+      setKycNote('No pudimos iniciar la verificación. Vuelve a intentarlo en unos minutos.');
+      return;
+    }
     setKycNote('Modo demo: Didit todavía no está conectado (ver SETUP.md). Verificación simulada.');
     setKycVerified(true);
     upsertStage('verificado');
@@ -91,7 +97,13 @@ export default function BookingWizard({
         return;
       }
     }
-    // Stripe todavía no está conectado: dejamos ver la confirmación en modo demo.
+    // 501 es el único caso en que el servidor dice "Stripe no está configurado".
+    // Con cualquier otro error (red, clave inválida, Stripe caído) mostrar
+    // "Reserva confirmada" le estaría diciendo al cliente que pagó cuando no pagó.
+    if (res.status !== 501) {
+      setPayError('No pudimos iniciar el pago. Vuelve a intentarlo en unos minutos.');
+      return;
+    }
     setPayError('Modo demo: Stripe todavía no está conectado (ver SETUP.md). Pago simulado.');
     setConfirmed(true);
   }

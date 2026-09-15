@@ -19,3 +19,20 @@ export async function requireApprovedAccess(nextPath: string): Promise<ApprovedA
 
   return { userId: user.id, email: user.email ?? null, applicationId: profile.applicationId };
 }
+
+// Misma comprobación para rutas de API, que no pueden redirigir: devuelve null
+// y cada route handler decide el status. Sin esto, /api/checkout y /api/kyc
+// quedaban abiertos a cualquiera, y cada llamada anónima creaba una sesión de
+// Stripe o de Didit (que se cobran por uso).
+export async function getApprovedUser(): Promise<ApprovedAccess | null> {
+  const supabase = createClient();
+  if (!supabase) return null;
+
+  const user = await getSessionUser();
+  if (!user) return null;
+
+  const profile = await getOwnProfile(user.id);
+  if (profile?.applicationStatus !== 'APPROVED') return null;
+
+  return { userId: user.id, email: user.email ?? null, applicationId: profile.applicationId };
+}
