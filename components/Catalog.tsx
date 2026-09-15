@@ -23,10 +23,17 @@ function parseDMY(s: string): Date {
 export default function Catalog({ rooms }: { rooms: Room[] }) {
   const zones = Array.from(new Set(rooms.map((r) => r.zone)));
 
+  const prices = rooms.map((r) => r.price);
+  const priceMin = prices.length ? Math.min(...prices) : 0;
+  const priceMax = prices.length ? Math.max(...prices) : 0;
+
   const [zone, setZone] = useState('Todas');
-  const [maxBudget, setMaxBudget] = useState(900);
+  const [maxBudget, setMaxBudget] = useState(priceMax);
   const [movein, setMovein] = useState('');
   const [pareja, setPareja] = useState(false);
+  const [wantsPets, setWantsPets] = useState(false);
+  const [wantsDogs, setWantsDogs] = useState(false);
+  const [wantsSmokers, setWantsSmokers] = useState(false);
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [showFavOnly, setShowFavOnly] = useState(false);
   const [favVersion, setFavVersion] = useState(0);
@@ -42,10 +49,18 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
       if (zone !== 'Todas' && room.zone !== zone) return false;
       if (room.price > maxBudget) return false;
       if (pareja && room.individualOrPareja === 'individual') return false;
+      if (wantsPets && !room.acceptsPets) return false;
+      if (wantsDogs && !room.acceptsDogs) return false;
+      if (wantsSmokers && !room.acceptsSmokers) return false;
       if (movein && parseDMY(room.available) > new Date(movein)) return false;
       return true;
     });
-  }, [rooms, zone, maxBudget, movein, pareja, showFavOnly, favIds]);
+  }, [rooms, zone, maxBudget, movein, pareja, wantsPets, wantsDogs, wantsSmokers, showFavOnly, favIds]);
+
+  function handleWantsPetsChange(checked: boolean) {
+    setWantsPets(checked);
+    if (!checked) setWantsDogs(false);
+  }
 
   return (
     <>
@@ -95,8 +110,8 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
               </label>
               <input
                 type="range"
-                min={600}
-                max={900}
+                min={priceMin}
+                max={priceMax}
                 step={10}
                 value={maxBudget}
                 onChange={(e) => setMaxBudget(Number(e.target.value))}
@@ -115,18 +130,49 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
             onClick={() => setShowMoreFilters((s) => !s)}
             className="mt-3 text-sm text-slate-300 underline underline-offset-4 hover:text-white"
           >
-            {showMoreFilters ? 'Ocultar filtros' : 'Más filtros (pareja)'}
+            {showMoreFilters ? 'Ocultar filtros' : 'Más filtros (pareja, mascotas, fumadores)'}
           </button>
           {showMoreFilters && (
-            <label className="mt-3 flex w-fit items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm text-white">
-              <input
-                type="checkbox"
-                checked={pareja}
-                onChange={(e) => setPareja(e.target.checked)}
-                className="accent-vivi-mint"
-              />
-              Acepta pareja
-            </label>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <label className="flex w-fit items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm text-white">
+                <input
+                  type="checkbox"
+                  checked={pareja}
+                  onChange={(e) => setPareja(e.target.checked)}
+                  className="accent-vivi-mint"
+                />
+                Acepta pareja
+              </label>
+              <label className="flex w-fit items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm text-white">
+                <input
+                  type="checkbox"
+                  checked={wantsPets}
+                  onChange={(e) => handleWantsPetsChange(e.target.checked)}
+                  className="accent-vivi-mint"
+                />
+                Acepta mascotas
+              </label>
+              {wantsPets && (
+                <label className="flex w-fit items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm text-white">
+                  <input
+                    type="checkbox"
+                    checked={wantsDogs}
+                    onChange={(e) => setWantsDogs(e.target.checked)}
+                    className="accent-vivi-mint"
+                  />
+                  Acepta perros
+                </label>
+              )}
+              <label className="flex w-fit items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm text-white">
+                <input
+                  type="checkbox"
+                  checked={wantsSmokers}
+                  onChange={(e) => setWantsSmokers(e.target.checked)}
+                  className="accent-vivi-mint"
+                />
+                Acepta fumadores
+              </label>
+            </div>
           )}
         </div>
       </section>
