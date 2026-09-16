@@ -28,6 +28,9 @@ const nextConfig = {
     // Las fotos de una habitación no cambian una vez subidas: que el navegador
     // y el caché en disco las reusen un mes en vez de volver a pedirlas.
     minimumCacheTTL: 60 * 60 * 24 * 30,
+    // Sin los tamaños gigantes (2048/3840) que ninguna pantalla de este sitio
+    // usa: cada uno es una redimensión más que el VPS tendría que calcular.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
   },
 };
 
