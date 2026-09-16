@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { fetchRoomById } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
-import { getOwnBookingStatus } from '@/lib/bookings.server';
+import { getOwnBooking } from '@/lib/bookings.server';
 import BookingWizard from '@/components/BookingWizard';
 
 export const dynamic = 'force-dynamic';
@@ -15,7 +15,7 @@ export default async function ReservarPage({ params }: { params: { id: string } 
   // por completo — sin esto, el wizard perdía el progreso guardado en
   // BookingWizard (estado de React, no sobrevive un reload) y volvía a pedir
   // verificar desde cero aunque ya había quedado registrado en el servidor.
-  const bookingStatus = await getOwnBookingStatus(userId, room.id);
+  const booking = await getOwnBooking(userId, room.id);
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-16">
@@ -24,12 +24,13 @@ export default async function ReservarPage({ params }: { params: { id: string } 
         Se reserva con fianza automática.
       </h1>
       <p className="mt-3 max-w-2xl text-sm text-vivi-muted">
-        No existe una seña separada. La fianza equivale a una mensualidad y se paga en el mismo
-        momento de la reserva. Vivienda habitual, estancia mínima de 6 meses.
+        No existe una seña separada. La fianza equivale a una mensualidad y se paga por
+        transferencia en el mismo momento de la reserva. Vivienda habitual, estancia mínima de 6
+        meses.
       </p>
 
       <div className="mt-10">
-        <BookingWizard room={room} initialBookingStatus={bookingStatus} />
+        <BookingWizard room={room} initialBooking={booking} />
       </div>
     </section>
   );

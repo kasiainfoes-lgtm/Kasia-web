@@ -4,6 +4,7 @@ import { fetchRooms } from '@/lib/properties.server';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
 import AdminVisitAction from '@/components/AdminVisitAction';
+import AdminTransferProofActions from '@/components/AdminTransferProofActions';
 
 // Nunca cachear esta página: muestra datos privados por sesión (auth + reservas).
 export const dynamic = 'force-dynamic';
@@ -11,16 +12,18 @@ export const dynamic = 'force-dynamic';
 const STAGE_LABEL: Record<string, string> = {
   nuevo: 'Nuevo',
   verificado: 'Verificado',
+  revision: 'En revisión',
   pagado: 'Pagado',
 };
 
 const STAGE_COLOR: Record<string, string> = {
   nuevo: '#E5484D',
   verificado: '#8B7CF6',
+  revision: '#F5A623',
   pagado: '#FB7360',
 };
 
-const STAGE_ORDER = ['nuevo', 'verificado', 'pagado'] as const;
+const STAGE_ORDER = ['nuevo', 'verificado', 'revision', 'pagado'] as const;
 
 export default async function AdminPage() {
   const gate = await adminPageGate('/admin');
@@ -28,6 +31,7 @@ export default async function AdminPage() {
 
   const [bookings, rooms] = await Promise.all([fetchAllBookings(), fetchRooms()]);
 
+  const pendingTransferReview = bookings.filter((b) => b.status === 'revision');
   const paid = bookings.filter((b) => b.status === 'pagado');
   const visitScheduledOrDone = bookings.filter(
     (b) => b.visitStatus === 'agendada' || b.visitStatus === 'hecha'
@@ -113,6 +117,56 @@ export default async function AdminPage() {
         </div>
       </div>
 
+      {pendingTransferReview.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-lg font-extrabold text-vivi-ink">
+            Comprobantes de transferencia pendientes de revisión ({pendingTransferReview.length})
+          </h2>
+          <div className="mt-4 overflow-x-auto rounded-2xl border border-amber-300 bg-amber-50/40">
+            <table className="w-full min-w-[720px] text-left text-sm">
+              <thead className="border-b border-amber-200 text-xs uppercase tracking-wide text-vivi-muted">
+                <tr>
+                  <th className="px-4 py-3">Cliente</th>
+                  <th className="px-4 py-3">Habitación</th>
+                  <th className="px-4 py-3">Enviado</th>
+                  <th className="px-4 py-3">Comprobante</th>
+                  <th className="px-4 py-3">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pendingTransferReview.map((b) => (
+                  <tr key={b.id} className="border-b border-amber-100 last:border-0">
+                    <td className="px-4 py-3 text-vivi-ink">{b.userEmail ?? '—'}</td>
+                    <td className="px-4 py-3">
+                      <p className="font-medium text-vivi-ink">{b.roomTitle}</p>
+                      <p className="text-xs text-vivi-muted">{b.roomZone}</p>
+                    </td>
+                    <td className="px-4 py-3 text-vivi-ink">
+                      {b.transferProofSubmittedAt
+                        ? new Date(b.transferProofSubmittedAt).toLocaleString('es-ES')
+                        : '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <a
+                        href={`/api/admin/bookings/${b.id}/proof`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs font-semibold text-vivi-navy hover:underline"
+                      >
+                        Ver comprobante
+                      </a>
+                    </td>
+                    <td className="px-4 py-3">
+                      <AdminTransferProofActions bookingId={b.id} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       <div className="mt-10 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-vivi-muted">
@@ -138,9 +192,11 @@ export default async function AdminPage() {
                     className={`rounded-full px-2.5 py-1 text-xs font-bold ${
                       b.status === 'pagado'
                         ? 'bg-vivi-mintLight text-red-700'
-                        : b.status === 'verificado'
-                          ? 'bg-indigo-50 text-indigo-600'
-                          : 'bg-slate-100 text-vivi-muted'
+                        : b.status === 'revision'
+                          ? 'bg-amber-50 text-amber-700'
+                          : b.status === 'verificado'
+                            ? 'bg-indigo-50 text-indigo-600'
+                            : 'bg-slate-100 text-vivi-muted'
                     }`}
                   >
                     {STAGE_LABEL[b.status]}

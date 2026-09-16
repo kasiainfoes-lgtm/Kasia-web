@@ -5,27 +5,31 @@ import type { Room } from '@/lib/rooms';
 import { calculateBookingTotal } from '@/lib/rooms';
 import { createClient } from '@/lib/supabase/client';
 import BookingTerms from '@/components/BookingTerms';
-import type { BookingStatus } from '@/lib/bookings.server';
+import TransferPayment from '@/components/TransferPayment';
+import type { OwnBooking } from '@/lib/bookings.server';
 
-const steps = ['Comprobación de identidad', 'Aceptar condiciones', 'Pagar'];
+const steps = ['Comprobación de identidad', 'Aceptar condiciones', 'Transferencia'];
 
 export default function BookingWizard({
   room,
-  initialBookingStatus,
+  initialBooking,
 }: {
   room: Room;
-  initialBookingStatus: BookingStatus | null;
+  initialBooking: OwnBooking | null;
 }) {
   const supabase = createClient();
-  const alreadyVerified = initialBookingStatus === 'verificado' || initialBookingStatus === 'pagado';
-  const [step, setStep] = useState(initialBookingStatus === 'pagado' ? steps.length - 1 : alreadyVerified ? 1 : 0);
-  const [confirmed, setConfirmed] = useState(initialBookingStatus === 'pagado');
+  const status = initialBooking?.status ?? null;
+  const alreadyVerified = status === 'verificado' || status === 'revision' || status === 'pagado';
+  const termsAlreadyAccepted = !!initialBooking?.termsAcceptedAt;
+
+  const [step, setStep] = useState(termsAlreadyAccepted ? 2 : alreadyVerified ? 1 : 0);
+  const [confirmed, setConfirmed] = useState(status === 'pagado');
+  const [pendingReview, setPendingReview] = useState(status === 'revision');
+  const [rejectionNote, setRejectionNote] = useState(initialBooking?.transferReviewRejectionNote ?? null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [kycVerified, setKycVerified] = useState(alreadyVerified);
-  const [termsAccepted, setTermsAccepted] = useState(initialBookingStatus === 'pagado');
+  const [termsAccepted, setTermsAccepted] = useState(termsAlreadyAccepted);
   const [kycNote, setKycNote] = useState<string | null>(null);
-  const [payError, setPayError] = useState<string | null>(null);
-  const [paying, setPaying] = useState(false);
   const { deposit, total } = calculateBookingTotal(room.price);
 
   useEffect(() => {
@@ -34,23 +38,23 @@ export default function BookingWizard({
 
   // Solo registra la etapa 'nuevo' si todavía no existe ninguna reserva para
   // esta persona y habitación — si ya había una más avanzada (verificado,
-  // pagado) del lado del servidor, esto la pisaba de vuelta a 'nuevo' cada
-  // vez que la página se recargaba (por ejemplo, al volver de Didit).
+  // en revisión, pagado) del lado del servidor, esto la pisaba de vuelta a
+  // 'nuevo' cada vez que la página se recargaba (por ejemplo, al volver de Didit).
   useEffect(() => {
-    if (!userEmail || initialBookingStatus) return;
+    if (!userEmail || status) return;
     upsertStage('nuevo');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userEmail, initialBookingStatus]);
+  }, [userEmail, status]);
 
   const isLastStep = step === steps.length - 1;
   const kycRequired = step === 0 && !kycVerified;
   const termsRequired = step === 1 && !termsAccepted;
 
-  function upsertStage(status: 'nuevo' | 'verificado', termsAcceptedNow = false) {
+  function upsertStage(stageStatus: 'nuevo' | 'verificado', termsAcceptedNow = false) {
     fetch('/api/bookings/upsert', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomId: room.id, status, termsAccepted: termsAcceptedNow }),
+      body: JSON.stringify({ roomId: room.id, status: stageStatus, termsAccepted: termsAcceptedNow }),
     }).catch(() => {
       // El seguimiento en el panel interno es best-effort: si Supabase no está
       // configurado todavía, la reserva sigue funcionando igual.
@@ -82,33 +86,6 @@ export default function BookingWizard({
     setKycNote('Modo demo: Didit todavía no está conectado (ver SETUP.md). Verificación simulada.');
     setKycVerified(true);
     upsertStage('verificado');
-  }
-
-  async function handlePay() {
-    setPaying(true);
-    setPayError(null);
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomId: room.id }),
-    });
-    setPaying(false);
-    if (res.ok) {
-      const { url } = await res.json();
-      if (url) {
-        window.location.href = url;
-        return;
-      }
-    }
-    // 501 es el único caso en que el servidor dice "Stripe no está configurado".
-    // Con cualquier otro error (red, clave inválida, Stripe caído) mostrar
-    // "Reserva confirmada" le estaría diciendo al cliente que pagó cuando no pagó.
-    if (res.status !== 501) {
-      setPayError('No pudimos iniciar el pago. Vuelve a intentarlo en unos minutos.');
-      return;
-    }
-    setPayError('Modo demo: Stripe todavía no está conectado (ver SETUP.md). Pago simulado.');
-    setConfirmed(true);
   }
 
   return (
@@ -178,7 +155,26 @@ export default function BookingWizard({
           />
         )}
 
-        {!confirmed ? (
+        {confirmed ? (
+          <div className="mt-8 rounded-xl bg-vivi-mintLight p-6 text-red-800">
+            <p className="font-bold">Reserva confirmada</p>
+            <p className="mt-2 text-sm">
+              Pago recibido. El asesor y la agenda de visitas ya están disponibles, junto con
+              alternativas similares dentro del mismo rango de precio.
+            </p>
+          </div>
+        ) : isLastStep ? (
+          <TransferPayment
+            room={room}
+            deposit={deposit}
+            pendingReview={pendingReview}
+            rejectionNote={rejectionNote}
+            onSubmitted={() => {
+              setPendingReview(true);
+              setRejectionNote(null);
+            }}
+          />
+        ) : (
           <div className="mt-8 flex gap-3">
             {step > 0 && (
               <button
@@ -189,29 +185,16 @@ export default function BookingWizard({
               </button>
             )}
             <button
-              disabled={kycRequired || termsRequired || paying}
+              disabled={kycRequired || termsRequired}
               onClick={() => {
-                if (isLastStep) {
-                  handlePay();
-                } else {
-                  // Deja constancia de cuándo aceptó las condiciones, antes de pagar.
-                  if (step === 1) upsertStage('verificado', true);
-                  setStep((s) => s + 1);
-                }
+                // Deja constancia de cuándo aceptó las condiciones, antes de pagar.
+                if (step === 1) upsertStage('verificado', true);
+                setStep((s) => s + 1);
               }}
               className="rounded-xl bg-vivi-navy px-5 py-2.5 text-sm font-semibold text-white hover:bg-vivi-navyLight disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isLastStep ? (paying ? 'Redirigiendo a pago…' : 'Pagar y reservar') : 'Continuar'}
+              Continuar
             </button>
-            {payError && <p className="self-center text-xs text-vivi-muted">{payError}</p>}
-          </div>
-        ) : (
-          <div className="mt-8 rounded-xl bg-vivi-mintLight p-6 text-red-800">
-            <p className="font-bold">Reserva confirmada</p>
-            <p className="mt-2 text-sm">
-              Pago recibido. El asesor y la agenda de visitas ya están disponibles, junto con
-              alternativas similares dentro del mismo rango de precio.
-            </p>
           </div>
         )}
       </div>
@@ -240,7 +223,7 @@ export default function BookingWizard({
             </>
           ) : (
             <div className="flex justify-between border-t border-slate-200 pt-3 text-base">
-              <dt className="font-bold text-vivi-ink">TOTAL HOY</dt>
+              <dt className="font-bold text-vivi-ink">TOTAL A TRANSFERIR</dt>
               <dd className="font-extrabold text-vivi-ink">{total.toFixed(2)} €</dd>
             </div>
           )}

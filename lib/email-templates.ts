@@ -62,6 +62,49 @@ export function paymentConfirmedEmailTemplate(roomTitle: string, amount: number)
   };
 }
 
+export function transferProofSubmittedNotificationEmailTemplate(
+  userEmail: string,
+  roomTitle: string,
+  reviewUrl: string
+) {
+  const safeEmail = escapeHtml(userEmail);
+  const safeTitle = escapeHtml(roomTitle);
+  return {
+    subject: `Comprobante de transferencia para revisar — ${roomTitle}`,
+    html: wrapper(
+      'Nuevo comprobante para revisar',
+      `<p style="margin:0 0 24px;color:#3A4356;font-size:14px;line-height:1.6;">
+         <strong>${safeEmail}</strong> subió el comprobante de la transferencia por
+         <strong>${safeTitle}</strong> y está esperando revisión en el panel interno.
+       </p>
+       <a href="${reviewUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
+         Revisar comprobante
+       </a>`
+    ),
+  };
+}
+
+export function transferProofRejectedEmailTemplate(note: string, roomTitle: string, bookingUrl: string) {
+  const safeNote = escapeHtml(note);
+  const safeTitle = escapeHtml(roomTitle);
+  return {
+    subject: `No pudimos confirmar tu transferencia — ${roomTitle}`,
+    html: wrapper(
+      'Necesitamos que revises tu comprobante',
+      `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">
+         Revisamos el comprobante que enviaste para <strong>${safeTitle}</strong> y no pudimos
+         confirmarlo:
+       </p>
+       <p style="margin:0 0 24px;padding:12px 16px;background:#FEF2F2;border-radius:12px;color:#B91C1C;font-size:14px;line-height:1.6;">
+         ${safeNote}
+       </p>
+       <a href="${bookingUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
+         Volver a subir el comprobante
+       </a>`
+    ),
+  };
+}
+
 export function newApplicationNotificationEmailTemplate(name: string, email: string, reviewUrl: string) {
   const safeName = escapeHtml(name);
   const safeEmail = escapeHtml(email);

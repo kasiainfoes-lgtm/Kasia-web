@@ -6,11 +6,12 @@ export type BookingRow = {
   roomTitle: string;
   roomZone: string;
   userEmail: string | null;
-  status: 'nuevo' | 'verificado' | 'pagado';
+  status: 'nuevo' | 'verificado' | 'revision' | 'pagado';
   amount: number | null;
   visitStatus: 'pendiente' | 'agendada' | 'hecha';
   visitAt: string | null;
   finalChoiceRoomId: string | null;
+  transferProofSubmittedAt: string | null;
   createdAt: string;
 };
 
@@ -36,6 +37,7 @@ export async function fetchAllBookings(): Promise<BookingRow[]> {
     visitStatus: row.visit_status,
     visitAt: row.visit_at,
     finalChoiceRoomId: row.final_choice_room_id,
+    transferProofSubmittedAt: row.transfer_proof_submitted_at,
     createdAt: row.created_at,
   }));
 }

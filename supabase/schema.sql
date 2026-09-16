@@ -78,7 +78,7 @@ create table if not exists public.bookings (
   room_id text not null references public.properties(id),
   user_id uuid references auth.users(id),
   user_email text,
-  status text not null default 'nuevo', -- 'nuevo' | 'verificado' | 'pagado'
+  status text not null default 'nuevo', -- 'nuevo' | 'verificado' | 'revision' | 'pagado'
   amount numeric,
   stripe_session_id text,
   visit_status text not null default 'pendiente', -- 'pendiente' | 'agendada' | 'hecha'
@@ -88,6 +88,13 @@ create table if not exists public.bookings (
                         -- (agendar visita, etc.), así que no sirve para esto
   review_reminder_sent_at timestamptz, -- evita mandar el recordatorio de reseña más de una vez
   terms_accepted_at timestamptz, -- cuándo aceptó las condiciones de reserva, siempre antes de pagar
+  -- Pago por transferencia: la persona sube un comprobante (bucket privado
+  -- payment-proofs, ver más abajo) y queda en 'revision' hasta que un admin lo
+  -- aprueba (pasa a 'pagado') o lo rechaza (vuelve a 'verificado' con una nota).
+  transfer_proof_path text,
+  transfer_proof_submitted_at timestamptz,
+  transfer_review_rejected_at timestamptz,
+  transfer_review_rejection_note text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (room_id, user_id)
@@ -259,6 +266,11 @@ create policy "users read their own profile"
 -- create unique index if not exists bookings_stripe_session_id_key
 --   on public.bookings (stripe_session_id) where stripe_session_id is not null;
 -- alter table public.bookings add column if not exists terms_accepted_at timestamptz;
+-- alter table public.bookings add column if not exists transfer_proof_path text;
+-- alter table public.bookings add column if not exists transfer_proof_submitted_at timestamptz;
+-- alter table public.bookings add column if not exists transfer_review_rejected_at timestamptz;
+-- alter table public.bookings add column if not exists transfer_review_rejection_note text;
+-- insert into storage.buckets (id, name, public) values ('payment-proofs', 'payment-proofs', false) on conflict (id) do nothing;
 
 -- ============================================================================
 -- Fotos de propiedades: se suben desde /admin/propiedades (crear o editar
@@ -283,3 +295,12 @@ on conflict (id) do nothing;
 -- Sin policies para anon/authenticated a propósito: la subida y cualquier
 -- lectura pasan siempre por rutas de servidor con la service_role key
 -- (que bypassea RLS), igual que el resto de las tablas de este archivo.
+
+-- ============================================================================
+-- Comprobantes de transferencia: cuando alguien reserva, sube acá la captura
+-- de la transferencia (ver /api/bookings/transfer-proof) para que un admin la
+-- revise desde /admin. Bucket privado, mismo patrón que application-documents.
+-- ============================================================================
+insert into storage.buckets (id, name, public)
+values ('payment-proofs', 'payment-proofs', false)
+on conflict (id) do nothing;
