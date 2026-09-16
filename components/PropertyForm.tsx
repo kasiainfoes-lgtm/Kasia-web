@@ -59,13 +59,24 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         const fd = new FormData();
         fd.append('file', file);
         const res = await fetch('/api/admin/properties/photos', { method: 'POST', body: fd });
-        if (!res.ok) throw new Error();
+        if (!res.ok) {
+          // 413 nunca llega a nuestro código: lo devuelve nginx/el proxy antes de
+          // que Next.js reciba la petición, así que la respuesta no es JSON y el
+          // mensaje real ("No pudimos subir el archivo") jamás se mostraría.
+          if (res.status === 413) {
+            throw new Error(
+              `"${file.name}" es demasiado grande para el servidor (más allá del límite de la app, hay un límite del servidor web). Avisale a soporte para subir ese límite.`
+            );
+          }
+          const body = await res.json().catch(() => null);
+          throw new Error(body?.error ? `"${file.name}": ${body.error}` : `"${file.name}": error ${res.status}.`);
+        }
         const data = await res.json();
         uploaded.push(data.url);
       }
       setPhotoUrls((urls) => [...urls, ...uploaded]);
-    } catch {
-      setPhotoError('No pudimos subir alguno de los archivos. Probá de nuevo.');
+    } catch (err) {
+      setPhotoError(err instanceof Error && err.message ? err.message : 'No pudimos subir alguno de los archivos. Probá de nuevo.');
     }
     setUploadingPhotos(false);
   }
@@ -357,6 +368,10 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         className="h-20 rounded-xl"
         style={{ background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})` }}
       />
+      <p className="-mt-3 text-xs text-vivi-muted">
+        Vista previa del degradé de respaldo. Solo se usa si esta habitación no tiene fotos reales
+        cargadas arriba — no reemplaza a las fotos.
+      </p>
 
       <div>
         <label className={labelClass}>Comodidades (separadas por coma)</label>
