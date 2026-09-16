@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { firstImageUrl, type Room } from '@/lib/rooms';
 import FavoriteButton from '@/components/FavoriteButton';
 
@@ -12,19 +13,18 @@ export default function RoomCard({
   const thumbnail = firstImageUrl(room.photoUrls);
   return (
     <Link href={`/rooms/${room.id}`} className="group block">
-      <div className="relative overflow-hidden rounded-2xl">
+      <div className="relative h-44 overflow-hidden rounded-2xl">
         {thumbnail ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={thumbnail}
             alt={room.title}
-            loading="lazy"
-            decoding="async"
-            className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <div
-            className="h-44 transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full transition-transform duration-300 group-hover:scale-105"
             style={{
               background: `linear-gradient(135deg, ${room.colorFrom}, ${room.colorTo})`,
             }}

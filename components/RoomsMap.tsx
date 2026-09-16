@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -75,10 +76,12 @@ export default function RoomsMap({ rooms }: { rooms: Room[] }) {
             <Popup>
               <div className="w-48">
                 {room.photoUrls[0] ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={room.photoUrls[0]}
                     alt={room.title}
+                    width={192}
+                    height={96}
+                    sizes="192px"
                     className="h-24 w-full rounded-lg object-cover"
                   />
                 ) : (

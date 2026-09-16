@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { isVideoUrl, type Room } from '@/lib/rooms';
 
@@ -311,8 +312,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
                 {isVideoUrl(url) ? (
                   <video src={url} muted playsInline controls className="h-full w-full object-cover" />
                 ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={url} alt="" className="h-full w-full object-cover" />
+                  <Image src={url} alt="" fill sizes="200px" className="object-cover" />
                 )}
                 <button
                   type="button"

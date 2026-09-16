@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { adminPageGate } from '@/lib/admin-page-gate.server';
 import { fetchRooms } from '@/lib/properties.server';
 import { firstImageUrl } from '@/lib/rooms';
@@ -36,14 +37,15 @@ export default async function AdminPropertiesPage() {
           return (
           <div key={room.id} className="rounded-2xl border border-slate-200 bg-white p-4">
             {thumbnail ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={thumbnail}
-                alt={room.title}
-                loading="lazy"
-                decoding="async"
-                className="h-28 w-full rounded-xl object-cover"
-              />
+              <div className="relative h-28 overflow-hidden rounded-xl">
+                <Image
+                  src={thumbnail}
+                  alt={room.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover"
+                />
+              </div>
             ) : (
               <div
                 className="h-28 rounded-xl"

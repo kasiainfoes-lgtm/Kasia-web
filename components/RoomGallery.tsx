@@ -1,9 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { isVideoUrl } from '@/lib/rooms';
 
+// Las fotos originales pueden pesar varios MB cada una. <Image> las sirve
+// redimensionadas y en formato moderno, así una galería de 5 fotos pasa de
+// decenas de MB a unos pocos cientos de KB.
 function Media({
   url,
   alt,
@@ -15,18 +19,36 @@ function Media({
   priority?: boolean;
   fit?: 'cover' | 'contain';
 }) {
-  const className = fit === 'cover' ? 'h-full w-full object-cover' : 'max-h-[85vh] max-w-[90vw] object-contain';
   if (isVideoUrl(url)) {
+    const className =
+      fit === 'cover' ? 'h-full w-full object-cover' : 'max-h-[85vh] max-w-[90vw] object-contain';
     return <video src={url} controls className={className} />;
   }
+
+  // El visor a pantalla completa necesita la foto grande, pero igual
+  // optimizada: sin medidas fijas no se puede usar `fill` acá.
+  if (fit === 'contain') {
+    return (
+      <Image
+        src={url}
+        alt={alt}
+        width={1600}
+        height={1200}
+        sizes="90vw"
+        priority={priority}
+        className="h-auto max-h-[85vh] w-auto max-w-[90vw] object-contain"
+      />
+    );
+  }
+
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={url}
       alt={alt}
-      loading={priority ? undefined : 'lazy'}
-      decoding={priority ? undefined : 'async'}
-      className={className}
+      fill
+      sizes="(max-width: 640px) 100vw, 50vw"
+      priority={priority}
+      className="object-cover"
     />
   );
 }
@@ -58,7 +80,7 @@ export default function RoomGallery({
       <button
         type="button"
         onClick={() => setLightboxIndex(index)}
-        className={`${className} block w-full cursor-zoom-in text-left`}
+        className={`${className} relative block w-full cursor-zoom-in overflow-hidden text-left`}
       >
         <Media url={media[index]} alt={title} priority={priority} />
       </button>
