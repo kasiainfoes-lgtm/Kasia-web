@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Star } from 'lucide-react';
 
-export default function ReviewForm({ roomId }: { roomId: string }) {
+export default function ReviewForm({ roomId, managerName }: { roomId: string; managerName: string }) {
   const router = useRouter();
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -48,7 +48,7 @@ export default function ReviewForm({ roomId }: { roomId: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-      <p className="text-sm font-semibold text-vivi-ink">¿Ya viviste acá? Dejá tu reseña</p>
+      <p className="text-sm font-semibold text-vivi-ink">¿Ya alquilaste con {managerName}? Dejá tu reseña</p>
       <div className="mt-2 flex gap-1">
         {[1, 2, 3, 4, 5].map((n) => (
           <button

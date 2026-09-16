@@ -19,10 +19,12 @@ function StarRow({ rating, size = 16 }: { rating: number; size?: number }) {
 
 export default function ReviewsSection({
   roomId,
+  managerName,
   reviews,
   canReview,
 }: {
   roomId: string;
+  managerName: string;
   reviews: Review[];
   canReview: boolean;
 }) {
@@ -30,9 +32,9 @@ export default function ReviewsSection({
     reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : null;
 
   return (
-    <div className="py-6">
+    <div className="border-b border-slate-200 py-6">
       <div className="flex items-center gap-2">
-        <h2 className="text-lg font-extrabold text-vivi-ink">Reseñas</h2>
+        <h2 className="text-lg font-extrabold text-vivi-ink">Reseñas de {managerName}</h2>
         {average !== null && (
           <span className="flex items-center gap-1 text-sm font-semibold text-vivi-ink">
             <Star width={16} height={16} className="fill-vivi-mint text-vivi-mint" />
@@ -40,13 +42,14 @@ export default function ReviewsSection({
           </span>
         )}
       </div>
+      <p className="mt-1 text-xs text-vivi-muted">
+        Lo que cuentan quienes ya alquilaron con {managerName} — en cualquiera de sus habitaciones.
+      </p>
 
-      {canReview && <ReviewForm roomId={roomId} />}
+      {canReview && <ReviewForm roomId={roomId} managerName={managerName} />}
 
       {reviews.length === 0 ? (
-        <p className="mt-4 text-sm text-vivi-muted">
-          Todavía no hay reseñas de esta habitación.
-        </p>
+        <p className="mt-4 text-sm text-vivi-muted">Todavía no hay reseñas de {managerName}.</p>
       ) : (
         <div className="mt-4 space-y-5">
           {reviews.map((review) => (

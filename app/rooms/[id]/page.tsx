@@ -2,11 +2,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fetchRoomById } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
-import { getRoomReviews, canReviewRoom } from '@/lib/reviews.server';
+import { getManagerReviews, canReviewManager } from '@/lib/reviews.server';
 import FavoriteButton from '@/components/FavoriteButton';
 import AmenityIcon from '@/components/AmenityIcon';
 import ReviewsSection from '@/components/ReviewsSection';
 import RoomGallery from '@/components/RoomGallery';
+import RoomLocationMap from '@/components/RoomLocationMap';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,8 +17,8 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
   if (!room) return notFound();
 
   const [reviews, canReview] = await Promise.all([
-    getRoomReviews(room.id),
-    canReviewRoom(userId, room.id),
+    getManagerReviews(room.managerEmail),
+    canReviewManager(userId, room.managerEmail),
   ]);
 
   return (
@@ -62,6 +63,13 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
             </div>
           </div>
 
+          <ReviewsSection
+            roomId={room.id}
+            managerName={room.manager}
+            reviews={reviews}
+            canReview={canReview}
+          />
+
           <p className="max-w-2xl border-b border-slate-200 py-6 text-sm leading-relaxed text-vivi-muted">
             {room.description}
           </p>
@@ -75,7 +83,13 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
             ))}
           </div>
 
-          <ReviewsSection roomId={room.id} reviews={reviews} canReview={canReview} />
+          <div className="py-6">
+            <h2 className="text-lg font-extrabold text-vivi-ink">Ubicación</h2>
+            <p className="mt-1 text-sm text-vivi-muted">{room.zone}, Valencia</p>
+            <div className="mt-4">
+              <RoomLocationMap zone={room.zone} lat={room.lat} lng={room.lng} />
+            </div>
+          </div>
         </div>
 
         <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-6">

@@ -119,20 +119,28 @@ create policy "users manage their own bookings"
 -- que no pasa por RLS, así que no hace falta una policy extra para eso.
 
 -- ============================================================================
--- Reseñas: solo puede dejar una quien tenga una reserva pagada de esa
--- habitación (se valida en la policy de insert, no en el código), una por
--- persona y habitación. Se muestran públicamente en /rooms/[id].
+-- Reseñas: son sobre la persona que gestiona la habitación (el/la asesor/a,
+-- identificado por su email), no sobre la habitación puntual — alguien puede
+-- reservar varias habitaciones del mismo asesor a lo largo del tiempo, pero
+-- solo deja una reseña por asesor. room_id queda igual como referencia de qué
+-- reserva la originó. Solo puede dejar una quien tenga una reserva pagada de
+-- alguna habitación de ese asesor (se valida en la policy de insert). Se
+-- muestran públicamente en /rooms/[id], para todas las habitaciones de ese
+-- mismo asesor.
 -- ============================================================================
 create table if not exists public.reviews (
   id uuid primary key default gen_random_uuid(),
   room_id text not null references public.properties(id) on delete cascade,
+  manager_email text not null,
   user_id uuid not null references auth.users(id) on delete cascade,
   reviewer_name text not null,
   rating int not null check (rating between 1 and 5),
   comment text,
-  created_at timestamptz not null default now(),
-  unique (room_id, user_id)
+  created_at timestamptz not null default now()
 );
+
+create unique index if not exists reviews_manager_email_user_id_key
+  on public.reviews (manager_email, user_id);
 
 alter table public.reviews enable row level security;
 
@@ -140,15 +148,16 @@ create policy "reviews are publicly readable"
   on public.reviews for select
   using (true);
 
-create policy "users review rooms they booked and paid for"
+create policy "users review advisors of rooms they booked and paid for"
   on public.reviews for insert
   with check (
     auth.uid() = user_id
     and exists (
       select 1 from public.bookings b
-      where b.room_id = reviews.room_id
-        and b.user_id = auth.uid()
+      join public.properties p on p.id = b.room_id
+      where b.user_id = auth.uid()
         and b.status = 'pagado'
+        and p.manager_email = reviews.manager_email
     )
   );
 
@@ -271,6 +280,29 @@ create policy "users read their own profile"
 -- alter table public.bookings add column if not exists transfer_review_rejected_at timestamptz;
 -- alter table public.bookings add column if not exists transfer_review_rejection_note text;
 -- insert into storage.buckets (id, name, public) values ('payment-proofs', 'payment-proofs', false) on conflict (id) do nothing;
+--
+-- Si ya habías corrido una versión anterior de `reviews` (una reseña por
+-- habitación en vez de por asesor), ejecutá esto una vez para migrarla:
+-- alter table public.reviews add column if not exists manager_email text;
+-- update public.reviews r set manager_email = p.manager_email
+--   from public.properties p where p.id = r.room_id and r.manager_email is null;
+-- alter table public.reviews alter column manager_email set not null;
+-- alter table public.reviews drop constraint if exists reviews_room_id_user_id_key;
+-- create unique index if not exists reviews_manager_email_user_id_key
+--   on public.reviews (manager_email, user_id);
+-- drop policy if exists "users review rooms they booked and paid for" on public.reviews;
+-- create policy "users review advisors of rooms they booked and paid for"
+--   on public.reviews for insert
+--   with check (
+--     auth.uid() = user_id
+--     and exists (
+--       select 1 from public.bookings b
+--       join public.properties p on p.id = b.room_id
+--       where b.user_id = auth.uid()
+--         and b.status = 'pagado'
+--         and p.manager_email = reviews.manager_email
+--     )
+--   );
 
 -- ============================================================================
 -- Fotos de propiedades: se suben desde /admin/propiedades (crear o editar
