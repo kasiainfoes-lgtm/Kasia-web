@@ -25,12 +25,16 @@ export default function RoomMiniMap({ zone, lat, lng }: { zone: string; lat: num
     <MapContainer
       center={[y, x]}
       zoom={15}
-      style={{ height: '220px', width: '100%', borderRadius: '1rem' }}
+      // Ver comentario en RoomsMap.tsx: sin position+zIndex explícitos, los
+      // controles de Leaflet quedan por encima del menú fijo al hacer scroll.
+      style={{ height: '220px', width: '100%', borderRadius: '1rem', position: 'relative', zIndex: 0 }}
       scrollWheelZoom={false}
     >
+      {/* Mismo cambio que RoomsMap.tsx: CartoDB empezó a pedir API key
+          incluso para su estilo gratuito. */}
       <TileLayer
-        attribution='&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <Marker position={[y, x]} icon={pinIcon()} />
     </MapContainer>

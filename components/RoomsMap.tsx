@@ -53,15 +53,19 @@ export default function RoomsMap({ rooms }: { rooms: Room[] }) {
     <MapContainer
       center={[first.lat, first.lng]}
       zoom={13}
-      style={{ height: '600px', width: '100%', borderRadius: '1rem' }}
+      // position+zIndex explícitos: sin esto, los controles internos de Leaflet
+      // (el +/- de zoom, z-index 1000 dentro de su propia capa) no quedaban
+      // contenidos y terminaban flotando por encima del menú fijo de arriba
+      // al hacer scroll.
+      style={{ height: '600px', width: '100%', borderRadius: '1rem', position: 'relative', zIndex: 0 }}
       scrollWheelZoom
     >
-      {/* CartoDB Positron: mismo mapa gratis sin API key que antes, pero en
-          un estilo minimalista — calles, barrios y agua, sin los íconos de
-          comercios/parques/puntos de interés del estilo estándar de OSM. */}
+      {/* CartoDB empezó a exigir API key incluso para su estilo gratuito
+          (aparecía "API KEY REQUIRED" sobre el mapa), así que volvimos al
+          mapa estándar de OpenStreetMap: gratis, sin cuenta ni clave. */}
       <TileLayer
-        attribution='&copy; <a href="https://carto.com/attributions">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <FitBounds rooms={rooms} />
       {rooms.map((room) => {
