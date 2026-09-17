@@ -3,9 +3,9 @@
 import dynamic from 'next/dynamic';
 import type { Room } from '@/lib/rooms';
 
-// Mismo motivo que RoomLocationMap.tsx: react-leaflet no puede renderizarse
-// en el servidor, y la página del asesor es un Server Component que no puede
-// pasar ssr:false directamente.
+// react-leaflet no puede renderizarse en el servidor, y la página del
+// asesor es un Server Component que no puede pasar ssr:false directamente
+// — por eso este wrapper 'use client' hace el import dinámico.
 const RoomsMap = dynamic(() => import('@/components/RoomsMap'), {
   ssr: false,
   loading: () => (

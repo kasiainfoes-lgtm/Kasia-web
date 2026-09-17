@@ -1,5 +1,6 @@
 import { Star } from 'lucide-react';
 import type { Review } from '@/lib/reviews.server';
+import { formatDateEs } from '@/lib/format';
 import ReviewForm from '@/components/ReviewForm';
 
 function StarRow({ rating, size = 16 }: { rating: number; size?: number }) {
@@ -56,9 +57,7 @@ export default function ReviewsSection({
             <div key={review.id} className="border-b border-slate-100 pb-5 last:border-0">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-semibold text-vivi-ink">{review.reviewerName}</p>
-                <p className="text-xs text-vivi-muted">
-                  {new Date(review.createdAt).toLocaleDateString('es-ES')}
-                </p>
+                <p className="text-xs text-vivi-muted">{formatDateEs(review.createdAt)}</p>
               </div>
               <div className="mt-1">
                 <StarRow rating={review.rating} />

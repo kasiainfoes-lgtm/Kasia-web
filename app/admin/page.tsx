@@ -1,6 +1,7 @@
 import { adminPageGate } from '@/lib/admin-page-gate.server';
 import { fetchAllBookings } from '@/lib/admin.server';
 import { fetchRooms } from '@/lib/properties.server';
+import { formatDateTimeEs, formatEurEs } from '@/lib/format';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
 import AdminVisitAction from '@/components/AdminVisitAction';
@@ -64,7 +65,7 @@ export default async function AdminPage() {
         <StatCard label="Reservas pagadas" value={String(paid.length)} accent="#5B93F2" />
         <StatCard
           label="Fianzas cobradas"
-          value={`${depositRevenue.toLocaleString('es-ES')} €`}
+          value={`${formatEurEs(depositRevenue)} €`}
           accent="#8B7CF6"
         />
         <StatCard label="Visitas agendadas" value={String(visitScheduledOrDone.length)} accent="#FB7360" />
@@ -142,9 +143,7 @@ export default async function AdminPage() {
                       <p className="text-xs text-vivi-muted">{b.roomZone}</p>
                     </td>
                     <td className="px-4 py-3 text-vivi-ink">
-                      {b.transferProofSubmittedAt
-                        ? new Date(b.transferProofSubmittedAt).toLocaleString('es-ES')
-                        : '—'}
+                      {b.transferProofSubmittedAt ? formatDateTimeEs(b.transferProofSubmittedAt) : '—'}
                     </td>
                     <td className="px-4 py-3">
                       <a
@@ -211,11 +210,7 @@ export default async function AdminPage() {
                         ? 'Agendada'
                         : 'Hecha'}
                   </p>
-                  {b.visitAt && (
-                    <p className="text-xs text-vivi-muted">
-                      {new Date(b.visitAt).toLocaleString('es-ES')}
-                    </p>
-                  )}
+                  {b.visitAt && <p className="text-xs text-vivi-muted">{formatDateTimeEs(b.visitAt)}</p>}
                 </td>
                 <td className="px-4 py-3">
                   <AdminVisitAction bookingId={b.id} visitStatus={b.visitStatus} />
