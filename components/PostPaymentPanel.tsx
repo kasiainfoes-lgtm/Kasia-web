@@ -81,7 +81,7 @@ function PostPaymentPanelInner({ room, alreadyPaid, deposit, total }: Props) {
           </span>
           <h1 className="mt-4 text-2xl font-extrabold text-vivi-ink">No pudimos confirmar el pago</h1>
           <p className="mt-3 text-sm text-vivi-muted">
-            Si el importe se descontó de tu cuenta, no vuelvas a pagar: escríbele a tu asesora con
+            Si el importe se descontó de tu cuenta, no vuelvas a pagar: escríbele a tu asesor/a con
             esta pantalla y lo revisamos enseguida.
           </p>
         </>
@@ -94,7 +94,7 @@ function PostPaymentPanelInner({ room, alreadyPaid, deposit, total }: Props) {
           </span>
           <h1 className="mt-4 text-2xl font-extrabold text-vivi-ink">Pago recibido</h1>
           <p className="mt-3 text-sm text-vivi-muted">
-            Has reservado <strong>{room.title}</strong>. Coordina tu visita y habla con tu asesora
+            Has reservado <strong>{room.title}</strong>. Coordina tu visita y habla con tu asesor/a
             cuando quieras.
           </p>
 
@@ -113,7 +113,7 @@ function PostPaymentPanelInner({ room, alreadyPaid, deposit, total }: Props) {
 
       <div className="mt-8 grid gap-6 text-left sm:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-6">
-          <p className="text-sm font-bold text-vivi-ink">Contacta a tu asesora</p>
+          <p className="text-sm font-bold text-vivi-ink">Contacta a tu asesor/a</p>
           <div className="mt-3 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-vivi-mintLight font-bold text-red-700">
               {room.manager.charAt(0)}

@@ -36,7 +36,7 @@ export default function BookingTermsContent({
         <li>Fianza: UNA mensualidad ({deposit.toFixed(2)} €)</li>
         <li>
           Gastos de entrada: pago único, para sábanas y otros enseres, preparación de la
-          habitación y servicios adicionales. El importe te lo confirma tu asesora antes de la
+          habitación y servicios adicionales. El importe te lo confirma tu asesor/a antes de la
           firma del contrato.
         </li>
       </ul>

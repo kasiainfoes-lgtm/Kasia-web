@@ -159,7 +159,7 @@ export default function BookingWizard({
           <div className="mt-8 rounded-xl bg-vivi-mintLight p-6 text-red-800">
             <p className="font-bold">Reserva confirmada</p>
             <p className="mt-2 text-sm">
-              Pago recibido. El asesor y la agenda de visitas ya están disponibles, junto con
+              Pago recibido. El contacto con tu asesor/a y la agenda de visitas ya están disponibles, junto con
               alternativas similares dentro del mismo rango de precio.
             </p>
           </div>

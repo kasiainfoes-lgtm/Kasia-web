@@ -272,7 +272,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
           <div className="rounded-2xl border border-slate-200 bg-white p-6">
             <p className="font-bold text-vivi-ink">¿Qué pasa después de reservar?</p>
             <p className="mt-2 text-sm text-vivi-muted">
-              Se desbloquean el asesor, la agenda de visitas y alternativas similares dentro del mismo
+              Se desbloquean el contacto con tu asesor/a, la agenda de visitas y alternativas similares dentro del mismo
               rango de precio.
             </p>
           </div>

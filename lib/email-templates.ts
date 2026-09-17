@@ -55,7 +55,7 @@ export function paymentConfirmedEmailTemplate(roomTitle: string, amount: number)
       `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">¡Gracias!</p>
        <p style="margin:0;color:#3A4356;font-size:14px;line-height:1.6;">
          Hemos recibido tu pago de <strong>${amount.toFixed(2)} €</strong> por la reserva de
-         <strong>${safeTitle}</strong>. En breve tu asesora se pondrá en contacto contigo para
+         <strong>${safeTitle}</strong>. En breve tu asesor/a se pondrá en contacto contigo para
          coordinar la visita.
        </p>`
     ),

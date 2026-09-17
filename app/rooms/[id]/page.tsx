@@ -58,7 +58,7 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
               {room.manager.charAt(0)}
             </div>
             <div>
-              <p className="text-sm font-bold text-vivi-ink">Gestionado por {room.manager} · Asesora Kasia</p>
+              <p className="text-sm font-bold text-vivi-ink">Gestionado por {room.manager} · Equipo Kasia</p>
               <p className="text-xs text-vivi-muted">{room.responseTime}</p>
             </div>
           </div>
