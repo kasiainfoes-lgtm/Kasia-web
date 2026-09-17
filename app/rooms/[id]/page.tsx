@@ -53,7 +53,10 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
             </span>
           </div>
 
-          <div className="flex items-center gap-3 border-b border-slate-200 py-6">
+          <Link
+            href={`/asesores/${encodeURIComponent(room.managerEmail)}`}
+            className="flex items-center gap-3 border-b border-slate-200 py-6 hover:bg-slate-50"
+          >
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-vivi-mintLight font-bold text-red-700">
               {room.manager.charAt(0)}
             </div>
@@ -61,7 +64,8 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
               <p className="text-sm font-bold text-vivi-ink">Gestionado por {room.manager} · Equipo Kasia</p>
               <p className="text-xs text-vivi-muted">{room.responseTime}</p>
             </div>
-          </div>
+            <span className="ml-auto text-xs font-semibold text-vivi-navy">Ver todas sus habitaciones →</span>
+          </Link>
 
           <ReviewsSection
             roomId={room.id}

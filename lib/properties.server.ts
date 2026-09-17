@@ -55,3 +55,11 @@ export async function fetchRoomById(id: string): Promise<Room | undefined> {
   if (error || !data) return undefined;
   return mapSupabaseRow(data);
 }
+
+// Todas las habitaciones que gestiona un mismo asesor (identificado por su
+// email) — para la página "todas las propiedades de David", al estilo del
+// perfil de un anfitrión en Airbnb.
+export async function fetchRoomsByManagerEmail(managerEmail: string): Promise<Room[]> {
+  const rooms = await fetchRooms();
+  return rooms.filter((room) => room.managerEmail === managerEmail);
+}
