@@ -5,7 +5,6 @@ import { fetchRoomsByManagerEmail } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
 import { getManagerReviews } from '@/lib/reviews.server';
 import RoomCard from '@/components/RoomCard';
-import AdvisorRoomsMap from '@/components/AdvisorRoomsMap';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,11 +52,7 @@ export default async function AdvisorPage({ params }: { params: { email: string 
         {rooms.length} {rooms.length === 1 ? 'habitación' : 'habitaciones'} gestionadas por {manager.manager}
       </p>
 
-      <div className="mt-4">
-        <AdvisorRoomsMap rooms={rooms} />
-      </div>
-
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {rooms.map((room) => (
           <RoomCard key={room.id} room={room} />
         ))}
