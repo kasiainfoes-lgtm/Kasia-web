@@ -43,8 +43,12 @@ export const ZONE_COORDINATES: Record<string, { lat: number; lng: number }> = {
 // Centro de Valencia, por si una zona no está en ZONE_COORDINATES.
 const VALENCIA_CENTER = { lat: 39.4699, lng: -0.3763 };
 
+function isValidCoordinate(lat: number, lng: number): boolean {
+  return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+}
+
 export function roomCoordinates(room: Pick<Room, 'lat' | 'lng' | 'zone'>): { lat: number; lng: number } {
-  if (room.lat && room.lng) return { lat: room.lat, lng: room.lng };
+  if (room.lat && room.lng && isValidCoordinate(room.lat, room.lng)) return { lat: room.lat, lng: room.lng };
   return ZONE_COORDINATES[room.zone] ?? VALENCIA_CENTER;
 }
 
