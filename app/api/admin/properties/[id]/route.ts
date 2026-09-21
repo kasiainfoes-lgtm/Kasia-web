@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAdminUser } from '@/lib/require-admin.server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { toPropertyRow, type PropertyInput } from '@/lib/property-input';
+import { toPropertyRow, validateCoordinates, type PropertyInput } from '@/lib/property-input';
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const user = await getAdminUser();
@@ -11,6 +11,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   if (!admin) return NextResponse.json({ error: 'Supabase no está configurado.' }, { status: 501 });
 
   const input: PropertyInput = await request.json();
+  const coordError = validateCoordinates(input.lat, input.lng);
+  if (coordError) return NextResponse.json({ error: coordError }, { status: 400 });
+
   const row = toPropertyRow(input);
   delete (row as any).id;
 

@@ -24,6 +24,20 @@ export type PropertyInput = {
   managerEmail: string;
 };
 
+// Coordenadas fuera de rango (ej: escribir la longitud sin el "0." inicial,
+// o pegar los dos números juntos en un solo campo) generaban un link a
+// Google Maps directamente roto. Latitud válida: -90 a 90. Longitud: -180 a
+// 180 — más allá de eso no es una coordenada real, sea cual sea el motivo.
+export function validateCoordinates(lat: number | null, lng: number | null): string | null {
+  if (lat !== null && (Number.isNaN(lat) || lat < -90 || lat > 90)) {
+    return 'La latitud tiene que estar entre -90 y 90.';
+  }
+  if (lng !== null && (Number.isNaN(lng) || lng < -180 || lng > 180)) {
+    return 'La longitud tiene que estar entre -180 y 180.';
+  }
+  return null;
+}
+
 export function toPropertyRow(input: PropertyInput) {
   return {
     id: input.id,

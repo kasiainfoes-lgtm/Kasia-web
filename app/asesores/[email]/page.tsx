@@ -4,6 +4,7 @@ import { Star } from 'lucide-react';
 import { fetchRoomsByManagerEmail } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
 import { getManagerReviews } from '@/lib/reviews.server';
+import { roomCoordinates, multiLocationMapsUrl } from '@/lib/rooms';
 import RoomCard from '@/components/RoomCard';
 
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,7 @@ export default async function AdvisorPage({ params }: { params: { email: string 
 
   const manager = rooms[0];
   const average = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : null;
+  const mapsUrl = multiLocationMapsUrl(rooms.map(roomCoordinates));
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-10">
@@ -48,9 +50,21 @@ export default async function AdvisorPage({ params }: { params: { email: string 
         </div>
       </div>
 
-      <p className="mt-6 text-sm font-semibold text-vivi-ink">
-        {rooms.length} {rooms.length === 1 ? 'habitación' : 'habitaciones'} gestionadas por {manager.manager}
-      </p>
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm font-semibold text-vivi-ink">
+          {rooms.length} {rooms.length === 1 ? 'habitación' : 'habitaciones'} gestionadas por {manager.manager}
+        </p>
+        {mapsUrl && (
+          <a
+            href={mapsUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-xl bg-vivi-bg px-4 py-2 text-sm font-semibold text-vivi-navy hover:bg-slate-200"
+          >
+            Ver todas en Google Maps ↗
+          </a>
+        )}
+      </div>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {rooms.map((room) => (

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAdminUser } from '@/lib/require-admin.server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { toPropertyRow, type PropertyInput } from '@/lib/property-input';
+import { toPropertyRow, validateCoordinates, type PropertyInput } from '@/lib/property-input';
 
 export async function POST(request: Request) {
   const user = await getAdminUser();
@@ -14,6 +14,8 @@ export async function POST(request: Request) {
   if (!input.id || !input.title || !input.zone) {
     return NextResponse.json({ error: 'Faltan campos obligatorios.' }, { status: 400 });
   }
+  const coordError = validateCoordinates(input.lat, input.lng);
+  if (coordError) return NextResponse.json({ error: coordError }, { status: 400 });
 
   const { error } = await admin.from('properties').insert(toPropertyRow(input));
   if (error) {

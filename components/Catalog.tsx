@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { Room } from '@/lib/rooms';
+import { roomCoordinates, multiLocationMapsUrl, type Room } from '@/lib/rooms';
 import { getFavorites } from '@/lib/favorites';
 import RoomCard from '@/components/RoomCard';
 
@@ -45,6 +45,17 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
       return true;
     });
   }, [rooms, zone, maxBudget, movein, pareja, wantsPets, wantsDogs, wantsSmokers, showFavOnly, favIds]);
+
+  // Un pin por zona, no por habitación: con varias propiedades en el mismo
+  // barrio, mostrar cada una como parada aparte no suma información y hace
+  // más fácil pasarse del límite de paradas de Google Maps.
+  const mapsUrl = useMemo(() => {
+    const byZone = new Map<string, { lat: number; lng: number }>();
+    for (const room of filtered) {
+      if (!byZone.has(room.zone)) byZone.set(room.zone, roomCoordinates(room));
+    }
+    return multiLocationMapsUrl(Array.from(byZone.values()));
+  }, [filtered]);
 
   function handleWantsPetsChange(checked: boolean) {
     setWantsPets(checked);
@@ -208,6 +219,16 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
             >
               ❤ Guardados ({favIds.size})
             </button>
+            {mapsUrl && (
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-bold text-vivi-ink hover:border-vivi-navy"
+              >
+                🗺 Ver en el mapa
+              </a>
+            )}
           </div>
         </div>
 
