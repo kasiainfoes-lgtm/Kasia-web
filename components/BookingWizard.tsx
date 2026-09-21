@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import type { Room } from '@/lib/rooms';
 import { calculateBookingTotal } from '@/lib/rooms';
 import { createClient } from '@/lib/supabase/client';
@@ -17,6 +18,7 @@ export default function BookingWizard({
   room: Room;
   initialBooking: OwnBooking | null;
 }) {
+  const router = useRouter();
   const supabase = createClient();
   const status = initialBooking?.status ?? null;
   const alreadyVerified = status === 'verificado' || status === 'revision' || status === 'pagado';
@@ -30,7 +32,28 @@ export default function BookingWizard({
   const [kycVerified, setKycVerified] = useState(alreadyVerified);
   const [termsAccepted, setTermsAccepted] = useState(termsAlreadyAccepted);
   const [kycNote, setKycNote] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
   const { deposit, total } = calculateBookingTotal(room.price);
+
+  async function handleCancelBooking() {
+    if (!confirm('¿Cancelar esta reserva? Vas a perder el progreso hecho hasta ahora.')) return;
+    setCancelling(true);
+    setCancelError(null);
+    const res = await fetch('/api/bookings/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomId: room.id }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setCancelError(data.error || 'No pudimos cancelar la reserva.');
+      setCancelling(false);
+      return;
+    }
+    router.push('/rooms');
+    router.refresh();
+  }
 
   useEffect(() => {
     supabase?.auth.getUser().then(({ data }) => setUserEmail(data.user?.email ?? null));
@@ -228,6 +251,20 @@ export default function BookingWizard({
             </div>
           )}
         </dl>
+
+        {!confirmed && (
+          <div className="mt-6 border-t border-slate-200 pt-4">
+            <button
+              type="button"
+              disabled={cancelling}
+              onClick={handleCancelBooking}
+              className="text-xs font-semibold text-red-600 hover:underline disabled:opacity-50"
+            >
+              {cancelling ? 'Cancelando…' : 'Cancelar esta reserva'}
+            </button>
+            {cancelError && <p className="mt-1.5 text-xs text-red-600">{cancelError}</p>}
+          </div>
+        )}
       </aside>
     </div>
   );

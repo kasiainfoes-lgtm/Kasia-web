@@ -33,6 +33,18 @@ export async function DELETE(_request: Request, { params }: { params: { id: stri
 
   const { error } = await admin.from('properties').delete().eq('id', params.id);
   if (error) {
+    // 23503 = foreign_key_violation: hay una reserva (en cualquier etapa)
+    // apuntando a esta propiedad. Sin este mensaje, el botón de eliminar
+    // fallaba sin explicar por qué.
+    if (error.code === '23503') {
+      return NextResponse.json(
+        {
+          error:
+            'No se puede eliminar: hay una reserva en proceso para esta habitación. Cancelala primero desde el panel de reservas (/admin) y volvé a intentar.',
+        },
+        { status: 409 }
+      );
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
   return NextResponse.json({ ok: true });

@@ -72,3 +72,27 @@ export async function POST(request: Request, { params }: { params: { id: string 
   const sent = await sendEmail({ to: booking.user_email, subject, html });
   return NextResponse.json({ ok: true, emailSent: sent.ok, emailError: sent.error });
 }
+
+export async function DELETE(_request: Request, { params }: { params: { id: string } }) {
+  const user = await getAdminUser();
+  if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+
+  const admin = createAdminClient();
+  if (!admin) return NextResponse.json({ error: 'Supabase no está configurado.' }, { status: 501 });
+
+  const { data: booking } = await admin.from('bookings').select('status').eq('id', params.id).maybeSingle();
+  if (!booking) return NextResponse.json({ error: 'Reserva no encontrada.' }, { status: 404 });
+
+  // Una reserva ya pagada implica una fianza cobrada de verdad: no se borra
+  // sola con un click, hay que resolver la devolución primero.
+  if (booking.status === 'pagado') {
+    return NextResponse.json(
+      { error: 'Esta reserva ya está pagada. Gestioná la devolución de la fianza antes de cancelarla.' },
+      { status: 400 }
+    );
+  }
+
+  const { error } = await admin.from('bookings').delete().eq('id', params.id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ ok: true });
+}

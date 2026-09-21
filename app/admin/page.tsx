@@ -6,6 +6,7 @@ import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
 import AdminVisitAction from '@/components/AdminVisitAction';
 import AdminTransferProofActions from '@/components/AdminTransferProofActions';
+import AdminCancelBookingAction from '@/components/AdminCancelBookingAction';
 
 // Nunca cachear esta página: muestra datos privados por sesión (auth + reservas).
 export const dynamic = 'force-dynamic';
@@ -176,6 +177,7 @@ export default async function AdminPage() {
               <th className="px-4 py-3">Pago</th>
               <th className="px-4 py-3">Visita</th>
               <th className="px-4 py-3">Acción</th>
+              <th className="px-4 py-3">Cancelar</th>
             </tr>
           </thead>
           <tbody>
@@ -215,11 +217,14 @@ export default async function AdminPage() {
                 <td className="px-4 py-3">
                   <AdminVisitAction bookingId={b.id} visitStatus={b.visitStatus} />
                 </td>
+                <td className="px-4 py-3">
+                  <AdminCancelBookingAction bookingId={b.id} status={b.status} />
+                </td>
               </tr>
             ))}
             {bookings.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-sm text-vivi-muted">
+                <td colSpan={7} className="px-4 py-10 text-center text-sm text-vivi-muted">
                   Todavía no hay reservas registradas.
                 </td>
               </tr>

@@ -34,6 +34,10 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
   const [acceptsDogs, setAcceptsDogs] = useState(initial?.acceptsDogs ?? false);
   const [lat, setLat] = useState(initial?.lat != null ? String(initial.lat) : '');
   const [lng, setLng] = useState(initial?.lng != null ? String(initial.lng) : '');
+  const [mapsLink, setMapsLink] = useState('');
+  const [resolvingLink, setResolvingLink] = useState(false);
+  const [linkError, setLinkError] = useState<string | null>(null);
+  const [linkOk, setLinkOk] = useState(false);
   const [photos, setPhotos] = useState(initial?.photos ?? 5);
   const [photoUrls, setPhotoUrls] = useState<string[]>(initial?.photoUrls ?? []);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
@@ -84,6 +88,28 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
 
   function removePhoto(url: string) {
     setPhotoUrls((urls) => urls.filter((u) => u !== url));
+  }
+
+  async function handleResolveMapsLink() {
+    if (!mapsLink.trim()) return;
+    setResolvingLink(true);
+    setLinkError(null);
+    setLinkOk(false);
+    try {
+      const res = await fetch('/api/admin/properties/resolve-location', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: mapsLink.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'No pudimos leer ese link.');
+      setLat(String(data.lat));
+      setLng(String(data.lng));
+      setLinkOk(true);
+    } catch (err) {
+      setLinkError(err instanceof Error ? err.message : 'No pudimos leer ese link.');
+    }
+    setResolvingLink(false);
   }
 
   function handleAcceptsPetsChange(checked: boolean) {
@@ -164,6 +190,36 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         </div>
       </div>
 
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <label className={labelClass}>Ubicación: pegá el link de Google Maps (recomendado)</label>
+        <p className="mt-1 text-xs text-vivi-muted">
+          En Google Maps, buscá la dirección, tocá &quot;Compartir&quot; y copiá el link. Es más preciso
+          que cargar latitud/longitud a mano.
+        </p>
+        <div className="mt-2 flex gap-2">
+          <input
+            value={mapsLink}
+            onChange={(e) => {
+              setMapsLink(e.target.value);
+              setLinkOk(false);
+              setLinkError(null);
+            }}
+            placeholder="https://maps.app.goo.gl/..."
+            className={`${inputClass} mt-0 flex-1`}
+          />
+          <button
+            type="button"
+            disabled={resolvingLink || !mapsLink.trim()}
+            onClick={handleResolveMapsLink}
+            className="shrink-0 rounded-lg bg-vivi-navy px-4 text-sm font-semibold text-white disabled:opacity-50"
+          >
+            {resolvingLink ? 'Buscando…' : 'Usar este link'}
+          </button>
+        </div>
+        {linkError && <p className="mt-1.5 text-xs text-red-600">{linkError}</p>}
+        {linkOk && <p className="mt-1.5 text-xs font-semibold text-red-700">✓ Ubicación cargada abajo.</p>}
+      </div>
+
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className={labelClass}>Latitud (opcional)</label>
@@ -187,7 +243,8 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
             className={inputClass}
           />
           <p className="mt-1.5 text-xs text-vivi-muted">
-            Si lo dejás vacío, en el mapa aparece en el centro del barrio (zona).
+            Se completan solas al usar el link de arriba. Si las dejás vacías, en el mapa aparece
+            el centro del barrio (zona).
           </p>
         </div>
       </div>
