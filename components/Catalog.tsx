@@ -1,9 +1,10 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { roomCoordinates, multiLocationMapsUrl, type Room } from '@/lib/rooms';
+import type { Room } from '@/lib/rooms';
 import { getFavorites } from '@/lib/favorites';
 import RoomCard from '@/components/RoomCard';
+import PropertiesMapLoader from '@/components/PropertiesMapLoader';
 
 function parseDMY(s: string): Date {
   const [d, m, y] = s.split('/').map(Number);
@@ -27,6 +28,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
   const [showMoreFilters, setShowMoreFilters] = useState(false);
   const [showFavOnly, setShowFavOnly] = useState(false);
   const [favVersion, setFavVersion] = useState(0);
+  const [view, setView] = useState<'lista' | 'mapa'>('lista');
 
   // favVersion forces a re-read of localStorage after a heart toggle elsewhere in the grid.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,17 +47,6 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
       return true;
     });
   }, [rooms, zone, maxBudget, movein, pareja, wantsPets, wantsDogs, wantsSmokers, showFavOnly, favIds]);
-
-  // Un pin por zona, no por habitación: con varias propiedades en el mismo
-  // barrio, mostrar cada una como parada aparte no suma información y hace
-  // más fácil pasarse del límite de paradas de Google Maps.
-  const mapsUrl = useMemo(() => {
-    const byZone = new Map<string, { lat: number; lng: number }>();
-    for (const room of filtered) {
-      if (!byZone.has(room.zone)) byZone.set(room.zone, roomCoordinates(room));
-    }
-    return multiLocationMapsUrl(Array.from(byZone.values()));
-  }, [filtered]);
 
   function handleWantsPetsChange(checked: boolean) {
     setWantsPets(checked);
@@ -219,30 +210,42 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
             >
               ❤ Guardados ({favIds.size})
             </button>
-            {mapsUrl && (
-              <a
-                href={mapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-bold text-vivi-ink hover:border-vivi-navy"
+            <div className="flex overflow-hidden rounded-full border border-slate-300">
+              <button
+                onClick={() => setView('lista')}
+                className={`px-3 py-1.5 text-xs font-bold ${
+                  view === 'lista' ? 'bg-vivi-navy text-white' : 'text-vivi-ink hover:bg-vivi-bg'
+                }`}
               >
-                🗺 Ver en el mapa
-              </a>
-            )}
+                ☰ Lista
+              </button>
+              <button
+                onClick={() => setView('mapa')}
+                className={`px-3 py-1.5 text-xs font-bold ${
+                  view === 'mapa' ? 'bg-vivi-navy text-white' : 'text-vivi-ink hover:bg-vivi-bg'
+                }`}
+              >
+                🗺 Mapa
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((room) => (
-            <RoomCard key={room.id} room={room} onToggleFavorite={() => setFavVersion((v) => v + 1)} />
-          ))}
-          {filtered.length === 0 && (
-            <p className="col-span-full rounded-xl border border-dashed border-slate-300 p-10 text-center text-sm text-vivi-muted">
-              No hay habitaciones que coincidan con esta búsqueda. Prueba ampliando el presupuesto o
-              cambiando de zona.
-            </p>
-          )}
-        </div>
+        {view === 'mapa' ? (
+          <PropertiesMapLoader rooms={filtered} height={600} />
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((room) => (
+              <RoomCard key={room.id} room={room} onToggleFavorite={() => setFavVersion((v) => v + 1)} />
+            ))}
+            {filtered.length === 0 && (
+              <p className="col-span-full rounded-xl border border-dashed border-slate-300 p-10 text-center text-sm text-vivi-muted">
+                No hay habitaciones que coincidan con esta búsqueda. Prueba ampliando el presupuesto o
+                cambiando de zona.
+              </p>
+            )}
+          </div>
+        )}
       </section>
 
       <section id="faq" className="mx-auto max-w-6xl px-6 py-20">

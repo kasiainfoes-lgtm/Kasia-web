@@ -7,7 +7,7 @@ import FavoriteButton from '@/components/FavoriteButton';
 import AmenityIcon from '@/components/AmenityIcon';
 import ReviewsSection from '@/components/ReviewsSection';
 import RoomGallery from '@/components/RoomGallery';
-import { roomCoordinates } from '@/lib/rooms';
+import PropertiesMapLoader from '@/components/PropertiesMapLoader';
 
 export const dynamic = 'force-dynamic';
 
@@ -90,14 +90,9 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
           <div className="py-6">
             <h2 className="text-lg font-extrabold text-vivi-ink">Ubicación</h2>
             <p className="mt-1 text-sm text-vivi-muted">{room.zone}, Valencia</p>
-            <a
-              href={`https://www.google.com/maps?q=${roomCoordinates(room).lat},${roomCoordinates(room).lng}`}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 inline-block rounded-xl bg-vivi-bg px-4 py-2.5 text-sm font-semibold text-vivi-navy hover:bg-slate-200"
-            >
-              Ver ubicación en Google Maps ↗
-            </a>
+            <div className="mt-4">
+              <PropertiesMapLoader rooms={[room]} height={320} />
+            </div>
           </div>
         </div>
 

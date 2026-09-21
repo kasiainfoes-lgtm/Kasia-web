@@ -48,37 +48,6 @@ export function roomCoordinates(room: Pick<Room, 'lat' | 'lng' | 'zone'>): { lat
   return ZONE_COORDINATES[room.zone] ?? VALENCIA_CENTER;
 }
 
-// Un solo link a Google Maps con varios puntos a la vez — sin ninguna
-// librería de mapas de por medio (nada de Leaflet), usando la ruta con
-// paradas de Google como forma de mostrar todas las ubicaciones juntas.
-// Google deja de agregar paradas de forma confiable pasadas ~10, así que si
-// hay más puntos que eso se recorta: mejor un mapa útil con las primeras 10
-// que un link que Google rechace por tener demasiadas.
-const MAX_MAP_POINTS = 10;
-
-export function multiLocationMapsUrl(points: { lat: number; lng: number }[]): string | null {
-  if (points.length === 0) return null;
-  const capped = points.slice(0, MAX_MAP_POINTS);
-
-  if (capped.length === 1) {
-    return `https://www.google.com/maps?q=${capped[0].lat},${capped[0].lng}`;
-  }
-
-  const [origin, ...rest] = capped;
-  const destination = rest[rest.length - 1];
-  const waypoints = rest.slice(0, -1);
-
-  const params = new URLSearchParams({
-    api: '1',
-    origin: `${origin.lat},${origin.lng}`,
-    destination: `${destination.lat},${destination.lng}`,
-  });
-  if (waypoints.length > 0) {
-    params.set('waypoints', waypoints.map((p) => `${p.lat},${p.lng}`).join('|'));
-  }
-  return `https://www.google.com/maps/dir/?${params.toString()}`;
-}
-
 // Se usan mientras no haya una tabla `properties` en Supabase configurada
 // (o como semilla para cargarlas ahí). Ver SETUP.md para subir las tuyas
 // sin código desde el editor de tablas de Supabase.
