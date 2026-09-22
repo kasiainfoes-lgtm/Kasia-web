@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ChoiceCard from '@/components/ChoiceCard';
-import DocumentFileInput, { type DocumentUploadStatus } from '@/components/DocumentFileInput';
 
 const ZONES = [
   'Cualquier zona',
@@ -21,7 +20,6 @@ const ZONES = [
 const DURATIONS = [3, 6, 9, 12, 18, 24];
 
 type PetType = 'perro' | 'gato' | 'otro' | '';
-type DocumentKind = 'financial-proof' | 'unpaid-rent-insurance';
 
 type FormState = {
   zone: string;
@@ -38,8 +36,6 @@ type FormState = {
   lastName: string;
   email: string;
   phone: string;
-  financialProofPath: string | null;
-  unpaidRentInsurancePath: string | null;
 };
 
 const STEP_TITLES = ['Tu búsqueda', 'Cómo vas a vivir', 'Tu perfil', 'Tus datos', 'Comprobando disponibilidad'];
@@ -48,10 +44,6 @@ export default function ApplyWizard() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [uploadStatus, setUploadStatus] = useState<Record<DocumentKind, DocumentUploadStatus>>({
-    'financial-proof': 'idle',
-    'unpaid-rent-insurance': 'idle',
-  });
   const [form, setForm] = useState<FormState>({
     zone: '',
     moveInDate: '',
@@ -67,34 +59,11 @@ export default function ApplyWizard() {
     lastName: '',
     email: '',
     phone: '',
-    financialProofPath: null,
-    unpaidRentInsurancePath: null,
   });
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
-
-  async function handleDocumentUpload(kind: DocumentKind, file: File | null) {
-    if (!file) return;
-    setUploadStatus((s) => ({ ...s, [kind]: 'uploading' }));
-    try {
-      const fd = new FormData();
-      fd.append('kind', kind);
-      fd.append('file', file);
-      const res = await fetch('/api/apply/documents', { method: 'POST', body: fd });
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      update(kind === 'financial-proof' ? 'financialProofPath' : 'unpaidRentInsurancePath', data.path);
-      setUploadStatus((s) => ({ ...s, [kind]: 'done' }));
-    } catch {
-      setUploadStatus((s) => ({ ...s, [kind]: 'error' }));
-    }
-  }
-
-  const isStudent = form.occupationType === 'estudiante';
-  const studentDocsReady =
-    !isStudent || (form.financialProofPath !== null && form.unpaidRentInsurancePath !== null);
 
   const stepValid = [
     form.zone !== '' && form.moveInDate !== '',
@@ -102,10 +71,7 @@ export default function ApplyWizard() {
       form.hasMinors !== null &&
       form.hasPet !== null &&
       (form.hasPet === false || form.petType !== ''),
-    form.occupationType !== '' &&
-      form.smoker !== null &&
-      form.stayDurationMonths !== '' &&
-      studentDocsReady,
+    form.occupationType !== '' && form.smoker !== null && form.stayDurationMonths !== '',
     form.firstName.trim() !== '' &&
       form.lastName.trim() !== '' &&
       /\S+@\S+\.\S+/.test(form.email) &&
@@ -257,23 +223,6 @@ export default function ApplyWizard() {
                 />
               </div>
             </Field>
-            {isStudent && (
-              <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs leading-relaxed text-vivi-muted">
-                  Como estudiante necesitamos dos documentos para revisar tu solicitud.
-                </p>
-                <DocumentFileInput
-                  label="Comprobante de solvencia económica"
-                  status={uploadStatus['financial-proof']}
-                  onChange={(file) => handleDocumentUpload('financial-proof', file)}
-                />
-                <DocumentFileInput
-                  label="Seguro de impago"
-                  status={uploadStatus['unpaid-rent-insurance']}
-                  onChange={(file) => handleDocumentUpload('unpaid-rent-insurance', file)}
-                />
-              </div>
-            )}
             <Field label="¿Fumas?">
               <YesNo value={form.smoker} onChange={(v) => update('smoker', v)} />
             </Field>

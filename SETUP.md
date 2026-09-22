@@ -47,7 +47,11 @@ El catálogo real (`/rooms`) ya no es público. El flujo es:
 3. Al enviarlo, el servidor evalúa la solicitud (`lib/application-scoring.ts`) y
    la guarda en la tabla `applications` con estado `APPROVED`, `REVIEW` o
    `NOT_ELIGIBLE` y un motivo interno (`internal_reason`) que tampoco se expone.
-4. `/apply/result` muestra uno de los tres mensajes según el estado.
+   Desde `/admin/solicitudes` alguien del equipo puede además aprobar o
+   rechazar a mano una solicitud en `REVIEW` (estado `REJECTED`).
+4. `/apply/result` muestra uno de los mensajes según el estado que tenía la
+   solicitud justo al enviarla (no se actualiza si después alguien del equipo
+   la aprueba o rechaza a mano — eso se avisa por email).
 5. `/signup` solo deja crear una cuenta si la solicitud está `APPROVED` — lo
    comprueba el servidor, no el botón del frontend. La cuenta queda linkeada a
    esa solicitud en la tabla `profiles`.
@@ -66,11 +70,15 @@ momento ninguna habitación admite perros, así que quedan descalificados con
 el mismo mensaje genérico que el resto de los casos sin disponibilidad; gatos
 y otras mascotas siguen el flujo normal.
 
-**Estudiantes:** además de las preguntas del formulario, tienen que subir
-comprobante de solvencia económica y seguro de impago (bucket privado
+**Documentación:** nadie tiene que subir nada en `/apply` — el formulario solo
+pide datos. Si alguien del equipo necesita más para decidir, le da a "Pedir
+más información" desde `/admin/solicitudes`, y ahí sí se le pide por email lo
+que corresponda a su perfil: comprobante de solvencia económica + seguro de
+impago si es estudiante, o nómina si es trabajador/a (bucket privado
 `application-documents` en Supabase Storage, creado por `supabase/schema.sql`).
-La cuenta no se rechaza automáticamente por ser estudiante, pero queda en
-estado `REVIEW` hasta que alguien del equipo revise esos documentos a mano.
+Ser estudiante no rechaza ni pide nada automáticamente, solo dispara el estado
+`REVIEW` para que alguien del equipo decida a mano — aprobar, rechazar o pedir
+más información.
 
 **Anti-reintentos:** si alguien vuelve a mandar el formulario con el mismo
 email o teléfono antes de que pasen `APPLICATION_COOLDOWN_DAYS` días (30 por

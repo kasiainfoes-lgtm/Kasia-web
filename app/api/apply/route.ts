@@ -34,20 +34,11 @@ export async function POST(request: Request) {
 
   const occupationType = body.occupationType === 'estudiante' ? 'estudiante' : 'trabajador';
   const petType = VALID_PET_TYPES.includes(body.petType) ? body.petType : 'ninguno';
-  const financialProofPath = body.financialProofPath ? String(body.financialProofPath) : null;
-  const unpaidRentInsurancePath = body.unpaidRentInsurancePath
-    ? String(body.unpaidRentInsurancePath)
-    : null;
 
-  // Los estudiantes tienen que haber subido los dos documentos antes de
-  // poder enviar la solicitud — el equipo los revisa a mano.
-  if (occupationType === 'estudiante' && (!financialProofPath || !unpaidRentInsurancePath)) {
-    return NextResponse.json(
-      { error: 'Como estudiante necesitamos el comprobante de solvencia económica y el seguro de impago.' },
-      { status: 400 }
-    );
-  }
-
+  // Nadie sube documentos en /apply: el formulario solo pide datos. Si hace
+  // falta más para decidir, alguien del equipo lo pide después a mano desde
+  // /admin/solicitudes (ver documentsPhase() ahí) y la persona los sube en
+  // /apply/documents.
   const answers: ApplicationAnswers = {
     zone: String(body.zone),
     occupancyType: body.occupancyType === 'pareja' ? 'pareja' : 'individual',
@@ -67,8 +58,8 @@ export async function POST(request: Request) {
     email: String(body.email).trim(),
     phone: body.phone ? String(body.phone).trim() : null,
     moveInDate: body.moveInDate || null,
-    financialProofPath,
-    unpaidRentInsurancePath,
+    financialProofPath: null,
+    unpaidRentInsurancePath: null,
   });
 
   const cookieBase = {

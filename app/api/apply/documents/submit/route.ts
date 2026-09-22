@@ -15,14 +15,17 @@ export async function POST(request: Request) {
 
   const body = await request.json().catch(() => null);
   const applicationId = body?.applicationId;
-  const financialProofPath = body?.financialProofPath;
-  const unpaidRentInsurancePath = body?.unpaidRentInsurancePath;
+  const financialProofPath = typeof body?.financialProofPath === 'string' ? body.financialProofPath : null;
+  const unpaidRentInsurancePath =
+    typeof body?.unpaidRentInsurancePath === 'string' ? body.unpaidRentInsurancePath : null;
+  const payslipPath = typeof body?.payslipPath === 'string' ? body.payslipPath : null;
 
-  if (
-    typeof applicationId !== 'string' ||
-    typeof financialProofPath !== 'string' ||
-    typeof unpaidRentInsurancePath !== 'string'
-  ) {
+  // Estudiante manda los dos, trabajador/a manda solo la nómina — ver
+  // DocumentsUploadForm, que decide cuáles pedir según el perfil.
+  const studentDocsSent = financialProofPath !== null && unpaidRentInsurancePath !== null;
+  const workerDocsSent = payslipPath !== null;
+
+  if (typeof applicationId !== 'string' || (!studentDocsSent && !workerDocsSent)) {
     return NextResponse.json({ error: 'Faltan datos.' }, { status: 400 });
   }
 
@@ -36,8 +39,10 @@ export async function POST(request: Request) {
   const { error } = await admin
     .from('applications')
     .update({
-      financial_proof_path: financialProofPath,
-      unpaid_rent_insurance_path: unpaidRentInsurancePath,
+      ...(studentDocsSent
+        ? { financial_proof_path: financialProofPath, unpaid_rent_insurance_path: unpaidRentInsurancePath }
+        : {}),
+      ...(workerDocsSent ? { payslip_path: payslipPath } : {}),
       documents_submitted_at: new Date().toISOString(),
       // Un reenvío siempre supera un rechazo anterior: limpiamos la nota para
       // que no quede pegada a los documentos nuevos.

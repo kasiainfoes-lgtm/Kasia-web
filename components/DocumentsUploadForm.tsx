@@ -3,16 +3,25 @@
 import { useState } from 'react';
 import DocumentFileInput, { type DocumentUploadStatus } from '@/components/DocumentFileInput';
 
-type DocumentKind = 'financial-proof' | 'unpaid-rent-insurance';
+type DocumentKind = 'financial-proof' | 'unpaid-rent-insurance' | 'payslip';
 
-export default function DocumentsUploadForm({ applicationId }: { applicationId: string }) {
+export default function DocumentsUploadForm({
+  applicationId,
+  occupationType,
+}: {
+  applicationId: string;
+  occupationType: 'trabajador' | 'estudiante';
+}) {
+  const isStudent = occupationType === 'estudiante';
   const [paths, setPaths] = useState<Record<DocumentKind, string | null>>({
     'financial-proof': null,
     'unpaid-rent-insurance': null,
+    payslip: null,
   });
   const [uploadStatus, setUploadStatus] = useState<Record<DocumentKind, DocumentUploadStatus>>({
     'financial-proof': 'idle',
     'unpaid-rent-insurance': 'idle',
+    payslip: 'idle',
   });
   const [submitState, setSubmitState] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
@@ -34,21 +43,27 @@ export default function DocumentsUploadForm({ applicationId }: { applicationId: 
     }
   }
 
-  const bothReady = paths['financial-proof'] !== null && paths['unpaid-rent-insurance'] !== null;
+  const ready = isStudent
+    ? paths['financial-proof'] !== null && paths['unpaid-rent-insurance'] !== null
+    : paths.payslip !== null;
 
   async function handleSubmit() {
-    if (!bothReady) return;
+    if (!ready) return;
     setSubmitState('submitting');
     setError(null);
     try {
       const res = await fetch('/api/apply/documents/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          applicationId,
-          financialProofPath: paths['financial-proof'],
-          unpaidRentInsurancePath: paths['unpaid-rent-insurance'],
-        }),
+        body: JSON.stringify(
+          isStudent
+            ? {
+                applicationId,
+                financialProofPath: paths['financial-proof'],
+                unpaidRentInsurancePath: paths['unpaid-rent-insurance'],
+              }
+            : { applicationId, payslipPath: paths.payslip }
+        ),
       });
       if (!res.ok) throw new Error();
       setSubmitState('done');
@@ -68,20 +83,30 @@ export default function DocumentsUploadForm({ applicationId }: { applicationId: 
 
   return (
     <div className="mt-8 space-y-5">
-      <DocumentFileInput
-        label="Seguro de impago"
-        status={uploadStatus['unpaid-rent-insurance']}
-        onChange={(file) => handleUpload('unpaid-rent-insurance', file)}
-      />
-      <DocumentFileInput
-        label="Nómina"
-        status={uploadStatus['financial-proof']}
-        onChange={(file) => handleUpload('financial-proof', file)}
-      />
+      {isStudent ? (
+        <>
+          <DocumentFileInput
+            label="Comprobante de solvencia económica"
+            status={uploadStatus['financial-proof']}
+            onChange={(file) => handleUpload('financial-proof', file)}
+          />
+          <DocumentFileInput
+            label="Seguro de impago"
+            status={uploadStatus['unpaid-rent-insurance']}
+            onChange={(file) => handleUpload('unpaid-rent-insurance', file)}
+          />
+        </>
+      ) : (
+        <DocumentFileInput
+          label="Nómina"
+          status={uploadStatus.payslip}
+          onChange={(file) => handleUpload('payslip', file)}
+        />
+      )}
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button
         type="button"
-        disabled={!bothReady || submitState === 'submitting'}
+        disabled={!ready || submitState === 'submitting'}
         onClick={handleSubmit}
         className="w-full rounded-xl bg-vivi-navy px-5 py-3 text-sm font-semibold text-white hover:bg-vivi-navyLight disabled:cursor-not-allowed disabled:opacity-50"
       >

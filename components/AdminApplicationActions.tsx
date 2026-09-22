@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-type Action = 'approve' | 'request-info';
+type Action = 'approve' | 'reject' | 'request-info';
 
 export default function AdminApplicationActions({ id }: { id: string }) {
   const router = useRouter();
@@ -11,6 +11,7 @@ export default function AdminApplicationActions({ id }: { id: string }) {
   const [message, setMessage] = useState<string | null>(null);
 
   async function act(action: Action) {
+    if (action === 'reject' && !confirm('¿Rechazar esta solicitud? Se le va a avisar por email.')) return;
     setLoading(action);
     setMessage(null);
     try {
@@ -44,6 +45,14 @@ export default function AdminApplicationActions({ id }: { id: string }) {
           className="rounded-full bg-vivi-mint px-3 py-1.5 text-xs font-bold text-vivi-navy hover:brightness-95 disabled:opacity-50"
         >
           {loading === 'approve' ? 'Aprobando…' : 'Aprobar'}
+        </button>
+        <button
+          type="button"
+          disabled={loading !== null}
+          onClick={() => act('reject')}
+          className="rounded-full border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:border-red-400 disabled:opacity-50"
+        >
+          {loading === 'reject' ? 'Rechazando…' : 'Rechazar'}
         </button>
         <button
           type="button"

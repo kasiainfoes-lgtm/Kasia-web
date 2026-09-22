@@ -1,6 +1,6 @@
 import { MINIMUM_STAY_MONTHS, roomAcceptsProfile, type Room } from '@/lib/rooms';
 
-export type ApplicationStatus = 'APPROVED' | 'REVIEW' | 'NOT_ELIGIBLE';
+export type ApplicationStatus = 'APPROVED' | 'REVIEW' | 'NOT_ELIGIBLE' | 'REJECTED';
 
 export type InternalReason =
   | 'MIN_STAY_NOT_MET'

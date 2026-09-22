@@ -3,10 +3,15 @@ import { getAdminUser } from '@/lib/require-admin.server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getApplicationById } from '@/lib/applications.server';
 import { sendEmail } from '@/lib/email.server';
-import { approvedEmailTemplate, documentsRejectedEmailTemplate, moreInfoEmailTemplate } from '@/lib/email-templates';
+import {
+  approvedEmailTemplate,
+  documentsRejectedEmailTemplate,
+  moreInfoEmailTemplate,
+  rejectedEmailTemplate,
+} from '@/lib/email-templates';
 import { resolveSiteUrl } from '@/lib/site-url';
 
-const ACTIONS = ['approve', 'request-info', 'approve-documents', 'reject-documents'] as const;
+const ACTIONS = ['approve', 'reject', 'request-info', 'approve-documents', 'reject-documents'] as const;
 type Action = (typeof ACTIONS)[number];
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
@@ -35,6 +40,18 @@ export async function POST(request: Request, { params }: { params: { id: string 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
     const { subject, html } = approvedEmailTemplate(application.name, `${siteUrl}/signup?app=${application.id}`);
+    const sent = await sendEmail({ to: application.email, subject, html });
+    return NextResponse.json({ ok: true, emailSent: sent.ok, emailError: sent.error });
+  }
+
+  if (action === 'reject') {
+    const { error } = await admin
+      .from('applications')
+      .update({ status: 'REJECTED', internal_reason: null, updated_at: new Date().toISOString() })
+      .eq('id', application.id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    const { subject, html } = rejectedEmailTemplate(application.name);
     const sent = await sendEmail({ to: application.email, subject, html });
     return NextResponse.json({ ok: true, emailSent: sent.ok, emailError: sent.error });
   }
@@ -83,7 +100,11 @@ export async function POST(request: Request, { params }: { params: { id: string 
     .eq('id', application.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const { subject, html } = moreInfoEmailTemplate(application.name, `${siteUrl}/apply/documents?app=${application.id}`);
+  const { subject, html } = moreInfoEmailTemplate(
+    application.name,
+    `${siteUrl}/apply/documents?app=${application.id}`,
+    application.occupationType ?? 'trabajador'
+  );
   const sent = await sendEmail({ to: application.email, subject, html });
   return NextResponse.json({ ok: true, emailSent: sent.ok, emailError: sent.error });
 }

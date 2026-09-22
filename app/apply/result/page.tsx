@@ -25,6 +25,12 @@ const COPY: Record<ApplicationStatus, { badge: string; title: string; message: s
     message:
       'En este momento no podemos ofrecerte acceso al catálogo disponible. Si cambian tus circunstancias o nuestra disponibilidad, podremos volver a revisar tu solicitud.',
   },
+  REJECTED: {
+    badge: 'Sin disponibilidad para tu perfil',
+    title: 'Gracias por completar tu perfil',
+    message:
+      'En este momento no podemos ofrecerte acceso al catálogo disponible. Si cambian tus circunstancias o nuestra disponibilidad, podremos volver a revisar tu solicitud.',
+  },
 };
 
 export default async function ApplyResultPage() {

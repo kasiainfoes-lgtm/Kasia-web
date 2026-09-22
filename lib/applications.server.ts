@@ -8,12 +8,14 @@ export type Application = {
   email: string;
   phone: string | null;
   status: ApplicationStatus;
+  occupationType?: 'trabajador' | 'estudiante';
   isNew?: boolean;
 };
 
 export type ApplicationDocumentsState = {
   financialProofPath: string | null;
   unpaidRentInsurancePath: string | null;
+  payslipPath: string | null;
   documentsRequestedAt: string | null;
   documentsSubmittedAt: string | null;
   documentsRejectedAt: string | null;
@@ -127,7 +129,7 @@ export async function fetchAllApplications(): Promise<AdminApplication[]> {
   const { data, error } = await admin
     .from('applications')
     .select(
-      'id, name, email, phone, zone, occupation_type, pet_type, budget, status, financial_proof_path, unpaid_rent_insurance_path, documents_requested_at, documents_submitted_at, documents_rejected_at, documents_rejection_note, documents_approved_at, created_at'
+      'id, name, email, phone, zone, occupation_type, pet_type, budget, status, financial_proof_path, unpaid_rent_insurance_path, payslip_path, documents_requested_at, documents_submitted_at, documents_rejected_at, documents_rejection_note, documents_approved_at, created_at'
     )
     .order('created_at', { ascending: false });
 
@@ -145,6 +147,7 @@ export async function fetchAllApplications(): Promise<AdminApplication[]> {
     status: row.status,
     financialProofPath: row.financial_proof_path,
     unpaidRentInsurancePath: row.unpaid_rent_insurance_path,
+    payslipPath: row.payslip_path,
     documentsRequestedAt: row.documents_requested_at,
     documentsSubmittedAt: row.documents_submitted_at,
     documentsRejectedAt: row.documents_rejected_at,
@@ -187,7 +190,7 @@ export async function getApplicationById(id: string): Promise<Application | null
   try {
     const { data, error } = await admin
       .from('applications')
-      .select('id, name, email, phone, status')
+      .select('id, name, email, phone, status, occupation_type')
       .eq('id', id)
       .single();
 
@@ -198,6 +201,7 @@ export async function getApplicationById(id: string): Promise<Application | null
       email: data.email,
       phone: data.phone,
       status: data.status as ApplicationStatus,
+      occupationType: data.occupation_type,
     };
   } catch {
     return null;
@@ -209,14 +213,14 @@ export async function getApplicationById(id: string): Promise<Application | null
 // formulario de subida o un mensaje de estado.
 export async function getApplicationForDocuments(
   id: string
-): Promise<(Pick<Application, 'id' | 'name'> & ApplicationDocumentsState) | null> {
+): Promise<(Pick<Application, 'id' | 'name'> & { occupationType: 'trabajador' | 'estudiante' } & ApplicationDocumentsState) | null> {
   const admin = createAdminClient();
   if (!admin) return null;
 
   const { data, error } = await admin
     .from('applications')
     .select(
-      'id, name, financial_proof_path, unpaid_rent_insurance_path, documents_requested_at, documents_submitted_at, documents_rejected_at, documents_rejection_note, documents_approved_at'
+      'id, name, occupation_type, financial_proof_path, unpaid_rent_insurance_path, payslip_path, documents_requested_at, documents_submitted_at, documents_rejected_at, documents_rejection_note, documents_approved_at'
     )
     .eq('id', id)
     .maybeSingle();
@@ -225,8 +229,10 @@ export async function getApplicationForDocuments(
   return {
     id: data.id,
     name: data.name,
+    occupationType: data.occupation_type,
     financialProofPath: data.financial_proof_path,
     unpaidRentInsurancePath: data.unpaid_rent_insurance_path,
+    payslipPath: data.payslip_path,
     documentsRequestedAt: data.documents_requested_at,
     documentsSubmittedAt: data.documents_submitted_at,
     documentsRejectedAt: data.documents_rejected_at,

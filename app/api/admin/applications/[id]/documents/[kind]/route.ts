@@ -10,7 +10,8 @@ export async function GET(request: Request, { params }: { params: { id: string; 
   const user = await getAdminUser();
   if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
 
-  if (params.kind !== 'financial-proof' && params.kind !== 'unpaid-rent-insurance') {
+  const VALID_KINDS = ['financial-proof', 'unpaid-rent-insurance', 'payslip'] as const;
+  if (!VALID_KINDS.includes(params.kind as (typeof VALID_KINDS)[number])) {
     return NextResponse.json({ error: 'Tipo de documento inválido.' }, { status: 400 });
   }
 
@@ -19,12 +20,16 @@ export async function GET(request: Request, { params }: { params: { id: string; 
 
   const { data: application } = await admin
     .from('applications')
-    .select('financial_proof_path, unpaid_rent_insurance_path')
+    .select('financial_proof_path, unpaid_rent_insurance_path, payslip_path')
     .eq('id', params.id)
     .maybeSingle();
 
   const path =
-    params.kind === 'financial-proof' ? application?.financial_proof_path : application?.unpaid_rent_insurance_path;
+    params.kind === 'financial-proof'
+      ? application?.financial_proof_path
+      : params.kind === 'unpaid-rent-insurance'
+        ? application?.unpaid_rent_insurance_path
+        : application?.payslip_path;
   if (!path) return NextResponse.json({ error: 'Documento no encontrado.' }, { status: 404 });
 
   const { data, error } = await admin.storage.from(BUCKET).createSignedUrl(path, 300);

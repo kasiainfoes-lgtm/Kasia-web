@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 // Bucket privado: solo la service_role key (este route handler) puede leer o
 // escribir. No hace falta policy de RLS en storage.objects para anon.
 const BUCKET = 'application-documents';
-const ALLOWED_KINDS = new Set(['financial-proof', 'unpaid-rent-insurance']);
+const ALLOWED_KINDS = new Set(['financial-proof', 'unpaid-rent-insurance', 'payslip']);
 const MAX_SIZE_BYTES = 8 * 1024 * 1024;
 const ALLOWED_MIME: Record<string, string> = {
   'application/pdf': 'pdf',

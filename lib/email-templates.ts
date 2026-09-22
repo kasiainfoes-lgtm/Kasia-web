@@ -176,20 +176,43 @@ export function documentsRejectedEmailTemplate(name: string, note: string, uploa
   };
 }
 
-export function moreInfoEmailTemplate(name: string, uploadUrl: string) {
+export function moreInfoEmailTemplate(
+  name: string,
+  uploadUrl: string,
+  occupationType: 'trabajador' | 'estudiante'
+) {
   const safeName = escapeHtml(name);
+  const whatToSend =
+    occupationType === 'estudiante'
+      ? 'tu <strong>comprobante de solvencia económica</strong> y tu <strong>seguro de impago</strong>'
+      : 'tu <strong>nómina</strong>';
   return {
     subject: 'Necesitamos un poco más de información — Kasia',
     html: wrapper(
       'Necesitamos un poco más de información',
       `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">Hola ${safeName},</p>
        <p style="margin:0 0 24px;color:#3A4356;font-size:14px;line-height:1.6;">
-         Antes de seguir con tu solicitud necesitamos que nos envíes tu <strong>seguro de impago</strong>
-         y tu <strong>nómina</strong>. Puedes subirlos de forma segura desde este enlace:
+         Antes de seguir con tu solicitud necesitamos que nos envíes ${whatToSend}. Puedes subirla de
+         forma segura desde este enlace:
        </p>
        <a href="${uploadUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
          Subir documentación
        </a>`
+    ),
+  };
+}
+
+export function rejectedEmailTemplate(name: string) {
+  const safeName = escapeHtml(name);
+  return {
+    subject: 'Sobre tu solicitud — Kasia',
+    html: wrapper(
+      'Sobre tu solicitud',
+      `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">Hola ${safeName},</p>
+       <p style="margin:0;color:#3A4356;font-size:14px;line-height:1.6;">
+         Hemos revisado tu solicitud y, por el momento, no podemos ofrecerte acceso al catálogo
+         disponible. Gracias por tu interés en Kasia.
+       </p>`
     ),
   };
 }

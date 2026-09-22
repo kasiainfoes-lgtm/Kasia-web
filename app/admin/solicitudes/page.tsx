@@ -11,12 +11,14 @@ const STATUS_LABEL: Record<string, string> = {
   APPROVED: 'Aprobado',
   REVIEW: 'En revisión',
   NOT_ELIGIBLE: 'Sin disponibilidad',
+  REJECTED: 'Rechazada',
 };
 
 const STATUS_COLOR: Record<string, string> = {
   APPROVED: 'bg-vivi-mintLight text-red-700',
   REVIEW: 'bg-indigo-50 text-indigo-600',
   NOT_ELIGIBLE: 'bg-slate-100 text-vivi-muted',
+  REJECTED: 'bg-red-50 text-red-600',
 };
 
 const PET_LABEL: Record<string, string> = { ninguno: '—', perro: 'Perro', gato: 'Gato', otro: 'Otro' };
@@ -30,7 +32,9 @@ type DocumentsPhase = 'approved' | 'rejected' | 'pending-review' | 'requested' |
 function documentsPhase(a: AdminApplication): DocumentsPhase {
   if (a.documentsApprovedAt) return 'approved';
   if (a.documentsRejectedAt) return 'rejected';
-  if (a.financialProofPath && a.unpaidRentInsurancePath) return 'pending-review';
+  const requiredDocsUploaded =
+    a.occupationType === 'estudiante' ? a.financialProofPath && a.unpaidRentInsurancePath : a.payslipPath;
+  if (requiredDocsUploaded) return 'pending-review';
   if (a.documentsRequestedAt) return 'requested';
   return 'not-requested';
 }
@@ -81,22 +85,35 @@ export default async function AdminSolicitudesPage() {
                     const phase = documentsPhase(a);
                     const viewLinks = (
                       <div className="flex flex-col gap-1">
-                        <a
-                          href={`/api/admin/applications/${a.id}/documents/financial-proof`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs font-semibold text-vivi-navy hover:underline"
-                        >
-                          Ver nómina / solvencia
-                        </a>
-                        <a
-                          href={`/api/admin/applications/${a.id}/documents/unpaid-rent-insurance`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs font-semibold text-vivi-navy hover:underline"
-                        >
-                          Ver seguro de impago
-                        </a>
+                        {a.occupationType === 'estudiante' ? (
+                          <>
+                            <a
+                              href={`/api/admin/applications/${a.id}/documents/financial-proof`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs font-semibold text-vivi-navy hover:underline"
+                            >
+                              Ver solvencia económica
+                            </a>
+                            <a
+                              href={`/api/admin/applications/${a.id}/documents/unpaid-rent-insurance`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs font-semibold text-vivi-navy hover:underline"
+                            >
+                              Ver seguro de impago
+                            </a>
+                          </>
+                        ) : (
+                          <a
+                            href={`/api/admin/applications/${a.id}/documents/payslip`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-xs font-semibold text-vivi-navy hover:underline"
+                          >
+                            Ver nómina
+                          </a>
+                        )}
                       </div>
                     );
 
