@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { Star } from 'lucide-react';
 import { getSessionUser, getOwnProfile } from '@/lib/supabase/session.server';
+import { getSiteReviews } from '@/lib/reviews.server';
+import { formatDateEs } from '@/lib/format';
 import PublicShowcase from '@/components/PublicShowcase';
 
 // Depende de la sesión (redirige a /rooms si ya está aprobado): nunca cachear.
@@ -15,6 +18,10 @@ export default async function HomePage() {
     if (profile?.applicationStatus === 'APPROVED') redirect('/rooms');
     pendingReview = !!profile;
   }
+
+  const siteReviews = await getSiteReviews();
+  const siteAverage =
+    siteReviews.length > 0 ? siteReviews.reduce((sum, r) => sum + r.rating, 0) / siteReviews.length : null;
 
   return (
     <>
@@ -73,6 +80,47 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {siteReviews.length > 0 && (
+        <section className="bg-white py-16">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="flex items-center gap-2">
+              <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Testimonios</p>
+            </div>
+            <div className="mt-2 flex items-center gap-2">
+              <h2 className="text-2xl font-extrabold text-vivi-ink sm:text-3xl">Lo que dicen quienes ya alquilaron</h2>
+              {siteAverage !== null && (
+                <span className="flex items-center gap-1 text-sm font-semibold text-vivi-ink">
+                  <Star width={16} height={16} className="fill-vivi-mint text-vivi-mint" />
+                  {siteAverage.toFixed(1)}
+                </span>
+              )}
+            </div>
+            <div className="mt-8 grid gap-6 sm:grid-cols-3">
+              {siteReviews.slice(0, 6).map((review) => (
+                <div key={review.id} className="rounded-2xl border border-slate-200 p-6">
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <Star
+                        key={n}
+                        width={14}
+                        height={14}
+                        className={n <= review.rating ? 'fill-vivi-mint text-vivi-mint' : 'text-slate-300'}
+                      />
+                    ))}
+                  </div>
+                  {review.comment && (
+                    <p className="mt-3 text-sm leading-relaxed text-vivi-muted">{review.comment}</p>
+                  )}
+                  <p className="mt-3 text-xs font-semibold text-vivi-ink">
+                    {review.reviewerName} · {formatDateEs(review.createdAt)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section id="faq" className="mx-auto max-w-6xl px-6 py-20">
         <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Preguntas frecuentes</p>

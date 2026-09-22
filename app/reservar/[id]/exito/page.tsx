@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fetchRoomById } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
-import { getOwnBookingStatus } from '@/lib/bookings.server';
+import { getOwnBooking } from '@/lib/bookings.server';
+import { canReviewManager, canReviewSite } from '@/lib/reviews.server';
 import { calculateBookingTotal } from '@/lib/rooms';
 import PostPaymentPanel from '@/components/PostPaymentPanel';
 
@@ -16,16 +17,24 @@ export default async function ReservaExitoPage({ params }: { params: { id: strin
   // El estado real de la reserva decide qué se muestra: antes esta página
   // anunciaba "Pago recibido" a cualquiera que la abriera, incluso si el pago
   // nunca se confirmó o si entró escribiendo la URL a mano.
-  const status = await getOwnBookingStatus(userId, params.id);
+  const booking = await getOwnBooking(userId, params.id);
   const { deposit, total } = calculateBookingTotal(room.price);
+  const [canReviewMgr, canReviewSvc] = await Promise.all([
+    canReviewManager(userId, room.managerEmail),
+    canReviewSite(userId),
+  ]);
 
   return (
     <section className="mx-auto max-w-2xl px-6 py-20 text-center">
       <PostPaymentPanel
         room={room}
-        alreadyPaid={status === 'pagado'}
+        alreadyPaid={booking?.status === 'pagado'}
         deposit={deposit}
         total={total}
+        visitStatus={booking?.visitStatus ?? 'pendiente'}
+        visitAt={booking?.visitAt ?? null}
+        canReviewManager={canReviewMgr}
+        canReviewSite={canReviewSvc}
       />
 
       <Link

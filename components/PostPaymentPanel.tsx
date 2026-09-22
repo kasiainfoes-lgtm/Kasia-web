@@ -1,10 +1,22 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { Room } from '@/lib/rooms';
+import type { VisitStatus } from '@/lib/bookings.server';
+import ReviewForm from '@/components/ReviewForm';
+import SiteReviewForm from '@/components/SiteReviewForm';
 
-type Props = { room: Room; alreadyPaid: boolean; deposit: number; total: number };
+type Props = {
+  room: Room;
+  alreadyPaid: boolean;
+  deposit: number;
+  total: number;
+  visitStatus: VisitStatus;
+  visitAt: string | null;
+  canReviewManager: boolean;
+  canReviewSite: boolean;
+};
 
 export default function PostPaymentPanel(props: Props) {
   return (
@@ -19,17 +31,29 @@ export default function PostPaymentPanel(props: Props) {
 // "Pago recibido" en ese caso.
 type ConfirmState = 'checking' | 'ok' | 'demo' | 'failed';
 
-function PostPaymentPanelInner({ room, alreadyPaid, deposit, total }: Props) {
+function PostPaymentPanelInner({
+  room,
+  alreadyPaid,
+  deposit,
+  total,
+  visitStatus,
+  visitAt: initialVisitAt,
+  canReviewManager,
+  canReviewSite,
+}: Props) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
 
   const [confirm, setConfirm] = useState<ConfirmState>(
     alreadyPaid ? 'ok' : sessionId ? 'checking' : 'failed'
   );
-  const [visitAt, setVisitAt] = useState('');
+  const [visitAtInput, setVisitAtInput] = useState('');
   const [scheduling, setScheduling] = useState(false);
   const [scheduleError, setScheduleError] = useState<string | null>(null);
-  const [scheduled, setScheduled] = useState(false);
+  const [showRescheduleForm, setShowRescheduleForm] = useState(false);
+  const [markingDone, setMarkingDone] = useState(false);
+  const [markDoneError, setMarkDoneError] = useState<string | null>(null);
 
   useEffect(() => {
     if (alreadyPaid || !sessionId) return;
@@ -49,7 +73,7 @@ function PostPaymentPanelInner({ room, alreadyPaid, deposit, total }: Props) {
     const res = await fetch('/api/bookings/schedule-visit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomId: room.id, visitAt }),
+      body: JSON.stringify({ roomId: room.id, visitAt: visitAtInput }),
     });
     setScheduling(false);
     if (!res.ok) {
@@ -57,7 +81,26 @@ function PostPaymentPanelInner({ room, alreadyPaid, deposit, total }: Props) {
       setScheduleError(error);
       return;
     }
-    setScheduled(true);
+    setShowRescheduleForm(false);
+    router.refresh();
+  }
+
+  async function handleMarkVisitDone() {
+    if (!window.confirm('¿Confirmás que ya se realizó la visita?')) return;
+    setMarkingDone(true);
+    setMarkDoneError(null);
+    const res = await fetch('/api/bookings/visit-done', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomId: room.id }),
+    });
+    setMarkingDone(false);
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: 'No pudimos actualizar la visita.' }));
+      setMarkDoneError(error);
+      return;
+    }
+    router.refresh();
   }
 
   const confirmed = confirm === 'ok' || confirm === 'demo';
@@ -145,17 +188,39 @@ function PostPaymentPanelInner({ room, alreadyPaid, deposit, total }: Props) {
         {confirmed && (
           <div className="rounded-2xl border border-slate-200 bg-white p-6">
             <p className="text-sm font-bold text-vivi-ink">Agenda tu visita</p>
-            {scheduled ? (
-              <p className="mt-3 text-sm text-red-700">
-                ✓ Visita agendada para {new Date(visitAt).toLocaleString('es-ES')}
-              </p>
+            {visitStatus === 'hecha' ? (
+              <p className="mt-3 text-sm text-red-700">✓ Visita realizada</p>
+            ) : visitStatus === 'agendada' && !showRescheduleForm ? (
+              <>
+                <p className="mt-3 text-sm text-red-700">
+                  ✓ Visita agendada para {initialVisitAt ? new Date(initialVisitAt).toLocaleString('es-ES') : '—'}
+                </p>
+                <div className="mt-3 flex gap-3">
+                  <button
+                    type="button"
+                    disabled={markingDone}
+                    onClick={handleMarkVisitDone}
+                    className="rounded-lg bg-vivi-navy px-4 py-2 text-xs font-semibold text-white disabled:opacity-60"
+                  >
+                    {markingDone ? 'Guardando…' : 'Marcar visita realizada'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowRescheduleForm(true)}
+                    className="rounded-lg border border-slate-300 px-4 py-2 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
+                  >
+                    Cambiar fecha
+                  </button>
+                </div>
+                {markDoneError && <p className="mt-2 text-xs text-red-600">{markDoneError}</p>}
+              </>
             ) : (
               <form onSubmit={handleSchedule} className="mt-3 space-y-3">
                 <input
                   type="datetime-local"
                   required
-                  value={visitAt}
-                  onChange={(e) => setVisitAt(e.target.value)}
+                  value={visitAtInput}
+                  onChange={(e) => setVisitAtInput(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
                 />
                 <button
@@ -171,6 +236,13 @@ function PostPaymentPanelInner({ room, alreadyPaid, deposit, total }: Props) {
           </div>
         )}
       </div>
+
+      {confirmed && visitStatus === 'hecha' && (canReviewManager || canReviewSite) && (
+        <div className="mt-8 grid gap-6 text-left sm:grid-cols-2">
+          {canReviewManager && <ReviewForm roomId={room.id} managerName={room.manager} />}
+          {canReviewSite && <SiteReviewForm />}
+        </div>
+      )}
     </>
   );
 }

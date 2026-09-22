@@ -217,7 +217,7 @@ export function rejectedEmailTemplate(name: string) {
   };
 }
 
-export function reviewRequestEmailTemplate(roomTitle: string, roomUrl: string) {
+export function reviewRequestEmailTemplate(roomTitle: string, reviewUrl: string) {
   const safeTitle = escapeHtml(roomTitle);
   return {
     subject: `¿Cómo te está yendo en ${roomTitle}? — Kasia`,
@@ -225,13 +225,49 @@ export function reviewRequestEmailTemplate(roomTitle: string, roomUrl: string) {
       '¿Nos contás cómo te fue?',
       `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">¡Hola!</p>
        <p style="margin:0 0 24px;color:#3A4356;font-size:14px;line-height:1.6;">
-         Ya pasaron un par de meses desde que te mudaste a <strong>${safeTitle}</strong>. Nos
-         ayudaría mucho que dejes una reseña contando cómo fue tu experiencia — le sirve a otras
-         personas que están buscando alojamiento.
+         Ya visitaste <strong>${safeTitle}</strong>. Nos ayudaría mucho que dejes una reseña de tu
+         asesor/a y de tu experiencia en general con Kasia — le sirve a otras personas que están
+         buscando alojamiento.
        </p>
-       <a href="${roomUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
+       <a href="${reviewUrl}" style="display:inline-block;background:#0B1B3B;color:#ffffff;font-weight:700;font-size:14px;padding:12px 24px;border-radius:12px;text-decoration:none;">
          Dejar mi reseña
        </a>`
+    ),
+  };
+}
+
+export function visitScheduledEmailTemplate(roomTitle: string, visitAtLabel: string) {
+  const safeTitle = escapeHtml(roomTitle);
+  const safeDate = escapeHtml(visitAtLabel);
+  return {
+    subject: `Visita agendada para ${roomTitle} — Kasia`,
+    html: wrapper(
+      'Tu visita quedó agendada',
+      `<p style="margin:0;color:#3A4356;font-size:14px;line-height:1.6;">
+         Agendaste tu visita a <strong>${safeTitle}</strong> para el <strong>${safeDate}</strong>.
+         Tu asesor/a te espera ahí. Si necesitás cambiar el horario, podés hacerlo desde la misma
+         página de tu reserva.
+       </p>`
+    ),
+  };
+}
+
+export function visitScheduledAdminNotificationEmailTemplate(
+  roomTitle: string,
+  customerEmail: string,
+  visitAtLabel: string
+) {
+  const safeTitle = escapeHtml(roomTitle);
+  const safeEmail = escapeHtml(customerEmail);
+  const safeDate = escapeHtml(visitAtLabel);
+  return {
+    subject: `Nueva visita agendada — ${roomTitle}`,
+    html: wrapper(
+      'Nueva visita agendada',
+      `<p style="margin:0;color:#3A4356;font-size:14px;line-height:1.6;">
+         <strong>${safeEmail}</strong> agendó una visita a <strong>${safeTitle}</strong> para el
+         <strong>${safeDate}</strong>. Podés ver todas las visitas agendadas en el panel interno.
+       </p>`
     ),
   };
 }

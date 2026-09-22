@@ -5,6 +5,7 @@ export type BookingRow = {
   roomId: string;
   roomTitle: string;
   roomZone: string;
+  manager: string;
   userEmail: string | null;
   status: 'nuevo' | 'verificado' | 'revision' | 'pagado';
   amount: number | null;
@@ -21,7 +22,7 @@ export async function fetchAllBookings(): Promise<BookingRow[]> {
 
   const { data, error } = await admin
     .from('bookings')
-    .select('*, properties!bookings_room_id_fkey(title, zone)')
+    .select('*, properties!bookings_room_id_fkey(title, zone, manager)')
     .order('created_at', { ascending: false });
 
   if (error || !data) return [];
@@ -31,6 +32,7 @@ export async function fetchAllBookings(): Promise<BookingRow[]> {
     roomId: row.room_id,
     roomTitle: row.properties?.title ?? row.room_id,
     roomZone: row.properties?.zone ?? '—',
+    manager: row.properties?.manager ?? '—',
     userEmail: row.user_email,
     status: row.status,
     amount: row.amount ? Number(row.amount) : null,

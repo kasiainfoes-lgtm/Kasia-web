@@ -56,3 +56,36 @@ export async function canReviewManager(userId: string, managerEmail: string): Pr
 
   return !!matchingRoom;
 }
+
+// Reseña del servicio en general (no de un asesor puntual) — se muestran como
+// testimonios en la home. Igual regla que las de asesor: hace falta una
+// reserva pagada, una por persona.
+export async function getSiteReviews(): Promise<Review[]> {
+  const supabase = createClient();
+  if (!supabase) return [];
+
+  const { data } = await supabase
+    .from('site_reviews')
+    .select('id, reviewer_name, rating, comment, created_at')
+    .order('created_at', { ascending: false });
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    reviewerName: row.reviewer_name,
+    rating: row.rating,
+    comment: row.comment,
+    createdAt: row.created_at,
+  }));
+}
+
+export async function canReviewSite(userId: string): Promise<boolean> {
+  const supabase = createClient();
+  if (!supabase) return false;
+
+  const [{ data: paidBookings }, { data: existingReview }] = await Promise.all([
+    supabase.from('bookings').select('id').eq('user_id', userId).eq('status', 'pagado').limit(1),
+    supabase.from('site_reviews').select('id').eq('user_id', userId).maybeSingle(),
+  ]);
+
+  return !existingReview && !!paidBookings && paidBookings.length > 0;
+}

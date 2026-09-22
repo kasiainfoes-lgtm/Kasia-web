@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     const room = await fetchRoomById(booking.room_id);
     if (!room) continue;
 
-    const { subject, html } = reviewRequestEmailTemplate(room.title, `${siteUrl}/rooms/${room.id}`);
+    const { subject, html } = reviewRequestEmailTemplate(room.title, `${siteUrl}/reservar/${room.id}/exito`);
     const result = await sendEmail({ to: booking.user_email, subject, html });
     // Si Resend falla, dejamos review_reminder_sent_at sin marcar para
     // reintentar mañana en vez de perder el recordatorio para siempre.

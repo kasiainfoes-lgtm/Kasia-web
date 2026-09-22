@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getAdminUser } from '@/lib/require-admin.server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { fetchRoomById } from '@/lib/properties.server';
+import { sendEmail } from '@/lib/email.server';
+import { reviewRequestEmailTemplate } from '@/lib/email-templates';
+import { resolveSiteUrl } from '@/lib/site-url';
 
 export async function POST(request: Request) {
   const user = await getAdminUser();
@@ -14,13 +18,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Estado inválido' }, { status: 400 });
   }
 
-  const { error } = await admin
+  const { data: booking, error } = await admin
     .from('bookings')
     .update({ visit_status: visitStatus, updated_at: new Date().toISOString() })
-    .eq('id', bookingId);
+    .eq('id', bookingId)
+    .select('room_id, user_email')
+    .single();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  if (visitStatus === 'hecha' && booking?.user_email) {
+    // Best-effort: la visita ya quedó marcada como hecha aunque falle el email.
+    try {
+      const room = await fetchRoomById(booking.room_id);
+      if (room) {
+        const siteUrl = resolveSiteUrl(request);
+        const { subject, html } = reviewRequestEmailTemplate(room.title, `${siteUrl}/reservar/${room.id}/exito`);
+        await sendEmail({ to: booking.user_email, subject, html });
+      }
+    } catch {
+      // best-effort, ver comentario arriba
+    }
+  }
+
   return NextResponse.json({ ok: true });
 }

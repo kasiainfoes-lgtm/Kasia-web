@@ -162,6 +162,35 @@ create policy "users review advisors of rooms they booked and paid for"
   );
 
 -- ============================================================================
+-- Reseñas del servicio en general (no de un asesor puntual): una por persona,
+-- pensadas para mostrarse como testimonios en la home (/). Igual que
+-- `reviews`, solo puede dejarla quien tenga alguna reserva pagada.
+-- ============================================================================
+create table if not exists public.site_reviews (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  reviewer_name text not null,
+  rating int not null check (rating between 1 and 5),
+  comment text,
+  created_at timestamptz not null default now()
+);
+
+create unique index if not exists site_reviews_user_id_key on public.site_reviews (user_id);
+
+alter table public.site_reviews enable row level security;
+
+create policy "site reviews are publicly readable"
+  on public.site_reviews for select
+  using (true);
+
+create policy "users review the service once they have a paid booking"
+  on public.site_reviews for insert
+  with check (
+    auth.uid() = user_id
+    and exists (select 1 from public.bookings b where b.user_id = auth.uid() and b.status = 'pagado')
+  );
+
+-- ============================================================================
 -- Integraciones: acá se guardan las claves de Stripe y Didit cuando las cargás
 -- desde /admin/integraciones en vez de configurarlas como variables de entorno.
 -- Es una sola fila (id=1). No tiene ninguna policy de RLS a propósito: ni
@@ -320,10 +349,10 @@ values ('property-photos', 'property-photos', true)
 on conflict (id) do nothing;
 
 -- ============================================================================
--- Documentos del formulario de compatibilidad: cuando alguien contesta que es
--- estudiante en /apply, tiene que subir comprobante de solvencia económica y
--- seguro de impago antes de poder enviar la solicitud (ver /api/apply/documents
--- y lib/application-scoring.ts). Se guardan acá, en un bucket privado.
+-- Documentos que se piden desde /admin/solicitudes cuando hace falta más
+-- información para decidir una solicitud (solvencia económica + seguro de
+-- impago para estudiantes, nómina para trabajadores — ver
+-- /api/apply/documents). Se guardan acá, en un bucket privado.
 -- ============================================================================
 insert into storage.buckets (id, name, public)
 values ('application-documents', 'application-documents', false)
@@ -341,3 +370,28 @@ on conflict (id) do nothing;
 insert into storage.buckets (id, name, public)
 values ('payment-proofs', 'payment-proofs', false)
 on conflict (id) do nothing;
+
+-- Si ya tenías este proyecto corriendo, ejecutá esto una vez para agregar las
+-- reseñas del servicio en general (testimonios en la home) y el nombre del
+-- asesor/a en el panel de reservas:
+-- create table if not exists public.site_reviews (
+--   id uuid primary key default gen_random_uuid(),
+--   user_id uuid not null references auth.users(id) on delete cascade,
+--   reviewer_name text not null,
+--   rating int not null check (rating between 1 and 5),
+--   comment text,
+--   created_at timestamptz not null default now()
+-- );
+-- create unique index if not exists site_reviews_user_id_key on public.site_reviews (user_id);
+-- alter table public.site_reviews enable row level security;
+-- drop policy if exists "site reviews are publicly readable" on public.site_reviews;
+-- create policy "site reviews are publicly readable"
+--   on public.site_reviews for select
+--   using (true);
+-- drop policy if exists "users review the service once they have a paid booking" on public.site_reviews;
+-- create policy "users review the service once they have a paid booking"
+--   on public.site_reviews for insert
+--   with check (
+--     auth.uid() = user_id
+--     and exists (select 1 from public.bookings b where b.user_id = auth.uid() and b.status = 'pagado')
+--   );
