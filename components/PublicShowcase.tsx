@@ -6,17 +6,19 @@ const SAMPLES = [
 
 export default function PublicShowcase() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
-      <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Nuestras habitaciones</p>
-      <h2 className="mt-2 text-2xl font-extrabold text-vivi-ink sm:text-3xl">
-        Habitaciones pensadas para quedarte.
-      </h2>
-      <p className="mt-2 max-w-xl text-sm text-vivi-muted">
-        Este es el estilo y el estándar que vas a encontrar. La disponibilidad exacta, con precios y
-        fechas reales, se desbloquea al completar tu perfil de búsqueda.
-      </p>
+    <section className="mx-auto max-w-6xl px-6 py-20">
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Nuestras habitaciones</p>
+        <h2 className="mt-2 text-2xl font-extrabold text-vivi-ink sm:text-3xl">
+          Habitaciones pensadas para quedarte.
+        </h2>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-vivi-muted">
+          Este es el estilo y el estándar que vas a encontrar. La disponibilidad exacta, con precios y
+          fechas reales, se desbloquea al completar tu perfil de búsqueda.
+        </p>
+      </div>
 
-      <div className="mt-8 grid gap-6 sm:grid-cols-3">
+      <div className="mt-10 grid gap-6 sm:grid-cols-3">
         {SAMPLES.map((s) => (
           <div key={s.zone} className="rounded-2xl border border-slate-200 bg-white p-4">
             <div
