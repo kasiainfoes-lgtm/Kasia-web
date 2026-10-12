@@ -7,4 +7,9 @@
 export const APP_ID_COOKIE = 'vivi_app_id';
 export const APP_DEMO_STATUS_COOKIE = 'vivi_app_demo_status';
 
-export const APP_COOKIE_MAX_AGE = 60 * 60; // 1 hora: alcanza para terminar el alta
+// 30 días (igual que APPLICATION_COOLDOWN_DAYS): antes duraba 1 hora, así que
+// alguien que volvía a la página horas o días después de aprobarse (la
+// revisión es manual, no instantánea) se encontraba con el formulario vacío
+// de nuevo en vez de con su resultado — ver /apply, que ahora revisa esta
+// cookie antes de mostrar el formulario.
+export const APP_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
