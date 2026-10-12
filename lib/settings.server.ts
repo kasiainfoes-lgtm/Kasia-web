@@ -3,8 +3,6 @@ import { createAdminClient } from '@/lib/supabase/admin';
 
 export type AppSettings = {
   stripeSecretKey: string | null;
-  diditApiKey: string | null;
-  diditWorkflowId: string | null;
   resendApiKey: string | null;
   emailFrom: string | null;
 };
@@ -19,14 +17,12 @@ export type AppSettings = {
 export const getAppSettings = cache(async function getAppSettings(): Promise<AppSettings> {
   const admin = createAdminClient();
   if (!admin) {
-    return { stripeSecretKey: null, diditApiKey: null, diditWorkflowId: null, resendApiKey: null, emailFrom: null };
+    return { stripeSecretKey: null, resendApiKey: null, emailFrom: null };
   }
 
   const { data } = await admin.from('app_settings').select('*').eq('id', 1).single();
   return {
     stripeSecretKey: data?.stripe_secret_key || null,
-    diditApiKey: data?.didit_api_key || null,
-    diditWorkflowId: data?.didit_workflow_id || null,
     resendApiKey: data?.resend_api_key || null,
     emailFrom: data?.email_from || null,
   };
@@ -35,14 +31,6 @@ export const getAppSettings = cache(async function getAppSettings(): Promise<App
 export async function resolveStripeSecretKey(): Promise<string | null> {
   const settings = await getAppSettings();
   return settings.stripeSecretKey || process.env.STRIPE_SECRET_KEY || null;
-}
-
-export async function resolveDiditConfig(): Promise<{ apiKey: string | null; workflowId: string | null }> {
-  const settings = await getAppSettings();
-  return {
-    apiKey: settings.diditApiKey || process.env.DIDIT_API_KEY || null,
-    workflowId: settings.diditWorkflowId || process.env.DIDIT_WORKFLOW_ID || null,
-  };
 }
 
 export async function resolveResendConfig(): Promise<{ apiKey: string | null; from: string | null }> {

@@ -9,7 +9,7 @@ import BookingTerms from '@/components/BookingTerms';
 import TransferPayment from '@/components/TransferPayment';
 import type { OwnBooking } from '@/lib/bookings.server';
 
-const steps = ['Comprobación de identidad', 'Aceptar condiciones', 'Transferencia'];
+const steps = ['Aceptar condiciones', 'Transferencia'];
 
 export default function BookingWizard({
   room,
@@ -21,17 +21,14 @@ export default function BookingWizard({
   const router = useRouter();
   const supabase = createClient();
   const status = initialBooking?.status ?? null;
-  const alreadyVerified = status === 'verificado' || status === 'revision' || status === 'pagado';
   const termsAlreadyAccepted = !!initialBooking?.termsAcceptedAt;
 
-  const [step, setStep] = useState(termsAlreadyAccepted ? 2 : alreadyVerified ? 1 : 0);
+  const [step, setStep] = useState(termsAlreadyAccepted ? 1 : 0);
   const [confirmed, setConfirmed] = useState(status === 'pagado');
   const [pendingReview, setPendingReview] = useState(status === 'revision');
   const [rejectionNote, setRejectionNote] = useState(initialBooking?.transferReviewRejectionNote ?? null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [kycVerified, setKycVerified] = useState(alreadyVerified);
   const [termsAccepted, setTermsAccepted] = useState(termsAlreadyAccepted);
-  const [kycNote, setKycNote] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
   const { deposit, total } = calculateBookingTotal(room.price);
@@ -62,7 +59,7 @@ export default function BookingWizard({
   // Solo registra la etapa 'nuevo' si todavía no existe ninguna reserva para
   // esta persona y habitación — si ya había una más avanzada (verificado,
   // en revisión, pagado) del lado del servidor, esto la pisaba de vuelta a
-  // 'nuevo' cada vez que la página se recargaba (por ejemplo, al volver de Didit).
+  // 'nuevo' cada vez que la página se recargaba.
   useEffect(() => {
     if (!userEmail || status) return;
     upsertStage('nuevo');
@@ -70,8 +67,7 @@ export default function BookingWizard({
   }, [userEmail, status]);
 
   const isLastStep = step === steps.length - 1;
-  const kycRequired = step === 0 && !kycVerified;
-  const termsRequired = step === 1 && !termsAccepted;
+  const termsRequired = step === 0 && !termsAccepted;
 
   function upsertStage(stageStatus: 'nuevo' | 'verificado', termsAcceptedNow = false) {
     fetch('/api/bookings/upsert', {
@@ -82,33 +78,6 @@ export default function BookingWizard({
       // El seguimiento en el panel interno es best-effort: si Supabase no está
       // configurado todavía, la reserva sigue funcionando igual.
     });
-  }
-
-  async function handleVerifyKyc() {
-    setKycNote(null);
-    const res = await fetch('/api/kyc', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomId: room.id }),
-    });
-    if (res.ok) {
-      const { url } = await res.json();
-      if (url) {
-        upsertStage('verificado');
-        window.location.href = url;
-        return;
-      }
-    }
-    // 501 es el único caso en que el servidor dice "Didit no está configurado".
-    // Cualquier otro error es real: dar por verificada la identidad ahí sería
-    // saltarse el KYC por una caída de red.
-    if (res.status !== 501) {
-      setKycNote('No pudimos iniciar la verificación. Vuelve a intentarlo en unos minutos.');
-      return;
-    }
-    setKycNote('Modo demo: Didit todavía no está conectado (ver SETUP.md). Verificación simulada.');
-    setKycVerified(true);
-    upsertStage('verificado');
   }
 
   return (
@@ -147,27 +116,6 @@ export default function BookingWizard({
         </ol>
 
         {step === 0 && (
-          <div className="mt-6 rounded-xl bg-slate-50 p-4">
-            {kycVerified ? (
-              <p className="text-sm font-semibold text-red-700">✓ Identidad verificada</p>
-            ) : (
-              <>
-                <p className="text-sm text-vivi-muted">
-                  Verifica tu identidad con documento + selfie para poder reservar.
-                </p>
-                <button
-                  onClick={handleVerifyKyc}
-                  className="mt-3 rounded-lg bg-vivi-navy px-4 py-2 text-sm font-semibold text-white"
-                >
-                  Verificar identidad con Didit
-                </button>
-              </>
-            )}
-            {kycNote && <p className="mt-2 text-xs text-vivi-muted">{kycNote}</p>}
-          </div>
-        )}
-
-        {step === 1 && (
           <BookingTerms
             roomTitle={room.title}
             zone={room.zone}
@@ -208,10 +156,10 @@ export default function BookingWizard({
               </button>
             )}
             <button
-              disabled={kycRequired || termsRequired}
+              disabled={termsRequired}
               onClick={() => {
                 // Deja constancia de cuándo aceptó las condiciones, antes de pagar.
-                if (step === 1) upsertStage('verificado', true);
+                if (step === 0) upsertStage('verificado', true);
                 setStep((s) => s + 1);
               }}
               className="rounded-xl bg-vivi-navy px-5 py-2.5 text-sm font-semibold text-white hover:bg-vivi-navyLight disabled:cursor-not-allowed disabled:opacity-50"

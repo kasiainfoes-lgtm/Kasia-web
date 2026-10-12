@@ -11,10 +11,8 @@ export default async function ReservarPage({ params }: { params: { id: string } 
   const room = await fetchRoomById(params.id);
   if (!room) return notFound();
 
-  // Didit redirige de vuelta a esta misma página tras el KYC, recargándola
-  // por completo — sin esto, el wizard perdía el progreso guardado en
-  // BookingWizard (estado de React, no sobrevive un reload) y volvía a pedir
-  // verificar desde cero aunque ya había quedado registrado en el servidor.
+  // El progreso (condiciones aceptadas, etc) vive en el servidor, no solo en
+  // el estado de React del wizard — así sobrevive un reload de la página.
   const booking = await getOwnBooking(userId, room.id);
 
   return (

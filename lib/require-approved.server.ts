@@ -21,9 +21,9 @@ export async function requireApprovedAccess(nextPath: string): Promise<ApprovedA
 }
 
 // Misma comprobación para rutas de API, que no pueden redirigir: devuelve null
-// y cada route handler decide el status. Sin esto, /api/checkout y /api/kyc
-// quedaban abiertos a cualquiera, y cada llamada anónima creaba una sesión de
-// Stripe o de Didit (que se cobran por uso).
+// y cada route handler decide el status. Sin esto, /api/checkout quedaba
+// abierto a cualquiera, y cada llamada anónima creaba una sesión de Stripe
+// (que se cobra por uso).
 export async function getApprovedUser(): Promise<ApprovedAccess | null> {
   const supabase = createClient();
   if (!supabase) return null;

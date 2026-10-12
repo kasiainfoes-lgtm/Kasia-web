@@ -1,9 +1,9 @@
 # Conectar Kasia a servicios reales
 
 Esta app funciona en "modo demo" sin configurar nada (con 9 habitaciones de ejemplo y
-pagos/verificación simulados). Para que sea real seguí estos pasos. Solo el primer
-paso (Supabase) toca variables de entorno — Stripe y Didit se cargan directamente
-desde el panel interno, sin redesplegar nada.
+pagos simulados). Para que sea real seguí estos pasos. Solo el primer paso (Supabase)
+toca variables de entorno — Stripe se carga directamente desde el panel interno, sin
+redesplegar nada.
 
 ## 1. Supabase — login, catálogo y panel interno
 
@@ -12,7 +12,7 @@ desde el panel interno, sin redesplegar nada.
    `supabase/schema.sql` de este repo y tocá **Run**. Esto crea las tablas:
    - `properties`: el catálogo, con 9 habitaciones de ejemplo.
    - `bookings`: cada reserva, con su etapa, pago y visita — alimenta el panel interno.
-   - `app_settings`: donde quedan guardadas las claves de Stripe/Didit cuando las
+   - `app_settings`: donde quedan guardadas las claves de Stripe/Resend cuando las
      cargás desde `/admin/integraciones`.
    - `applications`: cada solicitud del formulario de compatibilidad (`/apply`),
      con su resultado (`APPROVED` / `REVIEW` / `NOT_ELIGIBLE`).
@@ -116,7 +116,7 @@ podés:
 desde Dashboard → Table Editor, pero ya no hace falta — el panel de `/admin` es más
 simple.)
 
-## 4. Stripe, Didit y Resend — desde el panel, sin tocar variables de entorno
+## 4. Stripe y Resend — desde el panel, sin tocar variables de entorno
 
 Andá a **Panel interno → Integraciones**:
 
@@ -134,20 +134,11 @@ Andá a **Panel interno → Integraciones**:
   Al tocar "Guardar", ya queda activo — no hace falta redesplegar. Cuando quieras
   cobrar de verdad, activá tu cuenta de Stripe y pegá la clave de modo real
   (`sk_live_...`) en el mismo lugar.
-- **Didit** (verificación de identidad): creá una cuenta en [Didit](https://didit.me),
-  armá un "workflow" de verificación (documento + selfie), y pegá tu **API key** y el
-  **ID del workflow** en el panel.
-  **Importante:** la integración en `app/api/kyc/route.ts` está armada según el
-  patrón habitual de la API de Didit (crear una sesión, redirigir a la URL que
-  devuelve). Antes de depender de esto en producción, confirmá contra la
-  [documentación actual de Didit](https://docs.didit.me) que el endpoint, el header
-  de la API key y los campos de la respuesta siguen siendo los mismos — las APIs de
-  terceros cambian con el tiempo.
 
 Si en algún momento preferís configurarlas como variables de entorno en vez del
 panel (por ejemplo para tener un valor por defecto en todos los ambientes), también
-funciona: `STRIPE_SECRET_KEY`, `DIDIT_API_KEY`, `DIDIT_WORKFLOW_ID` en `.env.local`.
-Lo que cargues desde el panel siempre tiene prioridad sobre la variable de entorno.
+funciona: `STRIPE_SECRET_KEY` en `.env.local`. Lo que cargues desde el panel siempre
+tiene prioridad sobre la variable de entorno.
 
 ## 5. Qué pasa después de que un cliente paga
 
@@ -178,5 +169,5 @@ variables de entorno del proyecto.
 
 La forma más simple es [Vercel](https://vercel.com) o Netlify: conectá el repo de
 GitHub, pegá las variables de entorno de Supabase del paso 5, y listo — cada push a
-la rama actualiza el sitio en vivo. Stripe y Didit no necesitan variables de entorno
-si los cargás desde `/admin/integraciones` (paso 3).
+la rama actualiza el sitio en vivo. Stripe no necesita variables de entorno si lo
+cargás desde `/admin/integraciones` (paso 3).

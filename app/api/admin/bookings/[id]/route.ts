@@ -53,8 +53,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
   const note = typeof body?.note === 'string' ? body.note.trim() : '';
   if (!note) return NextResponse.json({ error: 'Escribe una nota explicando qué corregir.' }, { status: 400 });
 
-  // Vuelve a 'verificado' (identidad + condiciones ya aceptadas) para que la
-  // persona pueda subir un comprobante nuevo sin repetir todo el wizard.
+  // Vuelve a 'verificado' (condiciones ya aceptadas) para que la persona
+  // pueda subir un comprobante nuevo sin repetir todo el wizard.
   const { error } = await admin
     .from('bookings')
     .update({

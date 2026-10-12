@@ -191,11 +191,16 @@ create policy "users review the service once they have a paid booking"
   );
 
 -- ============================================================================
--- Integraciones: acá se guardan las claves de Stripe y Didit cuando las cargás
--- desde /admin/integraciones en vez de configurarlas como variables de entorno.
--- Es una sola fila (id=1). No tiene ninguna policy de RLS a propósito: ni
--- anon ni authenticated pueden leerla ni escribirla, solo la service_role key
--- (que usa el servidor de /admin) puede saltarse RLS y acceder.
+-- Integraciones: acá se guardan las claves de Stripe cuando las cargás desde
+-- /admin/integraciones en vez de configurarlas como variables de entorno. Es
+-- una sola fila (id=1). No tiene ninguna policy de RLS a propósito: ni anon ni
+-- authenticated pueden leerla ni escribirla, solo la service_role key (que
+-- usa el servidor de /admin) puede saltarse RLS y acceder.
+--
+-- didit_api_key / didit_workflow_id quedan en la tabla sin usarse: la
+-- verificación de identidad con Didit se sacó del flujo de reserva (no
+-- aportaba datos accionables y era fricción extra antes de pagar), pero no
+-- hace falta borrar las columnas para eso.
 -- ============================================================================
 create table if not exists public.app_settings (
   id int primary key default 1,

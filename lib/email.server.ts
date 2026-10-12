@@ -3,7 +3,7 @@ import { resolveResendConfig } from '@/lib/settings.server';
 export type SendEmailResult = { ok: boolean; error?: string };
 
 // Usa la API de Resend directo por fetch (sin agregar su SDK como dependencia).
-// La clave y el remitente se resuelven igual que Stripe/Didit: primero lo
+// La clave y el remitente se resuelven igual que Stripe: primero lo
 // cargado desde /admin/integraciones, si no lo que haya en variables de entorno.
 export async function sendEmail({
   to,

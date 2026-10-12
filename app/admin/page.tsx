@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 
 const STAGE_LABEL: Record<string, string> = {
   nuevo: 'Nuevo',
-  verificado: 'Verificado',
+  verificado: 'Condiciones aceptadas',
   revision: 'En revisión',
   pagado: 'Pagado',
 };

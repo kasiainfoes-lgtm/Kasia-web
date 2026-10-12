@@ -1,4 +1,4 @@
-// Resuelve la URL pública del sitio para armar links de retorno (Stripe, Didit,
+// Resuelve la URL pública del sitio para armar links de retorno (Stripe,
 // emails). NEXT_PUBLIC_SITE_URL va primero porque detrás de un reverse proxy
 // (nginx -> pm2 en el VPS) que no reenvía el Host original, request.url termina
 // apuntando al host interno (localhost:3000) en vez del dominio público — eso
