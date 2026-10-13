@@ -2,6 +2,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getSessionUser, getOwnProfile } from '@/lib/supabase/session.server';
 import { getApplicationById } from '@/lib/applications.server';
+import { fetchRooms } from '@/lib/properties.server';
+import { uniqueZones } from '@/lib/rooms';
 import { APP_ID_COOKIE } from '@/lib/apply-session';
 import ApplyWizard from '@/components/ApplyWizard';
 
@@ -27,5 +29,8 @@ export default async function ApplyPage() {
     if (application) redirect('/apply/result');
   }
 
-  return <ApplyWizard />;
+  const rooms = await fetchRooms();
+  const zones = uniqueZones(rooms);
+
+  return <ApplyWizard zones={zones} />;
 }

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import type { Room } from '@/lib/rooms';
-import { normalizeZoneKey } from '@/lib/rooms';
+import { normalizeZoneKey, uniqueZones } from '@/lib/rooms';
 import { getFavorites } from '@/lib/favorites';
 import RoomCard from '@/components/RoomCard';
 import PropertiesMapLoader from '@/components/PropertiesMapLoader';
@@ -13,18 +13,7 @@ function parseDMY(s: string): Date {
 }
 
 export default function Catalog({ rooms }: { rooms: Room[] }) {
-  // Agrupadas por zona "normalizada" para que "Malvarrosa" y "Malva-Rosa" no
-  // aparezcan como dos pills distintas — se queda con la primera forma de
-  // escribirla que encuentra como etiqueta a mostrar.
-  const zones = Array.from(
-    rooms
-      .reduce((map, r) => {
-        const key = normalizeZoneKey(r.zone);
-        if (!map.has(key)) map.set(key, r.zone);
-        return map;
-      }, new Map<string, string>())
-      .values()
-  );
+  const zones = uniqueZones(rooms);
 
   const prices = rooms.map((r) => r.price);
   const priceMin = prices.length ? Math.min(...prices) : 0;

@@ -4,19 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ChoiceCard from '@/components/ChoiceCard';
 
-const ZONES = [
-  'Cualquier zona',
-  'Ruzafa',
-  'Benimaclet',
-  'Mestalla',
-  'El Carmen',
-  'Extramurs',
-  'Camins al Grau',
-  'Patraix',
-  'Algirós',
-  'Malvarrosa',
-];
-
 const DURATIONS = [3, 6, 9, 12, 18, 24];
 
 type PetType = 'perro' | 'gato' | 'otro' | '';
@@ -40,7 +27,8 @@ type FormState = {
 
 const STEP_TITLES = ['Tu búsqueda', 'Cómo vas a vivir', 'Tu perfil', 'Tus datos', 'Comprobando disponibilidad'];
 
-export default function ApplyWizard() {
+export default function ApplyWizard({ zones }: { zones: string[] }) {
+  const zoneOptions = ['Cualquier zona', ...zones];
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -126,7 +114,7 @@ export default function ApplyWizard() {
                 <option value="" disabled>
                   Elige una zona
                 </option>
-                {ZONES.map((z) => (
+                {zoneOptions.map((z) => (
                   <option key={z} value={z}>
                     {z}
                   </option>

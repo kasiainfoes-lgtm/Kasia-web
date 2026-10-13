@@ -68,6 +68,20 @@ const ZONE_COORDINATES_BY_KEY = new Map(
   Object.entries(ZONE_COORDINATES).map(([zone, coords]) => [normalizeZoneKey(zone), coords])
 );
 
+// Zonas que existen de verdad en el catálogo, agrupadas por zona
+// normalizada (ver normalizeZoneKey) y en el orden en que aparecen. Se usa
+// tanto para las pills del catálogo como para el desplegable de /apply: una
+// zona sin ninguna propiedad cargada no aparece como opción, y en cuanto se
+// carga la primera ahí sí aparece sola.
+export function uniqueZones(rooms: Pick<Room, 'zone'>[]): string[] {
+  const seen = new Map<string, string>();
+  for (const room of rooms) {
+    const key = normalizeZoneKey(room.zone);
+    if (!seen.has(key)) seen.set(key, room.zone);
+  }
+  return Array.from(seen.values());
+}
+
 export function roomCoordinates(room: Pick<Room, 'lat' | 'lng' | 'zone'>): { lat: number; lng: number } {
   if (room.lat && room.lng && isValidCoordinate(room.lat, room.lng)) return { lat: room.lat, lng: room.lng };
   return ZONE_COORDINATES_BY_KEY.get(normalizeZoneKey(room.zone)) ?? VALENCIA_CENTER;
