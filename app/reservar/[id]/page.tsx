@@ -22,9 +22,9 @@ export default async function ReservarPage({ params }: { params: { id: string } 
         Se reserva con fianza automática.
       </h1>
       <p className="mt-3 max-w-2xl text-sm text-vivi-muted">
-        No existe una seña separada. La fianza equivale a una mensualidad y se paga por
-        transferencia en el mismo momento de la reserva. Vivienda habitual, estancia mínima de 6
-        meses.
+        No existe una seña separada. La fianza equivale a una mensualidad y se paga con tarjeta,
+        de forma segura, en el mismo momento de la reserva. Vivienda habitual, estancia mínima de
+        6 meses.
       </p>
 
       <div className="mt-10">

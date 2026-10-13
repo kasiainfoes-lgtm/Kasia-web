@@ -6,10 +6,10 @@ import type { Room } from '@/lib/rooms';
 import { calculateBookingTotal } from '@/lib/rooms';
 import { createClient } from '@/lib/supabase/client';
 import BookingTerms from '@/components/BookingTerms';
-import TransferPayment from '@/components/TransferPayment';
+import StripeCheckoutButton from '@/components/StripeCheckoutButton';
 import type { OwnBooking } from '@/lib/bookings.server';
 
-const steps = ['Aceptar condiciones', 'Transferencia'];
+const steps = ['Aceptar condiciones', 'Pago'];
 
 export default function BookingWizard({
   room,
@@ -25,8 +25,6 @@ export default function BookingWizard({
 
   const [step, setStep] = useState(termsAlreadyAccepted ? 1 : 0);
   const [confirmed, setConfirmed] = useState(status === 'pagado');
-  const [pendingReview, setPendingReview] = useState(status === 'revision');
-  const [rejectionNote, setRejectionNote] = useState(initialBooking?.transferReviewRejectionNote ?? null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(termsAlreadyAccepted);
   const [cancelling, setCancelling] = useState(false);
@@ -127,7 +125,7 @@ export default function BookingWizard({
         )}
 
         {confirmed ? (
-          <div className="mt-8 rounded-xl bg-vivi-mintLight p-6 text-red-800">
+          <div className="mt-8 rounded-xl bg-vivi-mintLight p-6 text-vivi-mint">
             <p className="font-bold">Reserva confirmada</p>
             <p className="mt-2 text-sm">
               Pago recibido. El contacto con tu asesor/a y la agenda de visitas ya están disponibles, junto con
@@ -135,16 +133,7 @@ export default function BookingWizard({
             </p>
           </div>
         ) : isLastStep ? (
-          <TransferPayment
-            room={room}
-            deposit={deposit}
-            pendingReview={pendingReview}
-            rejectionNote={rejectionNote}
-            onSubmitted={() => {
-              setPendingReview(true);
-              setRejectionNote(null);
-            }}
-          />
+          <StripeCheckoutButton room={room} deposit={deposit} />
         ) : (
           <div className="mt-8 flex gap-3">
             {step > 0 && (
@@ -194,7 +183,7 @@ export default function BookingWizard({
             </>
           ) : (
             <div className="flex justify-between border-t border-stone-200 pt-3 text-base">
-              <dt className="font-bold text-vivi-ink">TOTAL A TRANSFERIR</dt>
+              <dt className="font-bold text-vivi-ink">TOTAL A PAGAR</dt>
               <dd className="font-extrabold text-vivi-ink">{total.toFixed(2)} €</dd>
             </div>
           )}
