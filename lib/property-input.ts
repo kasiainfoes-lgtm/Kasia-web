@@ -11,7 +11,6 @@ export type PropertyInput = {
   acceptsDogs: boolean;
   lat: number | null;
   lng: number | null;
-  photos: number;
   photoUrls: string[];
   colorFrom: string;
   colorTo: string;
@@ -51,7 +50,6 @@ export function toPropertyRow(input: PropertyInput) {
     accepts_dogs: input.acceptsDogs,
     lat: input.lat,
     lng: input.lng,
-    photos: input.photos,
     photo_urls: input.photoUrls,
     color_from: input.colorFrom,
     color_to: input.colorTo,

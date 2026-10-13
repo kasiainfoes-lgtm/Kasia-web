@@ -17,6 +17,8 @@ function toDMY(dateInput: string): string {
   return `${d}/${m}/${y}`;
 }
 
+const MAX_PHOTOS = 10;
+
 export default function PropertyForm({ initial }: { initial?: Room }) {
   const router = useRouter();
   const isEdit = !!initial;
@@ -37,7 +39,6 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
   const [resolvingLink, setResolvingLink] = useState(false);
   const [linkError, setLinkError] = useState<string | null>(null);
   const [linkOk, setLinkOk] = useState(false);
-  const [photos, setPhotos] = useState(initial?.photos ?? 5);
   const [photoUrls, setPhotoUrls] = useState<string[]>(initial?.photoUrls ?? []);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
@@ -55,6 +56,12 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
 
   async function handlePhotoUpload(files: FileList | null) {
     if (!files || files.length === 0) return;
+    if (photoUrls.length + files.length > MAX_PHOTOS) {
+      setPhotoError(
+        `Como máximo se pueden cargar ${MAX_PHOTOS} fotos/videos — ya hay ${photoUrls.length} cargados. Elegí menos archivos.`
+      );
+      return;
+    }
     setUploadingPhotos(true);
     setPhotoError(null);
     try {
@@ -134,7 +141,6 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
       acceptsDogs,
       lat: lat.trim() ? Number(lat) : null,
       lng: lng.trim() ? Number(lng) : null,
-      photos: Number(photos),
       photoUrls,
       colorFrom,
       colorTo,
@@ -276,7 +282,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         </div>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className={labelClass}>Individual / pareja</label>
           <select
@@ -300,17 +306,6 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
             <option value="estudiante">Estudiante</option>
             <option value="ambos">Ambos</option>
           </select>
-        </div>
-        <div>
-          <label className={labelClass}>Cantidad de fotos</label>
-          <input
-            type="number"
-            min={1}
-            value={photos}
-            onChange={(e) => setPhotos(Number(e.target.value))}
-            className={inputClass}
-          />
-          <p className="mt-1.5 text-xs text-vivi-muted">Solo referencia, no hace falta que coincida.</p>
         </div>
       </div>
 
@@ -347,7 +342,9 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
       </div>
 
       <div>
-        <label className={labelClass}>Fotos y videos de la habitación</label>
+        <label className={labelClass}>
+          Fotos y videos de la habitación ({photoUrls.length}/{MAX_PHOTOS})
+        </label>
         {photoUrls.length > 0 && (
           <div className="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-4">
             {photoUrls.map((url) => (
@@ -368,15 +365,23 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
             ))}
           </div>
         )}
-        <input
-          type="file"
-          multiple
-          accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime,video/webm"
-          disabled={uploadingPhotos}
-          onChange={(e) => handlePhotoUpload(e.target.files)}
-          className="mt-3 block w-full text-xs text-vivi-muted file:mr-3 file:rounded-lg file:border-0 file:bg-vivi-navy file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
-        />
-        <p className="mt-1.5 text-xs text-vivi-muted">Fotos hasta 8 MB, videos hasta 50 MB.</p>
+        {photoUrls.length < MAX_PHOTOS ? (
+          <>
+            <input
+              type="file"
+              multiple
+              accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime,video/webm"
+              disabled={uploadingPhotos}
+              onChange={(e) => handlePhotoUpload(e.target.files)}
+              className="mt-3 block w-full text-xs text-vivi-muted file:mr-3 file:rounded-lg file:border-0 file:bg-vivi-navy file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
+            />
+            <p className="mt-1.5 text-xs text-vivi-muted">Fotos hasta 8 MB, videos hasta 50 MB.</p>
+          </>
+        ) : (
+          <p className="mt-3 text-xs text-vivi-muted">
+            Llegaste al máximo de {MAX_PHOTOS} fotos/videos. Borrá alguna para subir otra.
+          </p>
+        )}
         {uploadingPhotos && <p className="mt-1.5 text-xs text-vivi-muted">Subiendo…</p>}
         {photoError && <p className="mt-1.5 text-xs text-red-600">{photoError}</p>}
       </div>

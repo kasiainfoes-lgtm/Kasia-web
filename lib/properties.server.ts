@@ -17,7 +17,6 @@ function mapSupabaseRow(row: any): Room {
     acceptsDogs: row.accepts_dogs ?? false,
     lat,
     lng,
-    photos: row.photos ?? 1,
     photoUrls: row.photo_urls ?? [],
     colorFrom: row.color_from ?? '#BFD9FF',
     colorTo: row.color_to ?? '#DCE9FF',

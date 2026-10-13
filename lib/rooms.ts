@@ -12,7 +12,6 @@ export type Room = {
   acceptsDogs: boolean;
   lat: number;
   lng: number;
-  photos: number;
   photoUrls: string[];
   colorFrom: string;
   colorTo: string;
@@ -105,7 +104,6 @@ export const mockRooms: Room[] = [
     acceptsDogs: false,
     lat: 39.4622,
     lng: -0.376,
-    photos: 12,
     photoUrls: [],
     colorFrom: '#BFD9FF',
     colorTo: '#DCE9FF',
@@ -131,7 +129,6 @@ export const mockRooms: Room[] = [
     acceptsDogs: false,
     lat: 39.486,
     lng: -0.3642,
-    photos: 9,
     photoUrls: [],
     colorFrom: '#E4D9FF',
     colorTo: '#F0E9FF',
@@ -157,7 +154,6 @@ export const mockRooms: Room[] = [
     acceptsDogs: false,
     lat: 39.475,
     lng: -0.358,
-    photos: 10,
     photoUrls: [],
     colorFrom: '#BFEBE0',
     colorTo: '#DFF7EF',
@@ -183,7 +179,6 @@ export const mockRooms: Room[] = [
     acceptsDogs: false,
     lat: 39.4796,
     lng: -0.376,
-    photos: 14,
     photoUrls: [],
     colorFrom: '#FFD9CF',
     colorTo: '#FFEAE4',
@@ -209,7 +204,6 @@ export const mockRooms: Room[] = [
     acceptsDogs: false,
     lat: 39.4743,
     lng: -0.386,
-    photos: 8,
     photoUrls: [],
     colorFrom: '#D9E8FF',
     colorTo: '#EAF2FF',
@@ -235,7 +229,6 @@ export const mockRooms: Room[] = [
     acceptsDogs: false,
     lat: 39.4683,
     lng: -0.3387,
-    photos: 11,
     photoUrls: [],
     colorFrom: '#FFE3B0',
     colorTo: '#FFF1D6',
@@ -261,7 +254,6 @@ export const mockRooms: Room[] = [
     acceptsDogs: false,
     lat: 39.4607,
     lng: -0.4003,
-    photos: 7,
     photoUrls: [],
     colorFrom: '#D6F0E0',
     colorTo: '#EAF8EF',
@@ -287,7 +279,6 @@ export const mockRooms: Room[] = [
     acceptsDogs: false,
     lat: 39.4773,
     lng: -0.3457,
-    photos: 9,
     photoUrls: [],
     colorFrom: '#E8DBFF',
     colorTo: '#F3ECFF',
@@ -313,7 +304,6 @@ export const mockRooms: Room[] = [
     acceptsDogs: false,
     lat: 39.4753,
     lng: -0.3257,
-    photos: 13,
     photoUrls: [],
     colorFrom: '#C9EAFB',
     colorTo: '#E3F5FD',
