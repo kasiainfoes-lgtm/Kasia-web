@@ -129,45 +129,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section id="faq" className="bg-vivi-bg py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Preguntas frecuentes</p>
-            <h2 className="mt-2 text-3xl font-extrabold text-vivi-ink sm:text-4xl">
-              Solo vivienda habitual: estancia mínima de 6 meses.
-            </h2>
-          </div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <p className="font-bold text-vivi-ink">¿Puedo ver el catálogo sin completar el formulario?</p>
-              <p className="mt-2 text-sm text-vivi-muted">
-                No. El inventario real (precios y fechas exactas) solo se muestra después de completar
-                tu perfil de búsqueda y que evaluemos tu compatibilidad — toma menos de dos minutos.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <p className="font-bold text-vivi-ink">¿Qué pago al reservar?</p>
-              <p className="mt-2 text-sm text-vivi-muted">
-                Una fianza equivalente a una mensualidad, en un único pago.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <p className="font-bold text-vivi-ink">¿Qué pasa después de reservar?</p>
-              <p className="mt-2 text-sm text-vivi-muted">
-                Se desbloquean el contacto con tu asesor/a, la agenda de visitas y alternativas similares
-                dentro del mismo rango de precio.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <p className="font-bold text-vivi-ink">¿Aceptan estancias cortas?</p>
-              <p className="mt-2 text-sm text-vivi-muted">
-                No. Todas las propiedades del catálogo son solo para vivienda habitual, con una estancia
-                mínima de 6 meses.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 }
