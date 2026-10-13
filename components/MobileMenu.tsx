@@ -4,17 +4,17 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 export default function MobileMenu({
+  isAdmin,
   catalogHref,
   catalogNavLabel,
   catalogCtaLabel,
   faqHref,
-  showAdminLink,
 }: {
+  isAdmin: boolean;
   catalogHref: string;
   catalogNavLabel: string;
   catalogCtaLabel: string;
   faqHref: string;
-  showAdminLink: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -41,24 +41,31 @@ export default function MobileMenu({
       {open && (
         <div className="absolute inset-x-0 top-full border-b border-slate-200 bg-white px-6 py-4 shadow-lg">
           <nav className="flex flex-col gap-4 text-sm font-medium text-vivi-ink">
-            <Link href={catalogHref} onClick={() => setOpen(false)}>
-              {catalogNavLabel}
-            </Link>
-            <Link href={faqHref} onClick={() => setOpen(false)}>
-              Preguntas frecuentes
-            </Link>
-            {showAdminLink && (
-              <Link href="/admin" onClick={() => setOpen(false)}>
+            {isAdmin ? (
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="rounded-full bg-vivi-navy px-5 py-2.5 text-center text-sm font-semibold text-white"
+              >
                 Panel interno
               </Link>
+            ) : (
+              <>
+                <Link href={catalogHref} onClick={() => setOpen(false)}>
+                  {catalogNavLabel}
+                </Link>
+                <Link href={faqHref} onClick={() => setOpen(false)}>
+                  Preguntas frecuentes
+                </Link>
+                <Link
+                  href={catalogHref}
+                  onClick={() => setOpen(false)}
+                  className="mt-2 rounded-full bg-vivi-navy px-5 py-2.5 text-center text-sm font-semibold text-white"
+                >
+                  {catalogCtaLabel}
+                </Link>
+              </>
             )}
-            <Link
-              href={catalogHref}
-              onClick={() => setOpen(false)}
-              className="mt-2 rounded-full bg-vivi-navy px-5 py-2.5 text-center text-sm font-semibold text-white"
-            >
-              {catalogCtaLabel}
-            </Link>
           </nav>
         </div>
       )}
