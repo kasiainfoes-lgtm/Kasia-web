@@ -27,6 +27,9 @@ create table if not exists public.properties (
   response_time text not null default 'Responde en menos de 24 horas',
   manager_phone text not null default '+34 600 000 000',
   manager_email text not null default 'hola@kasia-valencia.com',
+  -- Para ocultar una habitación del catálogo sin borrarla (y poder
+  -- reactivarla después) — ver la palanca en /admin/propiedades.
+  published boolean not null default true,
   created_at timestamptz not null default now()
 );
 
@@ -309,6 +312,7 @@ create policy "users read their own profile"
 -- alter table public.properties add column if not exists accepts_dogs boolean not null default false;
 -- alter table public.properties add column if not exists lat numeric;
 -- alter table public.properties add column if not exists lng numeric;
+-- alter table public.properties add column if not exists published boolean not null default true;
 -- alter table public.bookings add column if not exists paid_at timestamptz;
 -- alter table public.bookings add column if not exists review_reminder_sent_at timestamptz;
 -- create unique index if not exists bookings_stripe_session_id_key

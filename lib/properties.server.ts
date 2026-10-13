@@ -26,6 +26,7 @@ function mapSupabaseRow(row: any): Room {
     responseTime: row.response_time ?? 'Responde en menos de 24 horas',
     managerPhone: row.manager_phone ?? '+34 600 000 000',
     managerEmail: row.manager_email ?? 'hola@kasia-valencia.com',
+    published: row.published ?? true,
   };
 }
 
@@ -46,6 +47,15 @@ export async function fetchRooms(): Promise<Room[]> {
   return data.map(mapSupabaseRow);
 }
 
+// Para todo lo que ve un cliente (catálogo, /apply, página de un asesor):
+// una propiedad oculta ("published = false") sigue existiendo y el admin
+// la sigue viendo en /admin/propiedades, pero no cuenta como disponible
+// para nadie más — ver la palanca de publicar/ocultar ahí.
+export async function fetchPublishedRooms(): Promise<Room[]> {
+  const rooms = await fetchRooms();
+  return rooms.filter((room) => room.published);
+}
+
 export async function fetchRoomById(id: string): Promise<Room | undefined> {
   const supabase = createClient();
   if (!supabase) return mockRooms.find((room) => room.id === id);
@@ -59,6 +69,6 @@ export async function fetchRoomById(id: string): Promise<Room | undefined> {
 // email) — para la página "todas las propiedades de David", al estilo del
 // perfil de un anfitrión en Airbnb.
 export async function fetchRoomsByManagerEmail(managerEmail: string): Promise<Room[]> {
-  const rooms = await fetchRooms();
+  const rooms = await fetchPublishedRooms();
   return rooms.filter((room) => room.managerEmail === managerEmail);
 }

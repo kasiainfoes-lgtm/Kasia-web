@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { submitApplication } from '@/lib/applications.server';
 import { scoreApplication, type ApplicationAnswers } from '@/lib/application-scoring';
-import { fetchRooms } from '@/lib/properties.server';
+import { fetchPublishedRooms } from '@/lib/properties.server';
 import { APP_ID_COOKIE, APP_DEMO_STATUS_COOKIE, APP_COOKIE_MAX_AGE } from '@/lib/apply-session';
 import { sendEmail } from '@/lib/email.server';
 import { newApplicationNotificationEmailTemplate } from '@/lib/email-templates';
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
   // Modo demo: Supabase no está configurado todavía, así que no hay dónde
   // persistir la solicitud. Igual calculamos un resultado real (sin
   // guardarlo) para que el flujo completo se pueda probar de punta a punta.
-  const rooms = await fetchRooms();
+  const rooms = await fetchPublishedRooms();
   const { status } = scoreApplication(answers, rooms);
   const response = NextResponse.json({ status });
   response.cookies.set(APP_DEMO_STATUS_COOKIE, status, cookieBase);

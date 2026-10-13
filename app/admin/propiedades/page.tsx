@@ -6,6 +6,7 @@ import { firstImageUrl } from '@/lib/rooms';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
 import DeletePropertyButton from '@/components/DeletePropertyButton';
+import PublishToggle from '@/components/PublishToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,7 +36,12 @@ export default async function AdminPropertiesPage() {
         {rooms.map((room) => {
           const thumbnail = firstImageUrl(room.photoUrls);
           return (
-          <div key={room.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+          <div
+            key={room.id}
+            className={`rounded-2xl border bg-white p-4 ${
+              room.published ? 'border-slate-200' : 'border-slate-200 opacity-60'
+            }`}
+          >
             {thumbnail ? (
               <div className="relative h-28 overflow-hidden rounded-xl">
                 <Image
@@ -57,12 +63,21 @@ export default async function AdminPropertiesPage() {
               {room.zone} · {room.price} € / mes
             </p>
             <p className="mt-1 text-xs text-vivi-muted">Disponible desde {room.available}</p>
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3">
+              <PublishToggle id={room.id} published={room.published} />
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
               <Link
                 href={`/admin/propiedades/${room.id}`}
                 className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
               >
                 Editar
+              </Link>
+              <Link
+                href={`/admin/propiedades/${room.id}/vista-previa`}
+                className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
+              >
+                Vista previa
               </Link>
               <DeletePropertyButton id={room.id} title={room.title} />
             </div>

@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin';
-import { fetchRooms } from '@/lib/properties.server';
+import { fetchPublishedRooms } from '@/lib/properties.server';
 import {
   scoreApplication,
   type ApplicationAnswers,
@@ -92,7 +92,7 @@ export async function submitApplication(
     };
   }
 
-  const rooms = await fetchRooms();
+  const rooms = await fetchPublishedRooms();
   const { status, internalReason } = scoreApplication(answers, rooms);
 
   const { data, error } = await admin

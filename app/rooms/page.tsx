@@ -1,5 +1,5 @@
 import Catalog from '@/components/Catalog';
-import { fetchRooms } from '@/lib/properties.server';
+import { fetchPublishedRooms } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
 import { getOwnApplicationAnswers } from '@/lib/applications.server';
 import { roomAcceptsProfile, calculateMatchPercent } from '@/lib/rooms';
@@ -10,7 +10,7 @@ export default async function RoomsPage() {
   const { applicationId } = await requireApprovedAccess('/rooms');
 
   const [rooms, ownAnswers] = await Promise.all([
-    fetchRooms(),
+    fetchPublishedRooms(),
     applicationId ? getOwnApplicationAnswers(applicationId) : Promise.resolve(null),
   ]);
 

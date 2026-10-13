@@ -21,6 +21,7 @@ export type Room = {
   responseTime: string;
   managerPhone: string;
   managerEmail: string;
+  published: boolean;
 };
 
 export const MINIMUM_STAY_MONTHS = 6;
@@ -114,6 +115,7 @@ export const mockRooms: Room[] = [
     responseTime: 'Responde en menos de 2 horas',
     managerPhone: '+34 600 111 222',
     managerEmail: 'alba@kasia-valencia.com',
+    published: true,
   },
   {
     id: 'benimaclet-1c',
@@ -139,6 +141,7 @@ export const mockRooms: Room[] = [
     responseTime: 'Responde en menos de 4 horas',
     managerPhone: '+34 600 333 444',
     managerEmail: 'marc@kasia-valencia.com',
+    published: true,
   },
   {
     id: 'mestalla-2b',
@@ -164,6 +167,7 @@ export const mockRooms: Room[] = [
     responseTime: 'Responde en menos de 2 horas',
     managerPhone: '+34 600 111 222',
     managerEmail: 'alba@kasia-valencia.com',
+    published: true,
   },
   {
     id: 'el-carmen-4d',
@@ -189,6 +193,7 @@ export const mockRooms: Room[] = [
     responseTime: 'Responde en menos de 1 hora',
     managerPhone: '+34 600 555 666',
     managerEmail: 'nuria@kasia-valencia.com',
+    published: true,
   },
   {
     id: 'extramurs-2a',
@@ -214,6 +219,7 @@ export const mockRooms: Room[] = [
     responseTime: 'Responde en menos de 4 horas',
     managerPhone: '+34 600 333 444',
     managerEmail: 'marc@kasia-valencia.com',
+    published: true,
   },
   {
     id: 'camins-3c',
@@ -239,6 +245,7 @@ export const mockRooms: Room[] = [
     responseTime: 'Responde en menos de 1 hora',
     managerPhone: '+34 600 555 666',
     managerEmail: 'nuria@kasia-valencia.com',
+    published: true,
   },
   {
     id: 'patraix-1b',
@@ -264,6 +271,7 @@ export const mockRooms: Room[] = [
     responseTime: 'Responde en menos de 2 horas',
     managerPhone: '+34 600 111 222',
     managerEmail: 'alba@kasia-valencia.com',
+    published: true,
   },
   {
     id: 'algiros-2d',
@@ -289,6 +297,7 @@ export const mockRooms: Room[] = [
     responseTime: 'Responde en menos de 4 horas',
     managerPhone: '+34 600 333 444',
     managerEmail: 'marc@kasia-valencia.com',
+    published: true,
   },
   {
     id: 'malvarrosa-5a',
@@ -314,6 +323,7 @@ export const mockRooms: Room[] = [
     responseTime: 'Responde en menos de 1 hora',
     managerPhone: '+34 600 555 666',
     managerEmail: 'nuria@kasia-valencia.com',
+    published: true,
   },
 ];
 

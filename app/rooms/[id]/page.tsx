@@ -16,7 +16,9 @@ export const dynamic = 'force-dynamic';
 export default async function RoomDetailPage({ params }: { params: { id: string } }) {
   const { userId, applicationId } = await requireApprovedAccess(`/rooms/${params.id}`);
   const room = await fetchRoomById(params.id);
-  if (!room) return notFound();
+  // Oculta (published = false): el admin la sigue viendo en /admin, pero
+  // para un cliente que llega por un link viejo es como si no existiera.
+  if (!room || !room.published) return notFound();
 
   const [reviews, canReview, ownAnswers] = await Promise.all([
     getManagerReviews(room.managerEmail),

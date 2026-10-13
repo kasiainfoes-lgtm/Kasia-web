@@ -1,9 +1,11 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { adminPageGate } from '@/lib/admin-page-gate.server';
 import { fetchRoomById } from '@/lib/properties.server';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
 import PropertyForm from '@/components/PropertyForm';
+import PublishToggle from '@/components/PublishToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +19,18 @@ export default async function EditPropertyPage({ params }: { params: { id: strin
   return (
     <section className="mx-auto max-w-3xl px-6 py-12">
       <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Panel interno</p>
-      <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink sm:text-3xl">Editar habitación</h1>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-extrabold text-vivi-ink sm:text-3xl">Editar habitación</h1>
+        <div className="flex items-center gap-4">
+          <PublishToggle id={room.id} published={room.published} />
+          <Link
+            href={`/admin/propiedades/${room.id}/vista-previa`}
+            className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
+          >
+            Vista previa
+          </Link>
+        </div>
+      </div>
       <AdminTabs active="/admin/propiedades" />
       <PropertyForm initial={room} />
     </section>
