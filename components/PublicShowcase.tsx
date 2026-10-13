@@ -1,7 +1,9 @@
+import RoomIllustration from '@/components/RoomIllustration';
+
 const SAMPLES = [
-  { zone: 'Ruzafa', priceFrom: 650, colorFrom: '#BFD9FF', colorTo: '#DCE9FF' },
-  { zone: 'Benimaclet', priceFrom: 680, colorFrom: '#E4D9FF', colorTo: '#F0E9FF' },
-  { zone: 'El Carmen', priceFrom: 700, colorFrom: '#FFD9CF', colorTo: '#FFEAE4' },
+  { zone: 'Ruzafa', priceFrom: 650, colorFrom: '#BFD9FF', colorTo: '#DCE9FF', illustration: 'window' as const },
+  { zone: 'Benimaclet', priceFrom: 680, colorFrom: '#E4D9FF', colorTo: '#F0E9FF', illustration: 'plant' as const },
+  { zone: 'El Carmen', priceFrom: 700, colorFrom: '#FFD9CF', colorTo: '#FFEAE4', illustration: 'lamp' as const },
 ];
 
 export default function PublicShowcase() {
@@ -21,9 +23,11 @@ export default function PublicShowcase() {
       <div className="mt-10 grid gap-6 sm:grid-cols-3">
         {SAMPLES.map((s) => (
           <div key={s.zone} className="rounded-2xl border border-slate-200 bg-white p-4">
-            <div
-              className="h-36 rounded-xl"
-              style={{ background: `linear-gradient(135deg, ${s.colorFrom}, ${s.colorTo})` }}
+            <RoomIllustration
+              id={`showcase-${s.zone}`}
+              variant={s.illustration}
+              colorFrom={s.colorFrom}
+              colorTo={s.colorTo}
             />
             <div className="mt-3 flex items-center justify-between">
               <p className="font-semibold text-vivi-ink">{s.zone}</p>
