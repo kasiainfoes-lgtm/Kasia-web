@@ -18,8 +18,6 @@ function mapSupabaseRow(row: any): Room {
     lat,
     lng,
     photoUrls: row.photo_urls ?? [],
-    colorFrom: row.color_from ?? '#BFD9FF',
-    colorTo: row.color_to ?? '#DCE9FF',
     amenities: row.amenities ?? [],
     description: row.description ?? '',
     manager: row.manager ?? 'Equipo Kasia',

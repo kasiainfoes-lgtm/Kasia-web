@@ -42,8 +42,6 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
   const [photoUrls, setPhotoUrls] = useState<string[]>(initial?.photoUrls ?? []);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
-  const [colorFrom, setColorFrom] = useState(initial?.colorFrom ?? '#BFD9FF');
-  const [colorTo, setColorTo] = useState(initial?.colorTo ?? '#DCE9FF');
   const [amenities, setAmenities] = useState(initial?.amenities.join(', ') ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [manager, setManager] = useState(initial?.manager ?? '');
@@ -142,8 +140,6 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
       lat: lat.trim() ? Number(lat) : null,
       lng: lng.trim() ? Number(lng) : null,
       photoUrls,
-      colorFrom,
-      colorTo,
       amenities: amenities
         .split(',')
         .map((a) => a.trim())
@@ -386,40 +382,6 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         {photoError && <p className="mt-1.5 text-xs text-red-600">{photoError}</p>}
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div>
-          <label className={labelClass}>Color de imagen (desde)</label>
-          <div className="mt-1.5 flex items-center gap-3">
-            <input
-              type="color"
-              value={colorFrom}
-              onChange={(e) => setColorFrom(e.target.value)}
-              className="h-10 w-14 rounded-lg border border-stone-300"
-            />
-            <span className="text-sm text-vivi-muted">{colorFrom}</span>
-          </div>
-        </div>
-        <div>
-          <label className={labelClass}>Color de imagen (hasta)</label>
-          <div className="mt-1.5 flex items-center gap-3">
-            <input
-              type="color"
-              value={colorTo}
-              onChange={(e) => setColorTo(e.target.value)}
-              className="h-10 w-14 rounded-lg border border-stone-300"
-            />
-            <span className="text-sm text-vivi-muted">{colorTo}</span>
-          </div>
-        </div>
-      </div>
-      <div
-        className="h-20 rounded-xl"
-        style={{ background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})` }}
-      />
-      <p className="-mt-3 text-xs text-vivi-muted">
-        Vista previa del degradé de respaldo. Solo se usa si esta habitación no tiene fotos reales
-        cargadas arriba — no reemplaza a las fotos.
-      </p>
 
       <div>
         <label className={labelClass}>Comodidades (separadas por coma)</label>

@@ -13,8 +13,6 @@ export type Room = {
   lat: number;
   lng: number;
   photoUrls: string[];
-  colorFrom: string;
-  colorTo: string;
   amenities: string[];
   description: string;
   manager: string;
@@ -106,8 +104,6 @@ export const mockRooms: Room[] = [
     lat: 39.4622,
     lng: -0.376,
     photoUrls: [],
-    colorFrom: '#BFD9FF',
-    colorTo: '#DCE9FF',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Escritorio', 'Lavadora', 'Ascensor', 'Balcón propio'],
     description:
       'Habitación exterior con balcón en un piso reformado a dos calles del Mercado de Ruzafa. Zona con más ambiente de bares y coworkings de la ciudad, ideal si trabajás remoto o estudiás cerca del centro.',
@@ -132,8 +128,6 @@ export const mockRooms: Room[] = [
     lat: 39.486,
     lng: -0.3642,
     photoUrls: [],
-    colorFrom: '#E4D9FF',
-    colorTo: '#F0E9FF',
     amenities: ['WiFi de 300Mb', 'Escritorio', 'Lavadora', 'Terraza compartida'],
     description:
       'A diez minutos a pie de la Universitat de València y la Politècnica. Barrio tranquilo con huerta cerca, panaderías de toda la vida y buena conexión en metro hacia el centro.',
@@ -158,8 +152,6 @@ export const mockRooms: Room[] = [
     lat: 39.475,
     lng: -0.358,
     photoUrls: [],
-    colorFrom: '#BFEBE0',
-    colorTo: '#DFF7EF',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Lavadora', 'Ascensor'],
     description:
       'Piso con mucha luz natural en una calle tranquila detrás del Mestalla. Buena opción si trabajás en la zona norte de la ciudad o llegás en tren a Cabanyal-Alameda.',
@@ -184,8 +176,6 @@ export const mockRooms: Room[] = [
     lat: 39.4796,
     lng: -0.376,
     photoUrls: [],
-    colorFrom: '#FFD9CF',
-    colorTo: '#FFEAE4',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Escritorio', 'Balcón propio', 'Ascensor'],
     description:
       'En pleno casco histórico, en un edificio del siglo XIX restaurado con techos altos y suelos originales. Todo el barrio a pie: Torres de Serranos, galerías de arte y las mejores terrazas.',
@@ -210,8 +200,6 @@ export const mockRooms: Room[] = [
     lat: 39.4743,
     lng: -0.386,
     photoUrls: [],
-    colorFrom: '#D9E8FF',
-    colorTo: '#EAF2FF',
     amenities: ['WiFi de 300Mb', 'Escritorio', 'Lavadora', 'Calefacción'],
     description:
       'Barrio residencial y bien conectado, a cinco paradas de metro del centro. Piso compartido con solo dos habitaciones, ambiente calmado, perfecto para teletrabajo.',
@@ -236,8 +224,6 @@ export const mockRooms: Room[] = [
     lat: 39.4683,
     lng: -0.3387,
     photoUrls: [],
-    colorFrom: '#FFE3B0',
-    colorTo: '#FFF1D6',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Lavadora', 'Terraza compartida', 'Ascensor'],
     description:
       'A quince minutos caminando de la playa de la Malvarrosa y cerca de la Ciudad de las Artes y las Ciencias. Ideal para parejas que buscan estabilidad y buen transporte al centro.',
@@ -262,8 +248,6 @@ export const mockRooms: Room[] = [
     lat: 39.4607,
     lng: -0.4003,
     photoUrls: [],
-    colorFrom: '#D6F0E0',
-    colorTo: '#EAF8EF',
     amenities: ['WiFi de 300Mb', 'Lavadora', 'Calefacción'],
     description:
       'Zona residencial con buen precio y todos los servicios cerca: supermercados, gimnasio y metro a diez minutos. Piso recién reformado con cocina y baño nuevos.',
@@ -288,8 +272,6 @@ export const mockRooms: Room[] = [
     lat: 39.4773,
     lng: -0.3457,
     photoUrls: [],
-    colorFrom: '#E8DBFF',
-    colorTo: '#F3ECFF',
     amenities: ['WiFi de 300Mb', 'Escritorio', 'Aire acondicionado', 'Ascensor'],
     description:
       'A cinco minutos de la Universitat Politècnica de València, en una zona con mucha vida estudiantil y buenas conexiones de bus y bici. Piso pensado para estudiar tranquilo.',
@@ -314,8 +296,6 @@ export const mockRooms: Room[] = [
     lat: 39.4753,
     lng: -0.3257,
     photoUrls: [],
-    colorFrom: '#C9EAFB',
-    colorTo: '#E3F5FD',
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Balcón propio', 'Lavadora'],
     description:
       'A metros del paseo marítimo, con vistas parciales al mar desde la habitación. Ambiente relajado de barrio de playa, con el chiringuito y el paseo para correr a la puerta.',

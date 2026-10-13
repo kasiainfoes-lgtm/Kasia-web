@@ -53,10 +53,7 @@ export default async function AdminPropertiesPage() {
                 />
               </div>
             ) : (
-              <div
-                className="h-28 rounded-xl"
-                style={{ background: `linear-gradient(135deg, ${room.colorFrom}, ${room.colorTo})` }}
-              />
+              <div className="h-28 rounded-xl bg-stone-200" />
             )}
             <p className="mt-3 font-semibold text-vivi-ink">{room.title}</p>
             <p className="text-sm text-vivi-muted">

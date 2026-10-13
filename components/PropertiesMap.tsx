@@ -19,8 +19,8 @@ function priceIcon(price: number): L.DivIcon {
     className: '',
     html: `
       <div style="transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;">
-        <div style="background:#E5484D;color:#fff;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.3);">${price} €</div>
-        <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid #E5484D;"></div>
+        <div style="background:#19180F;color:#fff;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.3);">${price} €</div>
+        <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid #19180F;"></div>
       </div>
     `,
     iconSize: [0, 0],
@@ -56,15 +56,15 @@ export default function PropertiesMap({ rooms, height = 500 }: { rooms: Room[]; 
 
       const thumb = room.photoUrls[0]
         ? `<img src="${room.photoUrls[0]}" alt="" style="width:100%;height:90px;object-fit:cover;border-radius:8px;" />`
-        : `<div style="width:100%;height:90px;border-radius:8px;background:linear-gradient(135deg, ${room.colorFrom}, ${room.colorTo});"></div>`;
+        : `<div style="width:100%;height:90px;border-radius:8px;background:#E5E2DA;"></div>`;
 
       const popupHtml = `
         <div style="width:180px;font-family:inherit;">
           ${thumb}
-          <p style="margin:6px 0 0;font-weight:700;font-size:13px;color:#0F172A;">${escapeHtml(room.title)}</p>
-          <p style="margin:2px 0;font-size:12px;color:#64748B;">${escapeHtml(room.zone)}</p>
-          <p style="margin:2px 0;font-size:13px;font-weight:600;color:#0F172A;">${room.price} € / mes</p>
-          <a href="/rooms/${encodeURIComponent(room.id)}" style="display:block;margin-top:6px;background:#0B1B3B;color:#fff;text-align:center;padding:6px;border-radius:8px;font-size:12px;text-decoration:none;">Ver habitación</a>
+          <p style="margin:6px 0 0;font-weight:700;font-size:13px;color:#19180F;">${escapeHtml(room.title)}</p>
+          <p style="margin:2px 0;font-size:12px;color:#726F65;">${escapeHtml(room.zone)}</p>
+          <p style="margin:2px 0;font-size:13px;font-weight:600;color:#19180F;">${room.price} € / mes</p>
+          <a href="/rooms/${encodeURIComponent(room.id)}" style="display:block;margin-top:6px;background:#15140F;color:#fff;text-align:center;padding:6px;border-radius:8px;font-size:12px;text-decoration:none;">Ver habitación</a>
         </div>
       `;
 

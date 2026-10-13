@@ -53,20 +53,8 @@ function Media({
   );
 }
 
-export default function RoomGallery({
-  media,
-  title,
-  colorFrom,
-  colorTo,
-}: {
-  media: string[];
-  title: string;
-  colorFrom: string;
-  colorTo: string;
-}) {
+export default function RoomGallery({ media, title }: { media: string[]; title: string }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const gradient = `linear-gradient(135deg, ${colorFrom}, ${colorTo})`;
-  const gradientAlt = `linear-gradient(200deg, ${colorTo}, ${colorFrom})`;
 
   function prev() {
     setLightboxIndex((i) => (i === null ? null : (i - 1 + media.length) % media.length));
@@ -91,11 +79,11 @@ export default function RoomGallery({
     <>
       {media.length === 0 ? (
         <div className="mt-6 grid gap-1.5 overflow-hidden rounded-2xl sm:h-96 sm:grid-cols-3 sm:grid-rows-2">
-          <div className="h-56 sm:col-span-1 sm:row-span-2 sm:h-full" style={{ background: gradient }} />
-          <div className="hidden h-full sm:block" style={{ background: gradientAlt }} />
-          <div className="hidden h-full sm:block" style={{ background: gradient }} />
-          <div className="hidden h-full sm:block" style={{ background: gradientAlt }} />
-          <div className="hidden h-full sm:block" style={{ background: gradient }} />
+          <div className="h-56 bg-stone-200 sm:col-span-1 sm:row-span-2 sm:h-full" />
+          <div className="hidden h-full bg-stone-100 sm:block" />
+          <div className="hidden h-full bg-stone-200 sm:block" />
+          <div className="hidden h-full bg-stone-100 sm:block" />
+          <div className="hidden h-full bg-stone-200 sm:block" />
         </div>
       ) : media.length === 1 ? (
         <div className="mt-6 h-72 overflow-hidden rounded-2xl sm:h-96">

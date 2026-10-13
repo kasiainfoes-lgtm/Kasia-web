@@ -23,12 +23,7 @@ export default function RoomCard({
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div
-            className="h-full w-full transition-transform duration-300 group-hover:scale-105"
-            style={{
-              background: `linear-gradient(135deg, ${room.colorFrom}, ${room.colorTo})`,
-            }}
-          />
+          <div className="h-full w-full bg-stone-200 transition-transform duration-300 group-hover:scale-105" />
         )}
         <FavoriteButton roomId={room.id} onToggle={onToggleFavorite} />
       </div>

@@ -46,7 +46,7 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
         </div>
       </div>
 
-      <RoomGallery media={room.photoUrls} title={room.title} colorFrom={room.colorFrom} colorTo={room.colorTo} />
+      <RoomGallery media={room.photoUrls} title={room.title} />
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
         <div>
