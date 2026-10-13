@@ -375,7 +375,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
               onChange={(e) => handlePhotoUpload(e.target.files)}
               className="mt-3 block w-full text-xs text-vivi-muted file:mr-3 file:rounded-lg file:border-0 file:bg-vivi-navy file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
             />
-            <p className="mt-1.5 text-xs text-vivi-muted">Fotos hasta 8 MB, videos hasta 50 MB.</p>
+            <p className="mt-1.5 text-xs text-vivi-muted">Fotos hasta 10 MB, videos hasta 100 MB.</p>
           </>
         ) : (
           <p className="mt-3 text-xs text-vivi-muted">

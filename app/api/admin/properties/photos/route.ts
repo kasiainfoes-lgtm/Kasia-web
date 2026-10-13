@@ -8,8 +8,8 @@ import { createAdminClient } from '@/lib/supabase/admin';
 // pero solo un admin autenticado puede subir o borrar, siempre a través de
 // esta ruta de servidor con la service_role key.
 const BUCKET = 'property-photos';
-const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024;
-const MAX_VIDEO_SIZE_BYTES = 50 * 1024 * 1024;
+const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
+const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024;
 // Lado máximo con el que se guarda una foto. Más que esto no aporta nada en
 // pantalla y multiplica el trabajo del servidor al mostrarla.
 const MAX_IMAGE_DIMENSION = 2000;
