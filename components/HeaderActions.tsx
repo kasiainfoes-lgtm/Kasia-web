@@ -32,7 +32,7 @@ export default function HeaderActions({
   if (isAdmin) {
     const onAdminHome = pathname === '/admin';
     return (
-      <>
+      <div className="flex items-center gap-6">
         {!onAdminHome && (
           <nav className="hidden items-center gap-8 text-sm font-medium text-vivi-muted sm:flex">
             <Link href="/admin" className="hover:text-vivi-navy">
@@ -44,7 +44,7 @@ export default function HeaderActions({
           <AuthButton email={email} />
           <MobileMenu isAdmin catalogHref="/admin" catalogCtaLabel="Panel interno" faqHref="/admin" />
         </div>
-      </>
+      </div>
     );
   }
 
@@ -52,7 +52,7 @@ export default function HeaderActions({
   const onFaq = sameTarget(faqHref, pathname);
 
   return (
-    <>
+    <div className="flex items-center gap-6">
       {!onFaq && (
         <nav className="hidden items-center gap-8 text-sm font-medium text-vivi-muted sm:flex">
           <Link href={faqHref} className="hover:text-vivi-navy">
@@ -79,6 +79,6 @@ export default function HeaderActions({
           hideFaq={onFaq}
         />
       </div>
-    </>
+    </div>
   );
 }
