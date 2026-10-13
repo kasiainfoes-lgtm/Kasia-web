@@ -47,9 +47,30 @@ function isValidCoordinate(lat: number, lng: number): boolean {
   return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
 }
 
+// La zona de cada propiedad es texto libre en /admin/propiedades, así que
+// "Malvarrosa", "Malva-Rosa" y "Malva Rosa" terminan siendo tres strings
+// distintos aunque sean el mismo barrio — y no alcanza con solo sacar el
+// guion: "Malvarrosa" lleva doble r (como palabra compuesta) pero al
+// escribirla separada ("Malva Rosa") la gente tipea una sola, así que
+// además de sacar espacios/guiones se colapsan letras repetidas seguidas.
+// Se usa para comparar/agrupar zonas, nunca para lo que se muestra en
+// pantalla, solo para decidir si dos zonas son "la misma".
+export function normalizeZoneKey(zone: string): string {
+  return zone
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[\s-]+/g, '')
+    .replace(/(.)\1+/g, '$1');
+}
+
+const ZONE_COORDINATES_BY_KEY = new Map(
+  Object.entries(ZONE_COORDINATES).map(([zone, coords]) => [normalizeZoneKey(zone), coords])
+);
+
 export function roomCoordinates(room: Pick<Room, 'lat' | 'lng' | 'zone'>): { lat: number; lng: number } {
   if (room.lat && room.lng && isValidCoordinate(room.lat, room.lng)) return { lat: room.lat, lng: room.lng };
-  return ZONE_COORDINATES[room.zone] ?? VALENCIA_CENTER;
+  return ZONE_COORDINATES_BY_KEY.get(normalizeZoneKey(room.zone)) ?? VALENCIA_CENTER;
 }
 
 // Se usan mientras no haya una tabla `properties` en Supabase configurada

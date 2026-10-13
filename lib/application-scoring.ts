@@ -1,4 +1,4 @@
-import { MINIMUM_STAY_MONTHS, roomAcceptsProfile, type Room } from '@/lib/rooms';
+import { MINIMUM_STAY_MONTHS, normalizeZoneKey, roomAcceptsProfile, type Room } from '@/lib/rooms';
 
 export type ApplicationStatus = 'APPROVED' | 'REVIEW' | 'NOT_ELIGIBLE' | 'REJECTED';
 
@@ -54,7 +54,7 @@ export function scoreApplication(answers: ApplicationAnswers, rooms: Room[]): Sc
   // filtrar por precio. Habitaciones más baratas que el presupuesto siempre
   // cuentan como match — el "<=" nunca las excluye.
   const profileRooms = rooms.filter((room) => {
-    const zoneOk = answers.zone === 'Cualquier zona' || room.zone === answers.zone;
+    const zoneOk = answers.zone === 'Cualquier zona' || normalizeZoneKey(room.zone) === normalizeZoneKey(answers.zone);
     const occupancyOk =
       answers.occupancyType === 'pareja' ? room.individualOrPareja !== 'individual' : true;
     return zoneOk && occupancyOk && roomAcceptsProfile(room, { smoker: answers.smoker, petType: answers.petType });
