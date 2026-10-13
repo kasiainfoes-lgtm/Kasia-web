@@ -6,17 +6,24 @@ import Link from 'next/link';
 export default function MobileMenu({
   isAdmin,
   catalogHref,
-  catalogNavLabel,
   catalogCtaLabel,
   faqHref,
+  hideCatalog = false,
+  hideFaq = false,
 }: {
   isAdmin: boolean;
   catalogHref: string;
-  catalogNavLabel: string;
   catalogCtaLabel: string;
   faqHref: string;
+  hideCatalog?: boolean;
+  hideFaq?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+
+  // Si ya estás en la única página a la que llevarían los dos links (ej:
+  // en /rooms, tanto el catálogo como las preguntas frecuentes viven ahí),
+  // no tiene sentido ni mostrar el botón de menú — no habría nada adentro.
+  if (!isAdmin && hideCatalog && hideFaq) return null;
 
   return (
     <div className="sm:hidden">
@@ -51,19 +58,20 @@ export default function MobileMenu({
               </Link>
             ) : (
               <>
-                <Link href={catalogHref} onClick={() => setOpen(false)}>
-                  {catalogNavLabel}
-                </Link>
-                <Link href={faqHref} onClick={() => setOpen(false)}>
-                  Preguntas frecuentes
-                </Link>
-                <Link
-                  href={catalogHref}
-                  onClick={() => setOpen(false)}
-                  className="mt-2 rounded-full bg-vivi-navy px-5 py-2.5 text-center text-sm font-semibold text-white"
-                >
-                  {catalogCtaLabel}
-                </Link>
+                {!hideFaq && (
+                  <Link href={faqHref} onClick={() => setOpen(false)}>
+                    Preguntas frecuentes
+                  </Link>
+                )}
+                {!hideCatalog && (
+                  <Link
+                    href={catalogHref}
+                    onClick={() => setOpen(false)}
+                    className="mt-2 rounded-full bg-vivi-navy px-5 py-2.5 text-center text-sm font-semibold text-white"
+                  >
+                    {catalogCtaLabel}
+                  </Link>
+                )}
               </>
             )}
           </nav>

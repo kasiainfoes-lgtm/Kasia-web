@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { getSessionUser, getOwnProfile } from '@/lib/supabase/session.server';
 import { isAdminEmail } from '@/lib/admin-auth';
-import AuthButton from '@/components/AuthButton';
-import MobileMenu from '@/components/MobileMenu';
+import HeaderActions from '@/components/HeaderActions';
 
 export default async function Navbar() {
   const user = await getSessionUser();
@@ -27,34 +26,13 @@ export default async function Navbar() {
             {isAdmin ? 'Panel interno' : 'Valencia'}
           </span>
         </Link>
-        {!isAdmin && (
-          <nav className="hidden items-center gap-8 text-sm font-medium text-vivi-muted sm:flex">
-            <Link href={catalogHref} className="hover:text-vivi-navy">
-              {approved ? 'Catálogo' : 'Encontrar habitación'}
-            </Link>
-            <Link href={faqHref} className="hover:text-vivi-navy">
-              Preguntas frecuentes
-            </Link>
-          </nav>
-        )}
-        <div className="flex items-center gap-3">
-          <AuthButton email={user?.email ?? null} />
-          {!isAdmin && (
-            <Link
-              href={catalogHref}
-              className="hidden rounded-full bg-vivi-navy px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-vivi-navyLight sm:inline-block"
-            >
-              {catalogLabel}
-            </Link>
-          )}
-          <MobileMenu
-            isAdmin={isAdmin}
-            catalogHref={catalogHref}
-            catalogNavLabel={approved ? 'Catálogo' : 'Encontrar habitación'}
-            catalogCtaLabel={catalogLabel}
-            faqHref={faqHref}
-          />
-        </div>
+        <HeaderActions
+          isAdmin={isAdmin}
+          email={user?.email ?? null}
+          catalogHref={catalogHref}
+          catalogLabel={catalogLabel}
+          faqHref={faqHref}
+        />
       </div>
     </header>
   );
