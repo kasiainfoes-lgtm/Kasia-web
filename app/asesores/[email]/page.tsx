@@ -4,6 +4,8 @@ import { Star } from 'lucide-react';
 import { fetchRoomsByManagerEmail } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
 import { getManagerReviews } from '@/lib/reviews.server';
+import { getOwnApplicationAnswers } from '@/lib/applications.server';
+import { calculateMatchPercent } from '@/lib/rooms';
 import RoomCard from '@/components/RoomCard';
 import PropertiesMapLoader from '@/components/PropertiesMapLoader';
 
@@ -14,15 +16,20 @@ export const dynamic = 'force-dynamic';
 // acá haciendo click en "Gestionado por ..." desde cualquiera de sus
 // habitaciones.
 export default async function AdvisorPage({ params }: { params: { email: string } }) {
-  await requireApprovedAccess(`/asesores/${params.email}`);
+  const { applicationId } = await requireApprovedAccess(`/asesores/${params.email}`);
 
   const managerEmail = decodeURIComponent(params.email);
-  const [rooms, reviews] = await Promise.all([
+  const [fetchedRooms, reviews, ownAnswers] = await Promise.all([
     fetchRoomsByManagerEmail(managerEmail),
     getManagerReviews(managerEmail),
+    applicationId ? getOwnApplicationAnswers(applicationId) : Promise.resolve(null),
   ]);
 
-  if (rooms.length === 0) return notFound();
+  if (fetchedRooms.length === 0) return notFound();
+
+  const rooms = ownAnswers
+    ? fetchedRooms.map((room) => ({ ...room, match: calculateMatchPercent(room, ownAnswers) }))
+    : fetchedRooms;
 
   const manager = rooms[0];
   const average = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : null;

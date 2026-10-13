@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { fetchRoomById } from '@/lib/properties.server';
 import { requireApprovedAccess } from '@/lib/require-approved.server';
 import { getManagerReviews, canReviewManager } from '@/lib/reviews.server';
+import { getOwnApplicationAnswers } from '@/lib/applications.server';
+import { calculateMatchPercent } from '@/lib/rooms';
 import FavoriteButton from '@/components/FavoriteButton';
 import AmenityIcon from '@/components/AmenityIcon';
 import ReviewsSection from '@/components/ReviewsSection';
@@ -12,14 +14,16 @@ import PropertiesMapLoader from '@/components/PropertiesMapLoader';
 export const dynamic = 'force-dynamic';
 
 export default async function RoomDetailPage({ params }: { params: { id: string } }) {
-  const { userId } = await requireApprovedAccess(`/rooms/${params.id}`);
+  const { userId, applicationId } = await requireApprovedAccess(`/rooms/${params.id}`);
   const room = await fetchRoomById(params.id);
   if (!room) return notFound();
 
-  const [reviews, canReview] = await Promise.all([
+  const [reviews, canReview, ownAnswers] = await Promise.all([
     getManagerReviews(room.managerEmail),
     canReviewManager(userId, room.managerEmail),
+    applicationId ? getOwnApplicationAnswers(applicationId) : Promise.resolve(null),
   ]);
+  const match = ownAnswers ? calculateMatchPercent(room, ownAnswers) : room.match;
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-10">
@@ -34,7 +38,7 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
         </div>
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-vivi-mintLight px-3 py-1 text-xs font-bold text-red-700">
-            {room.match}% compatible
+            {match}% compatible
           </span>
           <FavoriteButton roomId={room.id} variant="inline" />
         </div>
@@ -109,7 +113,7 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
           </div>
           <div className="flex justify-between border-b border-slate-200 py-3 text-sm">
             <span className="text-vivi-muted">Compatibilidad</span>
-            <span className="font-semibold text-vivi-ink">{room.match}%</span>
+            <span className="font-semibold text-vivi-ink">{match}%</span>
           </div>
           <Link
             href={`/reservar/${room.id}`}

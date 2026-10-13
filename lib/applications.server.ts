@@ -170,21 +170,33 @@ export async function fetchAllApplications(): Promise<AdminApplication[]> {
 // su perfil. Recibe el application_id ya resuelto (ver requireApprovedAccess)
 // para no repetir la consulta a `profiles`. Usa el cliente admin porque
 // `applications` no tiene policy de lectura para usuarios normales.
-export async function getOwnApplicationAnswers(
-  applicationId: string
-): Promise<{ smoker: boolean; petType: PetType } | null> {
+export type OwnApplicationAnswers = {
+  zone: string;
+  occupancyType: 'individual' | 'pareja';
+  petType: PetType;
+  smoker: boolean;
+  budget: number;
+};
+
+export async function getOwnApplicationAnswers(applicationId: string): Promise<OwnApplicationAnswers | null> {
   const admin = createAdminClient();
   if (!admin) return null;
 
   const { data: application } = await admin
     .from('applications')
-    .select('smoker, pet_type')
+    .select('zone, occupancy_type, smoker, pet_type, budget')
     .eq('id', applicationId)
     .maybeSingle();
 
   if (!application) return null;
 
-  return { smoker: application.smoker, petType: application.pet_type as PetType };
+  return {
+    zone: application.zone,
+    occupancyType: application.occupancy_type as 'individual' | 'pareja',
+    smoker: application.smoker,
+    petType: application.pet_type as PetType,
+    budget: Number(application.budget),
+  };
 }
 
 export async function getApplicationById(id: string): Promise<Application | null> {

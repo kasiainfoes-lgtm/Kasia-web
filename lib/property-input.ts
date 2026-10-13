@@ -3,7 +3,6 @@ export type PropertyInput = {
   zone: string;
   title: string;
   price: number;
-  match: number;
   available: string;
   individualOrPareja: 'individual' | 'pareja' | 'ambos';
   workerOrStudent: 'trabajador' | 'estudiante' | 'ambos';
@@ -44,7 +43,6 @@ export function toPropertyRow(input: PropertyInput) {
     zone: input.zone,
     title: input.title,
     price: input.price,
-    match: input.match,
     available: input.available,
     individual_or_pareja: input.individualOrPareja,
     worker_or_student: input.workerOrStudent,

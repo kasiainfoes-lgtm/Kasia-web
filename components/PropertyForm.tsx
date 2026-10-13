@@ -25,7 +25,6 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
   const [zone, setZone] = useState(initial?.zone ?? '');
   const [title, setTitle] = useState(initial?.title ?? '');
   const [price, setPrice] = useState(initial?.price ?? 700);
-  const [match, setMatch] = useState(initial?.match ?? 90);
   const [available, setAvailable] = useState(initial ? toDateInput(initial.available) : '');
   const [individualOrPareja, setIndividualOrPareja] = useState(initial?.individualOrPareja ?? 'ambos');
   const [workerOrStudent, setWorkerOrStudent] = useState(initial?.workerOrStudent ?? 'ambos');
@@ -127,7 +126,6 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
       zone,
       title,
       price: Number(price),
-      match: Number(match),
       available: toDMY(available),
       individualOrPareja,
       workerOrStudent,
@@ -254,7 +252,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         <input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className={labelClass}>Precio mensual (€)</label>
           <input
@@ -263,18 +261,6 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
             min={0}
             value={price}
             onChange={(e) => setPrice(Number(e.target.value))}
-            className={inputClass}
-          />
-        </div>
-        <div>
-          <label className={labelClass}>% compatibilidad (match)</label>
-          <input
-            required
-            type="number"
-            min={0}
-            max={100}
-            value={match}
-            onChange={(e) => setMatch(Number(e.target.value))}
             className={inputClass}
           />
         </div>

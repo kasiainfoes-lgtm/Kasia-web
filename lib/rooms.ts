@@ -360,3 +360,41 @@ export function roomAcceptsProfile(
   if (profile.petType === 'perro' && !room.acceptsDogs) return false;
   return true;
 }
+
+// Mismo margen de presupuesto que se usa al evaluar /apply (lib/application-scoring.ts).
+const MATCH_BUDGET_TOLERANCE_EUR = 100;
+
+// El "% de compatibilidad" que ve cada persona ya no lo tipea quien carga la
+// propiedad — se calcula acá, comparando lo que pidió en /apply contra lo
+// que ofrece esta habitación en concreto. Mismos cuatro factores que deciden
+// si una solicitud queda NOT_ELIGIBLE (zona, ocupación, fumador/mascota,
+// presupuesto), pero como puntaje continuo en vez de sí/no.
+export function calculateMatchPercent(
+  room: Room,
+  answers: {
+    zone: string;
+    occupancyType: 'individual' | 'pareja';
+    petType: 'ninguno' | 'perro' | 'gato' | 'otro';
+    smoker: boolean;
+    budget: number;
+  }
+): number {
+  let score = 100;
+
+  if (answers.zone !== 'Cualquier zona' && normalizeZoneKey(room.zone) !== normalizeZoneKey(answers.zone)) {
+    score -= 20;
+  }
+  if (answers.occupancyType === 'pareja' && room.individualOrPareja === 'individual') {
+    score -= 20;
+  }
+  if (!roomAcceptsProfile(room, { smoker: answers.smoker, petType: answers.petType })) {
+    score -= 30;
+  }
+  if (room.price > answers.budget + MATCH_BUDGET_TOLERANCE_EUR) {
+    score -= 30;
+  } else if (room.price > answers.budget) {
+    score -= 15;
+  }
+
+  return Math.max(0, score);
+}
