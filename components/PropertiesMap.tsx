@@ -68,7 +68,22 @@ export default function PropertiesMap({ rooms, height = 500 }: { rooms: Room[]; 
         </div>
       `;
 
-      L.marker([lat, lng], { icon: priceIcon(room.price) }).addTo(map).bindPopup(popupHtml);
+      const marker = L.marker([lat, lng], { icon: priceIcon(room.price) }).addTo(map).bindPopup(popupHtml);
+
+      // Se ve la foto al pasar el mouse, sin tener que hacer click — pero si
+      // ya la abrió con un click, queda fija (no se cierra sola al mover el
+      // mouse) hasta que la cierre a propósito.
+      let openedByClick = false;
+      marker.on('click', () => {
+        openedByClick = true;
+      });
+      marker.on('popupclose', () => {
+        openedByClick = false;
+      });
+      marker.on('mouseover', () => marker.openPopup());
+      marker.on('mouseout', () => {
+        if (!openedByClick) marker.closePopup();
+      });
     }
 
     if (points.length === 1) {
