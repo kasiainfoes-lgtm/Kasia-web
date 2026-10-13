@@ -41,7 +41,7 @@ export default async function AdvisorPage({ params }: { params: { email: string 
       </Link>
 
       <div className="mt-4 flex items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-vivi-mintLight text-xl font-bold text-red-700">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-vivi-mintLight text-xl font-bold text-vivi-mint">
           {manager.manager.charAt(0)}
         </div>
         <div>

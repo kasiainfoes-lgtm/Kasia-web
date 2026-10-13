@@ -44,7 +44,7 @@ export default function AdminTransferProofActions({ bookingId }: { bookingId: st
           onChange={(e) => setNote(e.target.value)}
           placeholder="¿Por qué no se pudo confirmar?"
           rows={2}
-          className="w-48 rounded-lg border border-slate-300 px-2 py-1.5 text-xs"
+          className="w-48 rounded-lg border border-stone-300 px-2 py-1.5 text-xs"
         />
         <div className="flex gap-2">
           <button
@@ -62,7 +62,7 @@ export default function AdminTransferProofActions({ bookingId }: { bookingId: st
               setRejecting(false);
               setNote('');
             }}
-            className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
+            className="rounded-full border border-stone-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
           >
             Cancelar
           </button>
@@ -87,7 +87,7 @@ export default function AdminTransferProofActions({ bookingId }: { bookingId: st
           type="button"
           disabled={loading !== null}
           onClick={() => setRejecting(true)}
-          className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
+          className="rounded-full border border-stone-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
         >
           Rechazar
         </button>

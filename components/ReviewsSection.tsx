@@ -11,7 +11,7 @@ function StarRow({ rating, size = 16 }: { rating: number; size?: number }) {
           key={n}
           width={size}
           height={size}
-          className={n <= rating ? 'fill-vivi-mint text-vivi-mint' : 'text-slate-300'}
+          className={n <= rating ? 'fill-vivi-mint text-vivi-mint' : 'text-stone-300'}
         />
       ))}
     </div>
@@ -33,7 +33,7 @@ export default function ReviewsSection({
     reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : null;
 
   return (
-    <div className="border-b border-slate-200 py-6">
+    <div className="border-b border-stone-200 py-6">
       <div className="flex items-center gap-2">
         <h2 className="text-lg font-extrabold text-vivi-ink">Reseñas de {managerName}</h2>
         {average !== null && (
@@ -54,7 +54,7 @@ export default function ReviewsSection({
       ) : (
         <div className="mt-4 space-y-5">
           {reviews.map((review) => (
-            <div key={review.id} className="border-b border-slate-100 pb-5 last:border-0">
+            <div key={review.id} className="border-b border-stone-100 pb-5 last:border-0">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-semibold text-vivi-ink">{review.reviewerName}</p>
                 <p className="text-xs text-vivi-muted">{formatDateEs(review.createdAt)}</p>

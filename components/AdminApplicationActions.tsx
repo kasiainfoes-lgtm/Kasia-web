@@ -42,7 +42,7 @@ export default function AdminApplicationActions({ id }: { id: string }) {
           type="button"
           disabled={loading !== null}
           onClick={() => act('approve')}
-          className="rounded-full bg-vivi-mint px-3 py-1.5 text-xs font-bold text-vivi-navy hover:brightness-95 disabled:opacity-50"
+          className="rounded-full bg-vivi-navy px-3 py-1.5 text-xs font-bold text-white hover:bg-vivi-navyLight disabled:opacity-50"
         >
           {loading === 'approve' ? 'Aprobando…' : 'Aprobar'}
         </button>
@@ -58,7 +58,7 @@ export default function AdminApplicationActions({ id }: { id: string }) {
           type="button"
           disabled={loading !== null}
           onClick={() => act('request-info')}
-          className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
+          className="rounded-full border border-stone-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
         >
           {loading === 'request-info' ? 'Enviando…' : 'Pedir más información'}
         </button>

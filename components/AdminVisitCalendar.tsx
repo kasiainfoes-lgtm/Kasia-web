@@ -65,12 +65,12 @@ export default function AdminVisitCalendar({ visits }: { visits: CalendarVisit[]
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5">
+      <div className="rounded-2xl border border-stone-200 bg-vivi-card p-5">
         <div className="flex items-center justify-between">
           <button
             type="button"
             onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
-            className="rounded-full border border-slate-300 px-3 py-1.5 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
+            className="rounded-full border border-stone-300 px-3 py-1.5 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
           >
             ←
           </button>
@@ -80,7 +80,7 @@ export default function AdminVisitCalendar({ visits }: { visits: CalendarVisit[]
           <button
             type="button"
             onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
-            className="rounded-full border border-slate-300 px-3 py-1.5 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
+            className="rounded-full border border-stone-300 px-3 py-1.5 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
           >
             →
           </button>
@@ -101,7 +101,7 @@ export default function AdminVisitCalendar({ visits }: { visits: CalendarVisit[]
               <div
                 key={date.toISOString()}
                 className={`min-h-[92px] rounded-lg border p-1.5 text-left ${
-                  inMonth ? 'border-slate-200 bg-white' : 'border-slate-100 bg-slate-50'
+                  inMonth ? 'border-stone-200 bg-vivi-card' : 'border-stone-100 bg-stone-50'
                 }`}
               >
                 <p
@@ -122,7 +122,7 @@ export default function AdminVisitCalendar({ visits }: { visits: CalendarVisit[]
                       title={`${v.roomTitle} · ${v.manager} · ${v.userEmail ?? ''}`}
                       className={`truncate rounded px-1 py-0.5 text-[10px] font-semibold ${
                         v.visitStatus === 'hecha'
-                          ? 'bg-vivi-mintLight text-red-700'
+                          ? 'bg-vivi-mintLight text-vivi-mint'
                           : 'bg-indigo-50 text-indigo-600'
                       }`}
                     >
@@ -140,12 +140,12 @@ export default function AdminVisitCalendar({ visits }: { visits: CalendarVisit[]
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5">
+      <div className="rounded-2xl border border-stone-200 bg-vivi-card p-5">
         <p className="text-sm font-extrabold text-vivi-ink">Próximas visitas ({upcoming.length})</p>
         <div className="mt-4 space-y-4">
           {upcoming.length === 0 && <p className="text-sm text-vivi-muted">No hay visitas agendadas.</p>}
           {upcoming.map((v) => (
-            <div key={v.bookingId} className="border-b border-slate-100 pb-4 last:border-0">
+            <div key={v.bookingId} className="border-b border-stone-100 pb-4 last:border-0">
               <p className="text-sm font-semibold text-vivi-ink">
                 {new Date(v.visitAt).toLocaleString('es-ES', {
                   weekday: 'short',

@@ -18,7 +18,7 @@ export default async function Navbar() {
   const faqHref = '/preguntas-frecuentes';
 
   return (
-    <header className="relative border-b border-slate-200/70 bg-white/80 backdrop-blur sticky top-0 z-40">
+    <header className="relative border-b border-stone-200/70 bg-vivi-card/80 backdrop-blur sticky top-0 z-40">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href={isAdmin ? '/admin' : '/'} className="flex items-baseline gap-2">
           <span className="text-2xl font-black tracking-tight text-vivi-navy">Kasia</span>

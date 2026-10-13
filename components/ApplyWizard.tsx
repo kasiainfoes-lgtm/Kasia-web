@@ -91,7 +91,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
 
   return (
     <section className="mx-auto max-w-md px-6 py-14">
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-200">
         <div
           className="h-full rounded-full bg-vivi-mint transition-all duration-300"
           style={{ width: `${pct}%` }}
@@ -109,7 +109,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
               <select
                 value={form.zone}
                 onChange={(e) => update('zone', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
+                className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm"
               >
                 <option value="" disabled>
                   Elige una zona
@@ -126,7 +126,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
                 type="date"
                 value={form.moveInDate}
                 onChange={(e) => update('moveInDate', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
+                className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm"
               />
             </Field>
             <Field label={`Presupuesto mensual · ${form.budget} €`}>
@@ -224,7 +224,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
                     className={`rounded-full border-2 px-4 py-2 text-sm font-semibold ${
                       form.stayDurationMonths === m
                         ? 'border-vivi-navy bg-vivi-navy text-white'
-                        : 'border-slate-200 text-vivi-ink hover:border-slate-300'
+                        : 'border-stone-200 text-vivi-ink hover:border-stone-300'
                     }`}
                   >
                     {m} meses
@@ -243,7 +243,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
                   type="text"
                   value={form.firstName}
                   onChange={(e) => update('firstName', e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
+                  className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm"
                 />
               </Field>
               <Field label="Apellido">
@@ -251,7 +251,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
                   type="text"
                   value={form.lastName}
                   onChange={(e) => update('lastName', e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
+                  className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm"
                 />
               </Field>
             </div>
@@ -260,7 +260,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
                 type="email"
                 value={form.email}
                 onChange={(e) => update('email', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
+                className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm"
               />
             </Field>
             <Field label="Teléfono">
@@ -270,7 +270,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
                 placeholder="+34 600 000 000"
                 value={form.phone}
                 onChange={(e) => update('phone', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"
+                className="w-full rounded-lg border border-stone-300 px-3 py-2.5 text-sm"
               />
               <p className="mt-1.5 text-xs text-vivi-muted">Incluye el prefijo del país (ej: +34).</p>
             </Field>
@@ -280,7 +280,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
 
         {step === 4 && (
           <div className="flex flex-col items-center gap-4 py-10 text-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-vivi-mint" />
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-stone-200 border-t-vivi-mint" />
             <p className="text-sm text-vivi-muted">
               Estamos comprobando tu compatibilidad con las habitaciones disponibles…
             </p>
@@ -293,7 +293,7 @@ export default function ApplyWizard({ zones }: { zones: string[] }) {
           {step > 0 && (
             <button
               onClick={() => setStep((s) => s - 1)}
-              className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-vivi-ink"
+              className="rounded-xl border border-stone-300 px-5 py-2.5 text-sm font-semibold text-vivi-ink"
             >
               Atrás
             </button>

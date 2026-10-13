@@ -16,9 +16,9 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_COLOR: Record<string, string> = {
-  APPROVED: 'bg-vivi-mintLight text-red-700',
+  APPROVED: 'bg-vivi-mintLight text-vivi-mint',
   REVIEW: 'bg-indigo-50 text-indigo-600',
-  NOT_ELIGIBLE: 'bg-slate-100 text-vivi-muted',
+  NOT_ELIGIBLE: 'bg-stone-100 text-vivi-muted',
   REJECTED: 'bg-red-50 text-red-600',
 };
 
@@ -68,9 +68,9 @@ export default async function AdminSolicitudesPage() {
 
       <AdminTabs active="/admin/solicitudes" />
 
-      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+      <div className="overflow-x-auto rounded-2xl border border-stone-200 bg-vivi-card">
         <table className="w-full min-w-[960px] text-left text-sm">
-          <thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-vivi-muted">
+          <thead className="border-b border-stone-200 text-xs uppercase tracking-wide text-vivi-muted">
             <tr>
               <th className="px-4 py-3">Persona</th>
               <th className="px-4 py-3">Perfil</th>
@@ -82,7 +82,7 @@ export default async function AdminSolicitudesPage() {
           </thead>
           <tbody>
             {applications.map((a) => (
-              <tr key={a.id} className="border-b border-slate-100 align-top last:border-0">
+              <tr key={a.id} className="border-b border-stone-100 align-top last:border-0">
                 <td className="px-4 py-3">
                   <p className="font-medium text-vivi-ink">{a.name}</p>
                   <p className="text-xs text-vivi-muted">{a.email}</p>
@@ -138,7 +138,7 @@ export default async function AdminSolicitudesPage() {
                       return (
                         <div className="flex flex-col gap-1.5">
                           {viewLinks}
-                          <span className="w-fit rounded-full bg-vivi-mintLight px-2 py-0.5 text-xs font-bold text-red-700">
+                          <span className="w-fit rounded-full bg-vivi-mintLight px-2 py-0.5 text-xs font-bold text-vivi-mint">
                             Aprobados
                           </span>
                         </div>

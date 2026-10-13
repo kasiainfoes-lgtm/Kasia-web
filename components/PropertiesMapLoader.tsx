@@ -9,7 +9,7 @@ import type { Room } from '@/lib/rooms';
 const PropertiesMap = dynamic(() => import('@/components/PropertiesMap'), {
   ssr: false,
   loading: () => (
-    <div className="flex h-[500px] items-center justify-center rounded-xl border border-slate-200 bg-vivi-bg text-sm text-vivi-muted">
+    <div className="flex h-[500px] items-center justify-center rounded-xl border border-stone-200 bg-vivi-bg text-sm text-vivi-muted">
       Cargando mapa…
     </div>
   ),

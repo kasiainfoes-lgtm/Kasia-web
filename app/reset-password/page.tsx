@@ -151,7 +151,7 @@ export default function ResetPasswordPage() {
             minLength={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-2 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
           />
         </div>
         <div>
@@ -164,7 +164,7 @@ export default function ResetPasswordPage() {
             minLength={6}
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-2 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
           />
         </div>
 

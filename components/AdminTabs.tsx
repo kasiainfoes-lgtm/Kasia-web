@@ -10,7 +10,7 @@ const tabs = [
 
 export default function AdminTabs({ active }: { active: string }) {
   return (
-    <div className="mb-8 flex gap-2 border-b border-slate-200">
+    <div className="mb-8 flex gap-2 border-b border-stone-200">
       {tabs.map((tab) => (
         <Link
           key={tab.href}

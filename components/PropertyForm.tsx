@@ -171,11 +171,11 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
     router.refresh();
   }
 
-  const inputClass = 'mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm';
+  const inputClass = 'mt-1.5 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm';
   const labelClass = 'block text-xs font-semibold uppercase tracking-wide text-vivi-muted';
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-5 rounded-2xl border border-slate-200 bg-white p-6">
+    <form onSubmit={handleSubmit} className="grid gap-5 rounded-2xl border border-stone-200 bg-vivi-card p-6">
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className={labelClass}>Identificador único (id)</label>
@@ -185,7 +185,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
             value={id}
             onChange={(e) => setId(e.target.value)}
             placeholder="ej: ruzafa-6f"
-            className={`${inputClass} disabled:bg-slate-100 disabled:text-vivi-muted`}
+            className={`${inputClass} disabled:bg-stone-100 disabled:text-vivi-muted`}
           />
         </div>
         <div>
@@ -194,7 +194,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+      <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
         <label className={labelClass}>Ubicación: pegá el link de Google Maps (recomendado)</label>
         <p className="mt-1 text-xs text-vivi-muted">
           En Google Maps, buscá la dirección, tocá &quot;Compartir&quot; y copiá el link. Es más preciso
@@ -221,7 +221,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
           </button>
         </div>
         {linkError && <p className="mt-1.5 text-xs text-red-600">{linkError}</p>}
-        {linkOk && <p className="mt-1.5 text-xs font-semibold text-red-700">✓ Ubicación cargada abajo.</p>}
+        {linkOk && <p className="mt-1.5 text-xs font-semibold text-vivi-mint">✓ Ubicación cargada abajo.</p>}
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -309,13 +309,13 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-x-6 gap-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+      <div className="flex flex-wrap gap-x-6 gap-y-3 rounded-xl border border-stone-200 bg-stone-50 p-4">
         <label className="flex items-center gap-2 text-sm font-medium text-vivi-navy">
           <input
             type="checkbox"
             checked={acceptsSmokers}
             onChange={(e) => setAcceptsSmokers(e.target.checked)}
-            className="h-4 w-4 rounded border-slate-300"
+            className="h-4 w-4 rounded border-stone-300"
           />
           Acepta fumadores
         </label>
@@ -324,7 +324,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
             type="checkbox"
             checked={acceptsPets}
             onChange={(e) => handleAcceptsPetsChange(e.target.checked)}
-            className="h-4 w-4 rounded border-slate-300"
+            className="h-4 w-4 rounded border-stone-300"
           />
           Acepta mascotas
         </label>
@@ -334,7 +334,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
               type="checkbox"
               checked={acceptsDogs}
               onChange={(e) => setAcceptsDogs(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300"
+              className="h-4 w-4 rounded border-stone-300"
             />
             Acepta perros
           </label>
@@ -348,7 +348,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
         {photoUrls.length > 0 && (
           <div className="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-4">
             {photoUrls.map((url) => (
-              <div key={url} className="group relative h-24 overflow-hidden rounded-lg border border-slate-200">
+              <div key={url} className="group relative h-24 overflow-hidden rounded-lg border border-stone-200">
                 {isVideoUrl(url) ? (
                   <video src={url} muted playsInline controls className="h-full w-full object-cover" />
                 ) : (
@@ -394,7 +394,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
               type="color"
               value={colorFrom}
               onChange={(e) => setColorFrom(e.target.value)}
-              className="h-10 w-14 rounded-lg border border-slate-300"
+              className="h-10 w-14 rounded-lg border border-stone-300"
             />
             <span className="text-sm text-vivi-muted">{colorFrom}</span>
           </div>
@@ -406,7 +406,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
               type="color"
               value={colorTo}
               onChange={(e) => setColorTo(e.target.value)}
-              className="h-10 w-14 rounded-lg border border-slate-300"
+              className="h-10 w-14 rounded-lg border border-stone-300"
             />
             <span className="text-sm text-vivi-muted">{colorTo}</span>
           </div>

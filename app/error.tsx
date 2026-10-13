@@ -25,7 +25,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
         </button>
         <Link
           href="/"
-          className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
+          className="rounded-xl border border-stone-300 px-5 py-2.5 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
         >
           Volver al inicio
         </Link>

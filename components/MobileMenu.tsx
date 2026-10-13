@@ -32,7 +32,7 @@ export default function MobileMenu({
         aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-vivi-ink"
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-stone-300 text-vivi-ink"
       >
         {open ? (
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -46,7 +46,7 @@ export default function MobileMenu({
       </button>
 
       {open && (
-        <div className="absolute inset-x-0 top-full border-b border-slate-200 bg-white px-6 py-4 shadow-lg">
+        <div className="absolute inset-x-0 top-full border-b border-stone-200 bg-vivi-card px-6 py-4 shadow-lg">
           <nav className="flex flex-col gap-4 text-sm font-medium text-vivi-ink">
             {isAdmin ? (
               <Link

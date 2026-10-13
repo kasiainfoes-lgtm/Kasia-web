@@ -86,7 +86,7 @@ export default async function AdminPage() {
                   }}
                 />
                 <p className="text-xs font-semibold">{STAGE_LABEL[stage]}</p>
-                <p className="text-xs text-slate-400">{count}</p>
+                <p className="text-xs text-stone-400">{count}</p>
               </div>
             ))}
           </div>
@@ -99,13 +99,13 @@ export default async function AdminPage() {
               const pct = bar.of > 0 ? Math.round((bar.count / bar.of) * 100) : 0;
               return (
                 <div key={bar.label}>
-                  <div className="flex justify-between text-xs text-slate-300">
+                  <div className="flex justify-between text-xs text-stone-300">
                     <span>{bar.label}</span>
                     <span>{bar.count}</span>
                   </div>
                   <div className="mt-1.5 h-2.5 w-full rounded-full bg-white/10">
                     <div
-                      className="h-full rounded-full bg-vivi-mint"
+                      className="h-full rounded-full bg-white"
                       style={{ width: `${bar.label === 'Reserva pagada' ? 100 : pct}%` }}
                     />
                   </div>
@@ -113,7 +113,7 @@ export default async function AdminPage() {
               );
             })}
           </div>
-          <p className="mt-5 text-xs text-slate-400">
+          <p className="mt-5 text-xs text-stone-400">
             Sobre el total de reservas pagadas ({paid.length}).
           </p>
         </div>
@@ -167,9 +167,9 @@ export default async function AdminPage() {
         </div>
       )}
 
-      <div className="mt-10 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+      <div className="mt-10 overflow-x-auto rounded-2xl border border-stone-200 bg-vivi-card">
         <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-vivi-muted">
+          <thead className="border-b border-stone-200 text-xs uppercase tracking-wide text-vivi-muted">
             <tr>
               <th className="px-4 py-3">Cliente</th>
               <th className="px-4 py-3">Habitación</th>
@@ -182,7 +182,7 @@ export default async function AdminPage() {
           </thead>
           <tbody>
             {bookings.map((b) => (
-              <tr key={b.id} className="border-b border-slate-100 last:border-0">
+              <tr key={b.id} className="border-b border-stone-100 last:border-0">
                 <td className="px-4 py-3 text-vivi-ink">{b.userEmail ?? '—'}</td>
                 <td className="px-4 py-3">
                   <p className="font-medium text-vivi-ink">{b.roomTitle}</p>
@@ -192,12 +192,12 @@ export default async function AdminPage() {
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-bold ${
                       b.status === 'pagado'
-                        ? 'bg-vivi-mintLight text-red-700'
+                        ? 'bg-vivi-mintLight text-vivi-mint'
                         : b.status === 'revision'
                           ? 'bg-amber-50 text-amber-700'
                           : b.status === 'verificado'
                             ? 'bg-indigo-50 text-indigo-600'
-                            : 'bg-slate-100 text-vivi-muted'
+                            : 'bg-stone-100 text-vivi-muted'
                     }`}
                   >
                     {STAGE_LABEL[b.status]}
@@ -239,7 +239,7 @@ export default async function AdminPage() {
 function StatCard({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
     <div
-      className="rounded-2xl border border-slate-200 bg-white p-5"
+      className="rounded-2xl border border-stone-200 bg-vivi-card p-5"
       style={{ borderLeft: `4px solid ${accent}` }}
     >
       <p className="text-2xl font-extrabold text-vivi-ink">{value}</p>

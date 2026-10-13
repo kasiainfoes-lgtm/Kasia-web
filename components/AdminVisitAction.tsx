@@ -30,7 +30,7 @@ export default function AdminVisitAction({
         setLoading(false);
         router.refresh();
       }}
-      className="rounded-full border border-slate-300 px-2.5 py-1 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
+      className="rounded-full border border-stone-300 px-2.5 py-1 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
     >
       {loading ? '…' : 'Marcar hecha'}
     </button>

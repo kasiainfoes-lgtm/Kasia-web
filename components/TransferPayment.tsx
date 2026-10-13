@@ -84,12 +84,12 @@ export default function TransferPayment({
     <div className="mt-6 space-y-5">
       <div>
         <p className="text-sm font-bold text-vivi-ink">Condiciones que ya aceptaste</p>
-        <div className="mt-2 max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs leading-relaxed text-vivi-muted">
+        <div className="mt-2 max-h-56 overflow-y-auto rounded-xl border border-stone-200 bg-stone-50 p-4 text-xs leading-relaxed text-vivi-muted">
           <BookingTermsContent roomTitle={room.title} zone={room.zone} price={room.price} deposit={deposit} />
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-300 bg-white p-4">
+      <div className="rounded-xl border border-stone-300 bg-vivi-card p-4">
         <p className="text-sm font-bold text-vivi-ink">Transferir la fianza</p>
         <dl className="mt-3 space-y-1.5 text-sm">
           <div className="flex justify-between gap-3">
@@ -108,7 +108,7 @@ export default function TransferPayment({
             <dt className="text-vivi-muted">Concepto</dt>
             <dd className="text-right font-semibold text-vivi-ink">Fianza {room.title}</dd>
           </div>
-          <div className="flex justify-between gap-3 border-t border-slate-200 pt-1.5 text-base">
+          <div className="flex justify-between gap-3 border-t border-stone-200 pt-1.5 text-base">
             <dt className="font-bold text-vivi-ink">Importe</dt>
             <dd className="font-extrabold text-vivi-ink">{deposit.toFixed(2)} €</dd>
           </div>
@@ -121,7 +121,7 @@ export default function TransferPayment({
         </p>
       )}
 
-      <form onSubmit={handleSubmit} className="rounded-xl border border-dashed border-slate-300 p-4">
+      <form onSubmit={handleSubmit} className="rounded-xl border border-dashed border-stone-300 p-4">
         <p className="text-sm font-semibold text-vivi-ink">Subir comprobante de la transferencia</p>
         <p className="mt-1 text-xs text-vivi-muted">
           Recordá hacer una captura de pantalla del comprobante apenas hagas la transferencia, para

@@ -37,17 +37,17 @@ export default function PublishToggle({ id, published }: { id: string; published
         disabled={loading}
         onClick={toggle}
         className={`flex items-center gap-2 text-xs font-semibold disabled:opacity-60 ${
-          current ? 'text-red-700' : 'text-vivi-muted'
+          current ? 'text-vivi-mint' : 'text-vivi-muted'
         }`}
       >
         <span
           className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
-            current ? 'bg-vivi-mint' : 'bg-slate-300'
+            current ? 'bg-vivi-mint' : 'bg-stone-300'
           }`}
         >
           <span
-            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-              current ? 'translate-x-5' : 'translate-x-0.5'
+            className={`inline-block h-5 w-5 transform rounded-full bg-vivi-card shadow transition-transform ${
+              current ? 'transtone-x-5' : 'transtone-x-0.5'
             }`}
           />
         </span>

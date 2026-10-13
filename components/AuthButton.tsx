@@ -12,7 +12,7 @@ export default function AuthButton({ email }: { email: string | null }) {
     return (
       <Link
         href="/login"
-        className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
+        className="rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
       >
         Iniciar sesión
       </Link>
@@ -26,7 +26,7 @@ export default function AuthButton({ email }: { email: string | null }) {
           await supabase?.auth.signOut();
           router.refresh();
         }}
-        className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
+        className="rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-vivi-ink hover:border-vivi-navy"
       >
         Cerrar sesión
       </button>

@@ -44,7 +44,7 @@ export default function AdminDocumentsActions({ id }: { id: string }) {
           onChange={(e) => setNote(e.target.value)}
           placeholder="¿Qué tiene que corregir?"
           rows={2}
-          className="w-48 rounded-lg border border-slate-300 px-2 py-1.5 text-xs"
+          className="w-48 rounded-lg border border-stone-300 px-2 py-1.5 text-xs"
         />
         <div className="flex gap-2">
           <button
@@ -62,7 +62,7 @@ export default function AdminDocumentsActions({ id }: { id: string }) {
               setRejecting(false);
               setNote('');
             }}
-            className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
+            className="rounded-full border border-stone-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
           >
             Cancelar
           </button>
@@ -79,7 +79,7 @@ export default function AdminDocumentsActions({ id }: { id: string }) {
           type="button"
           disabled={loading !== null}
           onClick={() => act('approve-documents')}
-          className="rounded-full bg-vivi-mint px-3 py-1.5 text-xs font-bold text-vivi-navy hover:brightness-95 disabled:opacity-50"
+          className="rounded-full bg-vivi-navy px-3 py-1.5 text-xs font-bold text-white hover:bg-vivi-navyLight disabled:opacity-50"
         >
           {loading === 'approve' ? 'Aprobando…' : 'Aprobar documentos'}
         </button>
@@ -87,7 +87,7 @@ export default function AdminDocumentsActions({ id }: { id: string }) {
           type="button"
           disabled={loading !== null}
           onClick={() => setRejecting(true)}
-          className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
+          className="rounded-full border border-stone-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy disabled:opacity-50"
         >
           Rechazar
         </button>

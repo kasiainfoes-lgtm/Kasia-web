@@ -21,7 +21,7 @@ export default function FaqContent() {
   return (
     <div className="mt-10 grid gap-6 sm:grid-cols-2">
       {FAQS.map((item) => (
-        <div key={item.q} className="rounded-2xl border border-slate-200 bg-white p-6">
+        <div key={item.q} className="rounded-2xl border border-stone-200 bg-vivi-card p-6">
           <p className="font-bold text-vivi-ink">{item.q}</p>
           <p className="mt-2 text-sm text-vivi-muted">{item.a}</p>
         </div>

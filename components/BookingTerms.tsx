@@ -44,11 +44,11 @@ export default function BookingTerms({
       <div
         ref={scrollRef}
         onScroll={checkScrolled}
-        className="mt-3 h-64 overflow-y-auto rounded-xl border border-slate-300 bg-slate-50 p-4 text-sm leading-relaxed text-vivi-ink"
+        className="mt-3 h-64 overflow-y-auto rounded-xl border border-stone-300 bg-stone-50 p-4 text-sm leading-relaxed text-vivi-ink"
       >
         <BookingTermsContent roomTitle={roomTitle} zone={zone} price={price} deposit={deposit} />
 
-        <p className="mt-4 border-t border-slate-300 pt-3 text-xs text-vivi-muted">
+        <p className="mt-4 border-t border-stone-300 pt-3 text-xs text-vivi-muted">
           Al marcar la casilla de abajo declaras haber leído y aceptado estas condiciones. Quedará
           registrada la fecha y hora de tu aceptación junto con tu reserva.
         </p>
@@ -63,8 +63,8 @@ export default function BookingTerms({
       <label
         className={`mt-3 flex items-start gap-3 rounded-xl border p-4 text-sm ${
           readToEnd
-            ? 'cursor-pointer border-slate-300 bg-white text-vivi-ink'
-            : 'cursor-not-allowed border-slate-200 bg-slate-50 text-vivi-muted'
+            ? 'cursor-pointer border-stone-300 bg-vivi-card text-vivi-ink'
+            : 'cursor-not-allowed border-stone-200 bg-stone-50 text-vivi-muted'
         }`}
       >
         <input

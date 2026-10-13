@@ -109,7 +109,7 @@ function PostPaymentPanelInner({
     <>
       {confirm === 'checking' && (
         <>
-          <span className="inline-block rounded-full bg-slate-100 px-4 py-1.5 text-xs font-bold text-vivi-muted">
+          <span className="inline-block rounded-full bg-stone-100 px-4 py-1.5 text-xs font-bold text-vivi-muted">
             Verificando
           </span>
           <h1 className="mt-4 text-2xl font-extrabold text-vivi-ink">Comprobando tu pago…</h1>
@@ -132,7 +132,7 @@ function PostPaymentPanelInner({
 
       {confirmed && (
         <>
-          <span className="inline-block rounded-full bg-vivi-mintLight px-4 py-1.5 text-xs font-bold text-red-700">
+          <span className="inline-block rounded-full bg-vivi-mintLight px-4 py-1.5 text-xs font-bold text-vivi-mint">
             Reserva confirmada
           </span>
           <h1 className="mt-4 text-2xl font-extrabold text-vivi-ink">Pago recibido</h1>
@@ -141,12 +141,12 @@ function PostPaymentPanelInner({
             cuando quieras.
           </p>
 
-          <dl className="mx-auto mt-6 max-w-sm space-y-2 rounded-2xl border border-slate-200 bg-white p-5 text-left text-sm">
+          <dl className="mx-auto mt-6 max-w-sm space-y-2 rounded-2xl border border-stone-200 bg-vivi-card p-5 text-left text-sm">
             <div className="flex justify-between">
               <dt className="text-vivi-muted">Fianza (1 mensualidad)</dt>
               <dd className="font-bold text-vivi-ink">{deposit.toFixed(2)} €</dd>
             </div>
-            <div className="flex justify-between border-t border-slate-200 pt-2 text-base">
+            <div className="flex justify-between border-t border-stone-200 pt-2 text-base">
               <dt className="font-bold text-vivi-ink">TOTAL PAGADO</dt>
               <dd className="font-extrabold text-vivi-ink">{total.toFixed(2)} €</dd>
             </div>
@@ -155,10 +155,10 @@ function PostPaymentPanelInner({
       )}
 
       <div className="mt-8 grid gap-6 text-left sm:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="rounded-2xl border border-stone-200 bg-vivi-card p-6">
           <p className="text-sm font-bold text-vivi-ink">Contacta a tu asesor/a</p>
           <div className="mt-3 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-vivi-mintLight font-bold text-red-700">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-vivi-mintLight font-bold text-vivi-mint">
               {room.manager.charAt(0)}
             </div>
             <div>
@@ -186,13 +186,13 @@ function PostPaymentPanelInner({
         </div>
 
         {confirmed && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="rounded-2xl border border-stone-200 bg-vivi-card p-6">
             <p className="text-sm font-bold text-vivi-ink">Agenda tu visita</p>
             {visitStatus === 'hecha' ? (
-              <p className="mt-3 text-sm text-red-700">✓ Visita realizada</p>
+              <p className="mt-3 text-sm text-vivi-mint">✓ Visita realizada</p>
             ) : visitStatus === 'agendada' && !showRescheduleForm ? (
               <>
-                <p className="mt-3 text-sm text-red-700">
+                <p className="mt-3 text-sm text-vivi-mint">
                   ✓ Visita agendada para {initialVisitAt ? new Date(initialVisitAt).toLocaleString('es-ES') : '—'}
                 </p>
                 <div className="mt-3 flex gap-3">
@@ -207,7 +207,7 @@ function PostPaymentPanelInner({
                   <button
                     type="button"
                     onClick={() => setShowRescheduleForm(true)}
-                    className="rounded-lg border border-slate-300 px-4 py-2 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
+                    className="rounded-lg border border-stone-300 px-4 py-2 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
                   >
                     Cambiar fecha
                   </button>
@@ -221,7 +221,7 @@ function PostPaymentPanelInner({
                   required
                   value={visitAtInput}
                   onChange={(e) => setVisitAtInput(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
                 />
                 <button
                   type="submit"

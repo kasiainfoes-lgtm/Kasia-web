@@ -82,8 +82,8 @@ export default function BookingWizard({
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <span className="inline-block rounded-full bg-vivi-mintLight px-3 py-1 text-xs font-bold text-red-700">
+      <div className="rounded-2xl border border-stone-200 bg-vivi-card p-6">
+        <span className="inline-block rounded-full bg-vivi-mintLight px-3 py-1 text-xs font-bold text-vivi-mint">
           Vivienda habitual · mínimo 6 meses
         </span>
 
@@ -95,10 +95,10 @@ export default function BookingWizard({
                 <span
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
                     state === 'done'
-                      ? 'bg-vivi-mint text-vivi-navy'
+                      ? 'bg-vivi-mintLight text-vivi-navy'
                       : state === 'current'
                         ? 'bg-vivi-navy text-white'
-                        : 'bg-slate-100 text-vivi-muted'
+                        : 'bg-stone-100 text-vivi-muted'
                   }`}
                 >
                   {i + 1}
@@ -150,7 +150,7 @@ export default function BookingWizard({
             {step > 0 && (
               <button
                 onClick={() => setStep((s) => s - 1)}
-                className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold text-vivi-ink"
+                className="rounded-xl border border-stone-300 px-5 py-2.5 text-sm font-semibold text-vivi-ink"
               >
                 Atrás
               </button>
@@ -170,7 +170,7 @@ export default function BookingWizard({
         )}
       </div>
 
-      <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-6">
+      <aside className="h-fit rounded-2xl border border-stone-200 bg-vivi-card p-6">
         <h3 className="text-lg font-bold text-vivi-ink">Resumen de reserva</h3>
         <dl className="mt-4 space-y-3 text-sm">
           <div className="flex justify-between">
@@ -187,13 +187,13 @@ export default function BookingWizard({
                 <dt className="text-vivi-muted">Fianza (1 mensualidad)</dt>
                 <dd className="font-bold text-vivi-ink">{deposit.toFixed(2)} €</dd>
               </div>
-              <div className="flex justify-between border-t border-slate-200 pt-3 text-base">
+              <div className="flex justify-between border-t border-stone-200 pt-3 text-base">
                 <dt className="font-bold text-vivi-ink">TOTAL PAGADO</dt>
                 <dd className="font-extrabold text-vivi-ink">{total.toFixed(2)} €</dd>
               </div>
             </>
           ) : (
-            <div className="flex justify-between border-t border-slate-200 pt-3 text-base">
+            <div className="flex justify-between border-t border-stone-200 pt-3 text-base">
               <dt className="font-bold text-vivi-ink">TOTAL A TRANSFERIR</dt>
               <dd className="font-extrabold text-vivi-ink">{total.toFixed(2)} €</dd>
             </div>
@@ -201,7 +201,7 @@ export default function BookingWizard({
         </dl>
 
         {!confirmed && (
-          <div className="mt-6 border-t border-slate-200 pt-4">
+          <div className="mt-6 border-t border-stone-200 pt-4">
             <button
               type="button"
               disabled={cancelling}

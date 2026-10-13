@@ -25,7 +25,7 @@ export default async function EditPropertyPage({ params }: { params: { id: strin
           <PublishToggle id={room.id} published={room.published} />
           <Link
             href={`/admin/propiedades/${room.id}/vista-previa`}
-            className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
+            className="rounded-full border border-stone-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
           >
             Vista previa
           </Link>

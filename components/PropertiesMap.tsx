@@ -102,7 +102,7 @@ export default function PropertiesMap({ rooms, height = 500 }: { rooms: Room[]; 
 
   if (rooms.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed border-slate-300 p-10 text-center text-sm text-vivi-muted">
+      <p className="rounded-xl border border-dashed border-stone-300 p-10 text-center text-sm text-vivi-muted">
         No hay habitaciones para mostrar en el mapa.
       </p>
     );

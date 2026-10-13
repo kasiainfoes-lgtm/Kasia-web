@@ -48,11 +48,11 @@ export default async function ApplyDocumentsPage({
           <DocumentsUploadForm applicationId={application.id} occupationType={application.occupationType} />
         </>
       ) : application.documentsApprovedAt ? (
-        <p className="mt-8 rounded-xl bg-vivi-mintLight px-4 py-3 text-sm font-medium text-red-700">
+        <p className="mt-8 rounded-xl bg-vivi-mintLight px-4 py-3 text-sm font-medium text-vivi-mint">
           Ya revisamos tus documentos y están todos en orden. Pronto nos pondremos en contacto contigo.
         </p>
       ) : (
-        <p className="mt-8 rounded-xl bg-vivi-mintLight px-4 py-3 text-sm font-medium text-red-700">
+        <p className="mt-8 rounded-xl bg-vivi-mintLight px-4 py-3 text-sm font-medium text-vivi-mint">
           Ya recibimos tus documentos. Te avisamos por email en cuanto los revisemos.
         </p>
       )}

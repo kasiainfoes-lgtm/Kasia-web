@@ -56,10 +56,10 @@ export default async function ApplyResultPage() {
       <span
         className={`inline-block rounded-full px-4 py-1.5 text-xs font-bold ${
           status === 'APPROVED'
-            ? 'bg-vivi-mintLight text-red-700'
+            ? 'bg-vivi-mintLight text-vivi-mint'
             : status === 'REVIEW'
               ? 'bg-indigo-50 text-indigo-600'
-              : 'bg-slate-100 text-vivi-muted'
+              : 'bg-stone-100 text-vivi-muted'
         }`}
       >
         {copy.badge}
@@ -70,7 +70,7 @@ export default async function ApplyResultPage() {
       {status === 'APPROVED' ? (
         <Link
           href="/signup"
-          className="mt-8 inline-block rounded-xl bg-vivi-mint px-6 py-3 text-sm font-bold text-vivi-navy hover:brightness-95"
+          className="mt-8 inline-block rounded-xl bg-vivi-navy px-6 py-3 text-sm font-bold text-white hover:bg-vivi-navyLight"
         >
           Crear cuenta y ver habitaciones
         </Link>

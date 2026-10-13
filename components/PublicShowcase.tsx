@@ -22,7 +22,7 @@ export default function PublicShowcase() {
 
       <div className="mt-10 grid gap-6 sm:grid-cols-3">
         {SAMPLES.map((s) => (
-          <div key={s.zone} className="rounded-2xl border border-slate-200 bg-white p-4">
+          <div key={s.zone} className="rounded-2xl border border-stone-200 bg-vivi-card p-4">
             <RoomIllustration
               id={`showcase-${s.zone}`}
               variant={s.illustration}
@@ -31,7 +31,7 @@ export default function PublicShowcase() {
             />
             <div className="mt-3 flex items-center justify-between">
               <p className="font-semibold text-vivi-ink">{s.zone}</p>
-              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-vivi-muted">
+              <span className="rounded-full bg-stone-100 px-2.5 py-1 text-xs font-bold text-vivi-muted">
                 Vista previa
               </span>
             </div>

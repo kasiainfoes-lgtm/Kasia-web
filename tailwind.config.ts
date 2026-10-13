@@ -5,19 +5,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Paleta minimalista cálida (gris piedra + negro), estilo
+        // portfolio: fondo gris cálido, tarjetas color crema, texto
+        // casi negro, acento oscuro en vez de colores vivos.
         vivi: {
-          navy: '#0B1524',
-          navyLight: '#152238',
-          // Nombres "mint" heredados del diseño original: el acento
-          // principal del sitio es rojo, no verde.
-          mint: '#E5484D',
-          mintLight: '#FBE3E1',
-          coral: '#FB7360',
+          navy: '#15140F',
+          navyLight: '#2B2A24',
+          mint: '#3A382F',
+          mintLight: '#EDEAE2',
+          coral: '#EDEAE2',
           purple: '#8B7CF6',
           blue: '#5B93F2',
-          bg: '#F4F6F9',
-          ink: '#0F172A',
-          muted: '#64748B',
+          bg: '#DBD8D1',
+          card: '#F1EEE7',
+          ink: '#19180F',
+          muted: '#726F65',
         },
       },
       fontFamily: {
@@ -25,6 +27,9 @@ const config: Config = {
       },
       borderRadius: {
         xl2: '1.25rem',
+        xl: '1rem',
+        '2xl': '1.75rem',
+        '3xl': '2.5rem',
       },
     },
   },

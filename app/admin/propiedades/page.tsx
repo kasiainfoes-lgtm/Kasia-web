@@ -38,8 +38,8 @@ export default async function AdminPropertiesPage() {
           return (
           <div
             key={room.id}
-            className={`rounded-2xl border bg-white p-4 ${
-              room.published ? 'border-slate-200' : 'border-slate-200 opacity-60'
+            className={`rounded-2xl border bg-vivi-card p-4 ${
+              room.published ? 'border-stone-200' : 'border-stone-200 opacity-60'
             }`}
           >
             {thumbnail ? (
@@ -69,13 +69,13 @@ export default async function AdminPropertiesPage() {
             <div className="mt-3 flex flex-wrap gap-2">
               <Link
                 href={`/admin/propiedades/${room.id}`}
-                className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
+                className="rounded-full border border-stone-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
               >
                 Editar
               </Link>
               <Link
                 href={`/admin/propiedades/${room.id}/vista-previa`}
-                className="rounded-full border border-slate-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
+                className="rounded-full border border-stone-300 px-3 py-1.5 text-xs font-semibold text-vivi-ink hover:border-vivi-navy"
               >
                 Vista previa
               </Link>

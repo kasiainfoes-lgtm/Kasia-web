@@ -25,38 +25,37 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-vivi-navy">
-        {/* Decorativos simétricos a los costados del bloque centrado — en
-            móvil no hay ancho libre y quedarían encima del texto. */}
-        <div className="absolute left-[6%] top-12 hidden h-20 w-20 rounded-full bg-vivi-coral/80 lg:block" />
-        <div className="absolute right-[6%] top-12 hidden h-20 w-20 rounded-full bg-vivi-mint/80 lg:block" />
-        <div className="relative mx-auto max-w-3xl px-6 py-24 text-center sm:py-32">
-          <span className="inline-block rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-vivi-mint">
-            Valencia · vivienda habitual · mínimo 6 meses
-          </span>
-          <h1 className="mx-auto mt-6 max-w-2xl text-4xl font-extrabold leading-tight text-white sm:text-5xl">
-            Alquiler residencial, verificado y pensado para quedarte.
-          </h1>
-          <p className="mx-auto mt-5 max-w-xl text-base text-slate-300">
-            Cuéntanos qué buscas y en dos minutos te decimos si tenemos disponibilidad para ti. El
-            catálogo completo, con precios y fechas exactas, se desbloquea después.
-          </p>
-
-          <div className="mx-auto mt-8 flex max-w-sm flex-col items-center gap-4 rounded-2xl bg-white p-5 shadow-xl shadow-black/20 sm:max-w-md">
-            <Link
-              href="/apply"
-              className="w-full rounded-xl bg-vivi-mint px-6 py-3.5 text-sm font-bold text-white transition hover:brightness-95"
-            >
-              Encontrar mi habitación
-            </Link>
-            <p className="text-xs font-medium text-vivi-muted">Sin compromiso · toma menos de 2 minutos</p>
-          </div>
-
-          {pendingReview && (
-            <p className="mx-auto mt-6 inline-block rounded-lg bg-white/10 px-4 py-2.5 text-sm text-slate-200">
-              Ya recibimos tu perfil de búsqueda y lo estamos revisando.
+      <section className="bg-vivi-bg pt-8 sm:pt-12">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-vivi-card px-6 py-20 text-center sm:py-28">
+            <span className="inline-block rounded-full bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-vivi-mint shadow-sm">
+              Valencia · vivienda habitual · mínimo 6 meses
+            </span>
+            <h1 className="mx-auto mt-6 max-w-2xl text-4xl font-extrabold leading-tight text-vivi-ink sm:text-5xl">
+              Alquiler residencial,{' '}
+              <span className="font-medium text-vivi-muted">verificado y pensado para quedarte.</span>
+            </h1>
+            <p className="mx-auto mt-5 max-w-xl text-base text-vivi-muted">
+              Cuéntanos qué buscas y en dos minutos te decimos si tenemos disponibilidad para ti. El
+              catálogo completo, con precios y fechas exactas, se desbloquea después.
             </p>
-          )}
+
+            <div className="mx-auto mt-8 flex flex-col items-center gap-3">
+              <Link
+                href="/apply"
+                className="inline-flex items-center gap-2 rounded-full bg-vivi-navy px-7 py-3.5 text-sm font-bold text-white transition hover:bg-vivi-navyLight"
+              >
+                Encontrar mi habitación
+              </Link>
+              <p className="text-xs font-medium text-vivi-muted">Sin compromiso · toma menos de 2 minutos</p>
+            </div>
+
+            {pendingReview && (
+              <p className="mx-auto mt-6 inline-block rounded-full bg-white px-4 py-2.5 text-sm text-vivi-ink shadow-sm">
+                Ya recibimos tu perfil de búsqueda y lo estamos revisando.
+              </p>
+            )}
+          </div>
         </div>
       </section>
 
@@ -65,8 +64,8 @@ export default async function HomePage() {
       <section className="bg-vivi-bg py-20">
         <div className="mx-auto max-w-6xl px-6">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Cómo funciona</p>
-            <h2 className="mt-2 text-2xl font-extrabold text-vivi-ink sm:text-3xl">
+            <Eyebrow>Cómo funciona</Eyebrow>
+            <h2 className="mt-4 text-2xl font-extrabold text-vivi-ink sm:text-3xl">
               Tres pasos antes de ver la disponibilidad real.
             </h2>
           </div>
@@ -87,11 +86,11 @@ export default async function HomePage() {
       </section>
 
       {siteReviews.length > 0 && (
-        <section className="bg-white py-20">
+        <section className="bg-vivi-card py-20">
           <div className="mx-auto max-w-6xl px-6">
             <div className="mx-auto max-w-2xl text-center">
-              <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Testimonios</p>
-              <div className="mt-2 flex items-center justify-center gap-2">
+              <Eyebrow>Testimonios</Eyebrow>
+              <div className="mt-4 flex items-center justify-center gap-2">
                 <h2 className="text-2xl font-extrabold text-vivi-ink sm:text-3xl">
                   Lo que dicen quienes ya alquilaron
                 </h2>
@@ -105,14 +104,14 @@ export default async function HomePage() {
             </div>
             <div className="mt-10 grid gap-6 sm:grid-cols-3">
               {siteReviews.slice(0, 6).map((review) => (
-                <div key={review.id} className="rounded-2xl border border-slate-200 p-6">
+                <div key={review.id} className="rounded-2xl border border-stone-200 p-6">
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map((n) => (
                       <Star
                         key={n}
                         width={14}
                         height={14}
-                        className={n <= review.rating ? 'fill-vivi-mint text-vivi-mint' : 'text-slate-300'}
+                        className={n <= review.rating ? 'fill-vivi-mint text-vivi-mint' : 'text-stone-300'}
                       />
                     ))}
                   </div>
@@ -133,10 +132,21 @@ export default async function HomePage() {
   );
 }
 
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative flex items-center justify-center">
+      <div className="absolute inset-x-0 top-1/2 h-px bg-stone-300" />
+      <span className="relative inline-block rounded-full border border-stone-300 bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-vivi-mint">
+        {children}
+      </span>
+    </div>
+  );
+}
+
 function Step({ n, title, desc }: { n: number; title: string; desc: string }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
-      <span className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-vivi-mintLight text-sm font-bold text-red-700">
+    <div className="rounded-2xl border border-stone-200 bg-vivi-card p-6 text-center">
+      <span className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-vivi-mintLight text-sm font-bold text-vivi-mint">
         {n}
       </span>
       <p className="mt-4 font-bold text-vivi-ink">{title}</p>

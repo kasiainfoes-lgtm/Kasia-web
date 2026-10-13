@@ -57,18 +57,15 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
   return (
     <>
       <section className="relative overflow-hidden bg-vivi-navy">
-        {/* Ver comentario en app/page.tsx: tapaban el texto en móvil. */}
-        <div className="absolute right-[14%] top-5 hidden h-20 w-20 rounded-full bg-vivi-mint/90 sm:block" />
-        <div className="absolute bottom-5 left-[8%] hidden h-24 w-24 rounded-full bg-vivi-coral/90 sm:block" />
         <div className="relative mx-auto max-w-6xl px-6 py-10 sm:py-12">
-          <span className="text-xs font-bold uppercase tracking-wide text-vivi-mint">
+          <span className="text-xs font-bold uppercase tracking-wide text-stone-300">
             Valencia · vivienda habitual · mínimo 6 meses
           </span>
           <h1 className="mt-3 max-w-xl text-2xl font-extrabold leading-tight text-white sm:text-3xl">
             Encuentra tu próxima habitación, verificada y reservable desde el móvil.
           </h1>
 
-          <div className="mt-6 grid gap-2 rounded-2xl bg-white p-2 shadow-xl sm:grid-cols-[1fr_1fr_1.4fr_auto]">
+          <div className="mt-6 grid gap-2 rounded-2xl bg-vivi-card p-2 shadow-xl sm:grid-cols-[1fr_1fr_1.4fr_auto]">
             <div className="rounded-xl px-4 py-2.5 hover:bg-vivi-bg">
               <label className="block text-[11px] font-bold uppercase tracking-wide text-vivi-muted">
                 Zona
@@ -113,7 +110,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
             </div>
             <a
               href="#catalogo"
-              className="flex items-center justify-center rounded-xl bg-vivi-mint px-6 py-2.5 text-sm font-bold text-vivi-navy hover:brightness-95"
+              className="flex items-center justify-center rounded-xl bg-vivi-navy px-6 py-2.5 text-sm font-bold text-white hover:bg-vivi-navyLight"
             >
               Buscar
             </a>
@@ -121,7 +118,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
 
           <button
             onClick={() => setShowMoreFilters((s) => !s)}
-            className="mt-3 text-sm text-slate-300 underline underline-offset-4 hover:text-white"
+            className="mt-3 text-sm text-stone-300 underline underline-offset-4 hover:text-white"
           >
             {showMoreFilters ? 'Ocultar filtros' : 'Más filtros'}
           </button>
@@ -170,12 +167,12 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
         </div>
       </section>
 
-      <div className="sticky top-[65px] z-30 border-b border-slate-200 bg-white">
+      <div className="sticky top-[65px] z-30 border-b border-stone-200 bg-vivi-card">
         <div className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-6 py-3">
           <button
             onClick={() => setZone('Todas')}
             className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${
-              zone === 'Todas' ? 'bg-vivi-navy text-white' : 'bg-vivi-bg text-vivi-muted hover:bg-slate-200'
+              zone === 'Todas' ? 'bg-vivi-navy text-white' : 'bg-vivi-bg text-vivi-muted hover:bg-stone-200'
             }`}
           >
             Todas
@@ -185,7 +182,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
               key={z}
               onClick={() => setZone(z)}
               className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${
-                zone === z ? 'bg-vivi-navy text-white' : 'bg-vivi-bg text-vivi-muted hover:bg-slate-200'
+                zone === z ? 'bg-vivi-navy text-white' : 'bg-vivi-bg text-vivi-muted hover:bg-stone-200'
               }`}
             >
               {z}
@@ -205,13 +202,13 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
               onClick={() => setShowFavOnly((s) => !s)}
               className={`rounded-full border px-3 py-1.5 text-xs font-bold ${
                 showFavOnly
-                  ? 'border-vivi-mint bg-vivi-mintLight text-red-700'
-                  : 'border-slate-300 text-vivi-ink hover:border-vivi-navy'
+                  ? 'border-vivi-mint bg-vivi-mintLight text-vivi-mint'
+                  : 'border-stone-300 text-vivi-ink hover:border-vivi-navy'
               }`}
             >
               ❤ Guardados ({favIds.size})
             </button>
-            <div className="flex overflow-hidden rounded-full border border-slate-300">
+            <div className="flex overflow-hidden rounded-full border border-stone-300">
               <button
                 onClick={() => setView('lista')}
                 className={`px-3 py-1.5 text-xs font-bold ${
@@ -240,7 +237,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
               <RoomCard key={room.id} room={room} onToggleFavorite={() => setFavVersion((v) => v + 1)} />
             ))}
             {filtered.length === 0 && (
-              <p className="col-span-full rounded-xl border border-dashed border-slate-300 p-10 text-center text-sm text-vivi-muted">
+              <p className="col-span-full rounded-xl border border-dashed border-stone-300 p-10 text-center text-sm text-vivi-muted">
                 No hay habitaciones que coincidan con esta búsqueda. Prueba ampliando el presupuesto o
                 cambiando de zona.
               </p>

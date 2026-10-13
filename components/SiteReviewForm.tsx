@@ -40,14 +40,14 @@ export default function SiteReviewForm() {
 
   if (done) {
     return (
-      <p className="rounded-xl bg-vivi-mintLight px-4 py-3 text-sm font-medium text-red-700">
+      <p className="rounded-xl bg-vivi-mintLight px-4 py-3 text-sm font-medium text-vivi-mint">
         ¡Gracias por tu reseña!
       </p>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+    <form onSubmit={handleSubmit} className="rounded-xl border border-stone-200 bg-stone-50 p-4">
       <p className="text-sm font-semibold text-vivi-ink">¿Cómo fue tu experiencia con Kasia?</p>
       <div className="mt-2 flex gap-1">
         {[1, 2, 3, 4, 5].map((n) => (
@@ -63,7 +63,7 @@ export default function SiteReviewForm() {
             <Star
               width={24}
               height={24}
-              className={n <= (hoverRating || rating) ? 'fill-vivi-mint text-vivi-mint' : 'text-slate-300'}
+              className={n <= (hoverRating || rating) ? 'fill-vivi-mint text-vivi-mint' : 'text-stone-300'}
             />
           </button>
         ))}
@@ -74,7 +74,7 @@ export default function SiteReviewForm() {
         placeholder="Contá cómo fue tu experiencia en general (opcional)"
         rows={3}
         maxLength={1000}
-        className="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+        className="mt-3 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
       />
       {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
       <button

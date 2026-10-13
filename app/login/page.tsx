@@ -57,7 +57,7 @@ function LoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-2 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
           />
         </div>
         <div>
@@ -74,7 +74,7 @@ function LoginForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-2 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
           />
         </div>
 
