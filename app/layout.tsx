@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 export const metadata: Metadata = {
   title: 'Kasia Valencia · Alquiler residencial verificado',
   description:
-    'Alquiler residencial de vivienda habitual en Valencia, verificado y reservable desde el móvil.',
+    'Alquiler residencial de vivienda habitual en Valencia, verificado y reservable desde el dispositivo.',
 };
 
 export default function RootLayout({

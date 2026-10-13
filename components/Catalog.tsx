@@ -62,7 +62,7 @@ export default function Catalog({ rooms }: { rooms: Room[] }) {
             Valencia · vivienda habitual · mínimo 6 meses
           </span>
           <h1 className="mt-3 max-w-xl text-2xl font-extrabold leading-tight text-white sm:text-3xl">
-            Encuentra tu próxima habitación, verificada y reservable desde el móvil.
+            Encuentra tu próxima habitación, verificada y reservable desde el dispositivo.
           </h1>
 
           <div className="mt-6 grid gap-2 rounded-2xl bg-vivi-card p-2 shadow-xl sm:grid-cols-[1fr_1fr_1.4fr_auto]">
