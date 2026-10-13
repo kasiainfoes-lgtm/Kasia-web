@@ -1,6 +1,12 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { fetchRooms } from '@/lib/properties.server';
-import { scoreApplication, type ApplicationAnswers, type ApplicationStatus, type PetType } from '@/lib/application-scoring';
+import {
+  scoreApplication,
+  type ApplicationAnswers,
+  type ApplicationStatus,
+  type InternalReason,
+  type PetType,
+} from '@/lib/application-scoring';
 
 export type Application = {
   id: string;
@@ -33,6 +39,7 @@ export type AdminApplication = {
   petType: PetType;
   budget: number;
   status: ApplicationStatus;
+  internalReason: InternalReason;
   createdAt: string;
 } & ApplicationDocumentsState;
 
@@ -129,7 +136,7 @@ export async function fetchAllApplications(): Promise<AdminApplication[]> {
   const { data, error } = await admin
     .from('applications')
     .select(
-      'id, name, email, phone, zone, occupation_type, pet_type, budget, status, financial_proof_path, unpaid_rent_insurance_path, payslip_path, documents_requested_at, documents_submitted_at, documents_rejected_at, documents_rejection_note, documents_approved_at, created_at'
+      'id, name, email, phone, zone, occupation_type, pet_type, budget, status, internal_reason, financial_proof_path, unpaid_rent_insurance_path, payslip_path, documents_requested_at, documents_submitted_at, documents_rejected_at, documents_rejection_note, documents_approved_at, created_at'
     )
     .order('created_at', { ascending: false });
 
@@ -145,6 +152,7 @@ export async function fetchAllApplications(): Promise<AdminApplication[]> {
     petType: row.pet_type,
     budget: Number(row.budget),
     status: row.status,
+    internalReason: row.internal_reason,
     financialProofPath: row.financial_proof_path,
     unpaidRentInsurancePath: row.unpaid_rent_insurance_path,
     payslipPath: row.payslip_path,

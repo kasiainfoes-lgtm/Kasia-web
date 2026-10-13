@@ -1,5 +1,6 @@
 import { adminPageGate } from '@/lib/admin-page-gate.server';
 import { fetchAllApplications, type AdminApplication } from '@/lib/applications.server';
+import { formatDateTimeEs } from '@/lib/format';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
 import AdminApplicationActions from '@/components/AdminApplicationActions';
@@ -19,6 +20,21 @@ const STATUS_COLOR: Record<string, string> = {
   REVIEW: 'bg-indigo-50 text-indigo-600',
   NOT_ELIGIBLE: 'bg-slate-100 text-vivi-muted',
   REJECTED: 'bg-red-50 text-red-600',
+};
+
+// Nunca se le muestra a la persona que aplicó (para que no pueda ir
+// ajustando sus respuestas hasta "adivinar" las reglas), pero adentro del
+// panel interno sí sirve para que el equipo entienda de un vistazo por qué
+// una solicitud quedó sin disponibilidad o en revisión.
+const REASON_LABEL: Record<string, string> = {
+  MIN_STAY_NOT_MET: 'Busca una estancia más corta que el mínimo (6 meses)',
+  OCCUPANCY_MISMATCH: 'Hay menores de edad',
+  PET_POLICY_MISMATCH: 'Política de mascotas',
+  SMOKING_POLICY_MISMATCH: 'Es fumador/a',
+  NO_MATCHING_INVENTORY: 'No hay ninguna habitación que encaje con su zona/ocupación/mascota/fumador',
+  NO_INVENTORY_LOADED: 'Todavía no hay catálogo cargado',
+  DOCUMENTATION_REVIEW: 'Es estudiante, hace falta revisar documentación',
+  BUDGET_MISMATCH: 'Su presupuesto queda por debajo de lo disponible para su perfil',
 };
 
 const PET_LABEL: Record<string, string> = { ninguno: '—', perro: 'Perro', gato: 'Gato', otro: 'Otro' };
@@ -60,6 +76,7 @@ export default async function AdminSolicitudesPage() {
               <th className="px-4 py-3">Perfil</th>
               <th className="px-4 py-3">Documentos</th>
               <th className="px-4 py-3">Estado</th>
+              <th className="px-4 py-3">Enviada</th>
               <th className="px-4 py-3">Acción</th>
             </tr>
           </thead>
@@ -155,7 +172,13 @@ export default async function AdminSolicitudesPage() {
                   <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${STATUS_COLOR[a.status]}`}>
                     {STATUS_LABEL[a.status]}
                   </span>
+                  {a.internalReason && REASON_LABEL[a.internalReason] && (
+                    <p className="mt-1.5 max-w-[200px] text-xs text-vivi-muted">
+                      {REASON_LABEL[a.internalReason]}
+                    </p>
+                  )}
                 </td>
+                <td className="px-4 py-3 text-xs text-vivi-muted">{formatDateTimeEs(a.createdAt)}</td>
                 <td className="px-4 py-3">
                   {a.status === 'REVIEW' ? (
                     <AdminApplicationActions id={a.id} />
@@ -167,7 +190,7 @@ export default async function AdminSolicitudesPage() {
             ))}
             {applications.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-sm text-vivi-muted">
+                <td colSpan={6} className="px-4 py-10 text-center text-sm text-vivi-muted">
                   Todavía no hay solicitudes.
                 </td>
               </tr>
