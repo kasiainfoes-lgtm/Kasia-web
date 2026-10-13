@@ -73,16 +73,45 @@ export default function PropertiesMap({ rooms, height = 500 }: { rooms: Room[]; 
       // Se ve la foto al pasar el mouse, sin tener que hacer click — pero si
       // ya la abrió con un click, queda fija (no se cierra sola al mover el
       // mouse) hasta que la cierre a propósito.
+      //
+      // El popup se abre justo arriba del precio y lo tapa: al abrirse, el
+      // cursor queda "sobre" el popup en vez de sobre el marcador, así que
+      // el mouseout del marcador se disparaba al toque y lo volvía a cerrar
+      // — titilaba sin llegar a mostrarse. Por eso el cierre no es
+      // inmediato: se demora un toque y se cancela si el mouse ya está
+      // sobre el propio popup (el usuario lo sigue viendo igual).
       let openedByClick = false;
+      let closeTimer: ReturnType<typeof setTimeout> | null = null;
+
+      function cancelClose() {
+        if (closeTimer !== null) {
+          clearTimeout(closeTimer);
+          closeTimer = null;
+        }
+      }
+      function scheduleClose() {
+        cancelClose();
+        closeTimer = setTimeout(() => {
+          if (!openedByClick) marker.closePopup();
+        }, 150);
+      }
+
       marker.on('click', () => {
         openedByClick = true;
       });
       marker.on('popupclose', () => {
         openedByClick = false;
       });
-      marker.on('mouseover', () => marker.openPopup());
-      marker.on('mouseout', () => {
-        if (!openedByClick) marker.closePopup();
+      marker.on('mouseover', () => {
+        cancelClose();
+        marker.openPopup();
+      });
+      marker.on('mouseout', scheduleClose);
+      marker.on('popupopen', (e) => {
+        const popupEl = e.popup.getElement();
+        if (!popupEl) return;
+        popupEl.addEventListener('mouseenter', cancelClose);
+        popupEl.addEventListener('mouseleave', scheduleClose);
       });
     }
 
