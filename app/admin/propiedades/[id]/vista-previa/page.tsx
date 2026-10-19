@@ -105,9 +105,6 @@ export default async function PreviewPropertyPage({ params }: { params: { id: st
             <span className="mt-5 block rounded-xl bg-vivi-navy py-3 text-center text-sm font-bold text-white opacity-60">
               Reservar habitación
             </span>
-            <p className="mt-3 text-center text-xs text-vivi-muted">
-              Botón de ejemplo — acá no reserva nada de verdad
-            </p>
           </aside>
         </div>
       </section>

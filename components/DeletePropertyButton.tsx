@@ -13,7 +13,12 @@ export default function DeletePropertyButton({ id, title }: { id: string; title:
       <button
         disabled={loading}
         onClick={async () => {
-          if (!confirm(`¿Eliminar "${title}"? Esta acción no se puede deshacer.`)) return;
+          if (
+            !confirm(
+              `¿Eliminar "${title}"? Esta acción no se puede deshacer y también borra cualquier reserva asociada a esta habitación.`
+            )
+          )
+            return;
           setLoading(true);
           setError(null);
           const res = await fetch(`/api/admin/properties/${id}`, { method: 'DELETE' });

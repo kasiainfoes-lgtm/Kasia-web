@@ -31,16 +31,21 @@ export async function DELETE(_request: Request, { params }: { params: { id: stri
   const admin = createAdminClient();
   if (!admin) return NextResponse.json({ error: 'Supabase no está configurado.' }, { status: 501 });
 
+  // Antes esto fallaba (23503, foreign_key_violation) apenas alguien había
+  // abierto /reservar/[id] una sola vez para esta habitación, porque eso ya
+  // deja una fila en bookings — el admin tenía que ir a cancelar esa reserva
+  // a mano antes de poder borrar. Como acá ya se confirmó que es una acción
+  // permanente, se limpian esas referencias primero en vez de bloquear.
+  await admin.from('bookings').delete().eq('room_id', params.id);
+  await admin.from('applications').update({ final_choice_room_id: null }).eq('final_choice_room_id', params.id);
+
   const { error } = await admin.from('properties').delete().eq('id', params.id);
   if (error) {
-    // 23503 = foreign_key_violation: hay una reserva (en cualquier etapa)
-    // apuntando a esta propiedad. Sin este mensaje, el botón de eliminar
-    // fallaba sin explicar por qué.
     if (error.code === '23503') {
       return NextResponse.json(
         {
           error:
-            'No se puede eliminar: hay una reserva en proceso para esta habitación. Cancelala primero desde el panel de reservas (/admin) y volvé a intentar.',
+            'No se puede eliminar: todavía hay datos que dependen de esta habitación. Escribile a soporte técnico si esto se repite.',
         },
         { status: 409 }
       );

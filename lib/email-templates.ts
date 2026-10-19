@@ -271,3 +271,27 @@ export function visitScheduledAdminNotificationEmailTemplate(
     ),
   };
 }
+
+export function supportRequestEmailTemplate(phone: string, email: string, message: string) {
+  const safePhone = escapeHtml(phone);
+  const safeEmail = escapeHtml(email);
+  const safeMessage = escapeHtml(message).replace(/\n/g, '<br />');
+  return {
+    subject: `Nueva consulta de soporte — ${phone}`,
+    html: wrapper(
+      'Nueva consulta de soporte',
+      `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">
+         Alguien completó el formulario de soporte del sitio. Para responderle:
+       </p>
+       <p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">
+         📞 <strong>${safePhone}</strong><br />
+         ✉️ <strong>${safeEmail}</strong>
+       </p>
+       ${
+         message
+           ? `<p style="margin:0;padding:16px;background:#F4F6FB;border-radius:12px;color:#3A4356;font-size:14px;line-height:1.6;">${safeMessage}</p>`
+           : ''
+       }`
+    ),
+  };
+}
