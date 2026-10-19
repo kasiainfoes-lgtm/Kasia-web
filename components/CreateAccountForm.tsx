@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 
 export default function CreateAccountForm({ email, appId }: { email: string; appId: string }) {
   const router = useRouter();
+  const supabase = createClient();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -23,10 +25,31 @@ export default function CreateAccountForm({ email, appId }: { email: string; app
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password, appId }),
     });
-    setLoading(false);
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      const { error } = await res.json().catch(() => ({ error: 'No pudimos crear la cuenta.' }));
-      setError(error);
+      setLoading(false);
+      setError(data.error ?? 'No pudimos crear la cuenta.');
+      return;
+    }
+
+    if (!supabase) {
+      setLoading(false);
+      setError('El login todavía no está conectado.');
+      return;
+    }
+
+    // La cuenta ya está creada del lado del servidor, pero el inicio de
+    // sesión lo hace el navegador: así la cookie queda escrita directo acá
+    // (document.cookie), sin depender de que un Set-Cookie llegue bien de
+    // vuelta a través de un proxy — que era por qué, tras elegir la
+    // contraseña, terminaba igual en /login en vez de entrar directo.
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: data.email ?? email,
+      password,
+    });
+    setLoading(false);
+    if (signInError) {
+      setError(signInError.message);
       return;
     }
     router.push('/rooms');

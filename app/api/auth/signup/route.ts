@@ -136,15 +136,15 @@ export async function POST(request: Request) {
 
   await admin.from('profiles').update({ application_status: application.status }).eq('id', authUserId);
 
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email: application.email,
-    password,
-  });
-  if (signInError) {
-    return NextResponse.json({ error: signInError.message }, { status: 400 });
-  }
-
-  const response = NextResponse.json({ ok: true });
+  // El inicio de sesión lo hace el navegador, no este endpoint: antes se
+  // hacía acá mismo con el cliente de servidor, pero esa sesión viaja de
+  // vuelta como cookies en la respuesta HTTP — con cualquier proxy de por
+  // medio (como el que sirve el sitio en producción) alcanza con que no
+  // reenvíe bien un Set-Cookie para que la cuenta quede creada pero sin
+  // sesión, y la persona recién aprobada termine en /login después de
+  // haber elegido su contraseña. El cliente de navegador en cambio escribe
+  // la cookie directo con document.cookie, igual que ya hace /login.
+  const response = NextResponse.json({ ok: true, email: application.email });
   response.cookies.delete(APP_ID_COOKIE);
   return response;
 }
