@@ -283,7 +283,14 @@ create table if not exists public.profiles (
   -- que se crea su cuenta en /propietarios/registro para publicar sus
   -- propias habitaciones y cobrar directo con Stripe Connect.
   role text not null default 'tenant',
-  owner_name text,
+  -- Datos de /perfil — igual para inquilinos y propietarios (el nombre de
+  -- empresa/dirección se usa sobre todo para propietarios, pero queda
+  -- disponible para cualquiera).
+  full_name text,
+  avatar_url text,
+  company_name text,
+  phone text,
+  address text,
   stripe_connect_account_id text,
   stripe_connect_onboarded boolean not null default false,
   created_at timestamptz not null default now()
@@ -365,6 +372,16 @@ values ('property-photos', 'property-photos', true)
 on conflict (id) do nothing;
 
 -- ============================================================================
+-- Fotos de perfil: se suben desde /perfil (cualquier usuario logueado, sea
+-- inquilino, propietario o del equipo de Kasia). Bucket público, mismo
+-- motivo que property-photos — solo se sube/cambia desde una ruta de
+-- servidor con la service_role key.
+-- ============================================================================
+insert into storage.buckets (id, name, public)
+values ('avatars', 'avatars', true)
+on conflict (id) do nothing;
+
+-- ============================================================================
 -- Documentos que se piden desde /admin/solicitudes cuando hace falta más
 -- información para decidir una solicitud (solvencia económica + seguro de
 -- impago para estudiantes, nómina para trabajadores — ver
@@ -418,3 +435,12 @@ on conflict (id) do nothing;
 -- alter table public.profiles add column if not exists owner_name text;
 -- alter table public.profiles add column if not exists stripe_connect_account_id text;
 -- alter table public.profiles add column if not exists stripe_connect_onboarded boolean not null default false;
+
+-- Foto de perfil y datos de contacto (/perfil) — si ya tenías profiles
+-- creada de antes, ejecuta esto una vez:
+-- alter table public.profiles add column if not exists full_name text;
+-- alter table public.profiles add column if not exists avatar_url text;
+-- alter table public.profiles add column if not exists company_name text;
+-- alter table public.profiles add column if not exists phone text;
+-- alter table public.profiles add column if not exists address text;
+-- insert into storage.buckets (id, name, public) values ('avatars', 'avatars', true) on conflict (id) do nothing;

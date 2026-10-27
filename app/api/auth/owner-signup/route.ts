@@ -49,7 +49,7 @@ export async function POST(request: Request) {
   const { error: profileError } = await admin.from('profiles').insert({
     id: created.user.id,
     role: 'owner',
-    owner_name: name,
+    full_name: name,
   });
   if (profileError) {
     return NextResponse.json({ error: profileError.message }, { status: 500 });

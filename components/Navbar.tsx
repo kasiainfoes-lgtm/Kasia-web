@@ -7,12 +7,14 @@ export default async function Navbar() {
   const user = await getSessionUser();
   const isAdmin = isAdminEmail(user?.email);
 
-  // Quien administra el sitio no es un inquilino buscando habitación: no
-  // tiene sentido mostrarle "Completar formulario" o "Ver habitaciones"
-  // como si fuera un cliente — por eso ni se consulta su perfil de inquilino.
-  const profile = !isAdmin && user ? await getOwnProfile(user.id) : null;
+  // Se pide el perfil para cualquier usuario logueado (admin incluido, por
+  // la foto/nombre), pero el estado de inquilino (approved/isOwner) solo
+  // importa para quien no es del equipo de Kasia: no tiene sentido
+  // mostrarle "Completar formulario" o "Ver habitaciones" a un admin como
+  // si fuera un cliente.
+  const profile = user ? await getOwnProfile(user.id) : null;
   const isOwner = !isAdmin && profile?.role === 'owner';
-  const approved = profile?.applicationStatus === 'APPROVED';
+  const approved = !isAdmin && profile?.applicationStatus === 'APPROVED';
 
   const panel = isAdmin
     ? { href: '/admin', label: 'Panel interno' }
@@ -36,6 +38,8 @@ export default async function Navbar() {
         <HeaderActions
           panel={panel}
           email={user?.email ?? null}
+          avatarUrl={profile?.avatarUrl ?? null}
+          displayName={profile?.fullName ?? null}
           catalogHref={catalogHref}
           catalogLabel={catalogLabel}
           faqHref={faqHref}

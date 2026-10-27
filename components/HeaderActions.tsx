@@ -19,6 +19,8 @@ type Panel = { href: string; label: string } | null;
 export default function HeaderActions({
   panel,
   email,
+  avatarUrl,
+  displayName,
   catalogHref,
   catalogLabel,
   faqHref,
@@ -28,6 +30,8 @@ export default function HeaderActions({
   // vez del flujo de inquilino (completar formulario / ver habitaciones).
   panel: Panel;
   email: string | null;
+  avatarUrl: string | null;
+  displayName: string | null;
   catalogHref: string;
   catalogLabel: string;
   faqHref: string;
@@ -46,7 +50,7 @@ export default function HeaderActions({
           </nav>
         )}
         <div className="flex items-center gap-3">
-          <AuthButton email={email} />
+          <AuthButton email={email} avatarUrl={avatarUrl} displayName={displayName} />
           <MobileMenu isAdmin catalogHref={panel.href} catalogCtaLabel={panel.label} faqHref={panel.href} />
         </div>
       </div>
@@ -66,7 +70,7 @@ export default function HeaderActions({
         </nav>
       )}
       <div className="flex items-center gap-3">
-        <AuthButton email={email} />
+        <AuthButton email={email} avatarUrl={avatarUrl} displayName={displayName} />
         {!onCatalog && (
           <Link
             href={catalogHref}

@@ -20,7 +20,8 @@ export type OwnProfile = {
   applicationStatus: string | null;
   applicationId: string | null;
   role: 'tenant' | 'owner';
-  ownerName: string | null;
+  fullName: string | null;
+  avatarUrl: string | null;
   stripeConnectAccountId: string | null;
   stripeConnectOnboarded: boolean;
 };
@@ -30,7 +31,7 @@ export const getOwnProfile = cache(async (userId: string): Promise<OwnProfile | 
   if (!supabase) return null;
   const { data } = await supabase
     .from('profiles')
-    .select('application_status, application_id, role, owner_name, stripe_connect_account_id, stripe_connect_onboarded')
+    .select('application_status, application_id, role, full_name, avatar_url, stripe_connect_account_id, stripe_connect_onboarded')
     .eq('id', userId)
     .maybeSingle();
   if (!data) return null;
@@ -38,7 +39,8 @@ export const getOwnProfile = cache(async (userId: string): Promise<OwnProfile | 
     applicationStatus: data.application_status,
     applicationId: data.application_id,
     role: data.role === 'owner' ? 'owner' : 'tenant',
-    ownerName: data.owner_name,
+    fullName: data.full_name,
+    avatarUrl: data.avatar_url,
     stripeConnectAccountId: data.stripe_connect_account_id,
     stripeConnectOnboarded: !!data.stripe_connect_onboarded,
   };
