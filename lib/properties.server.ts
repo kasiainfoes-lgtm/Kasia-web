@@ -30,7 +30,7 @@ function mapSupabaseRow(row: any): Room {
 
 // mockRooms son datos de demostración con asesoras y teléfonos inventados, así
 // que solo se usan cuando Supabase todavía no está configurado. Con Supabase
-// conectado, una tabla vacía significa "no hay habitaciones", no "mostrá las de
+// conectado, una tabla vacía significa "no hay habitaciones", no "muestra las de
 // ejemplo": si no, borrar el catálogo hacía reaparecer las falsas.
 export async function fetchRooms(): Promise<Room[]> {
   const supabase = createClient();
