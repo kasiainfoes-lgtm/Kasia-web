@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   const stripe = await getStripeClient();
   if (!stripe) {
     return NextResponse.json(
-      { error: 'Stripe no está configurado todavía. Pedile al equipo de Kasia que lo revise.' },
+      { error: 'Stripe no está configurado todavía. Pídele al equipo de Kasia que lo revise.' },
       { status: 501 }
     );
   }

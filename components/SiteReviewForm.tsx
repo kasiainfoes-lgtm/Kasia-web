@@ -16,7 +16,7 @@ export default function SiteReviewForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (rating === 0) {
-      setError('Elegí una puntuación de 1 a 5.');
+      setError('Elige una puntuación de 1 a 5.');
       return;
     }
     setSubmitting(true);
@@ -71,7 +71,7 @@ export default function SiteReviewForm() {
       <textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder="Contá cómo fue tu experiencia en general (opcional)"
+        placeholder="Cuenta cómo fue tu experiencia en general (opcional)"
         rows={3}
         maxLength={1000}
         className="mt-3 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"

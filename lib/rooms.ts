@@ -106,7 +106,7 @@ export const mockRooms: Room[] = [
     photoUrls: [],
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Escritorio', 'Lavadora', 'Ascensor', 'Balcón propio'],
     description:
-      'Habitación exterior con balcón en un piso reformado a dos calles del Mercado de Ruzafa. Zona con más ambiente de bares y coworkings de la ciudad, ideal si trabajás remoto o estudiás cerca del centro.',
+      'Habitación exterior con balcón en un piso reformado a dos calles del Mercado de Ruzafa. Zona con más ambiente de bares y coworkings de la ciudad, ideal si trabajas remoto o estudias cerca del centro.',
     manager: 'Alba',
     responseTime: 'Responde en menos de 2 horas',
     managerPhone: '+34 600 111 222',
@@ -154,7 +154,7 @@ export const mockRooms: Room[] = [
     photoUrls: [],
     amenities: ['WiFi de 300Mb', 'Aire acondicionado', 'Lavadora', 'Ascensor'],
     description:
-      'Piso con mucha luz natural en una calle tranquila detrás del Mestalla. Buena opción si trabajás en la zona norte de la ciudad o llegás en tren a Cabanyal-Alameda.',
+      'Piso con mucha luz natural en una calle tranquila detrás del Mestalla. Buena opción si trabajas en la zona norte de la ciudad o llegas en tren a Cabanyal-Alameda.',
     manager: 'Alba',
     responseTime: 'Responde en menos de 2 horas',
     managerPhone: '+34 600 111 222',

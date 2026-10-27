@@ -16,7 +16,7 @@ export default function ReviewForm({ roomId, managerName }: { roomId: string; ma
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (rating === 0) {
-      setError('Elegí una puntuación de 1 a 5.');
+      setError('Elige una puntuación de 1 a 5.');
       return;
     }
     setSubmitting(true);
@@ -48,7 +48,7 @@ export default function ReviewForm({ roomId, managerName }: { roomId: string; ma
 
   return (
     <form onSubmit={handleSubmit} className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-4">
-      <p className="text-sm font-semibold text-vivi-ink">¿Ya alquilaste con {managerName}? Dejá tu reseña</p>
+      <p className="text-sm font-semibold text-vivi-ink">¿Ya alquilaste con {managerName}? Deja tu reseña</p>
       <div className="mt-2 flex gap-1">
         {[1, 2, 3, 4, 5].map((n) => (
           <button
@@ -71,7 +71,7 @@ export default function ReviewForm({ roomId, managerName }: { roomId: string; ma
       <textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder="Contá cómo fue tu experiencia (opcional)"
+        placeholder="Cuenta cómo fue tu experiencia (opcional)"
         rows={3}
         maxLength={1000}
         className="mt-3 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"

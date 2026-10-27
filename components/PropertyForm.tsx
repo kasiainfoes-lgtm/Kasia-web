@@ -201,9 +201,9 @@ export default function PropertyForm({
       </div>
 
       <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
-        <label className={labelClass}>Ubicación: pegá el link de Google Maps (recomendado)</label>
+        <label className={labelClass}>Ubicación: pega el link de Google Maps (recomendado)</label>
         <p className="mt-1 text-xs text-vivi-muted">
-          En Google Maps, buscá la dirección, tocá &quot;Compartir&quot; y copiá el link. Es más preciso
+          En Google Maps, busca la dirección, toca &quot;Compartir&quot; y copia el link. Es más preciso
           que cargar latitud/longitud a mano.
         </p>
         <div className="mt-2 flex gap-2">
@@ -253,7 +253,7 @@ export default function PropertyForm({
             className={inputClass}
           />
           <p className="mt-1.5 text-xs text-vivi-muted">
-            Se completan solas al usar el link de arriba. Si las dejás vacías, en el mapa aparece
+            Se completan solas al usar el link de arriba. Si las dejas vacías, en el mapa aparece
             el centro del barrio (zona).
           </p>
         </div>
@@ -385,7 +385,7 @@ export default function PropertyForm({
           </>
         ) : (
           <p className="mt-3 text-xs text-vivi-muted">
-            Llegaste al máximo de {MAX_PHOTOS} fotos/videos. Borrá alguna para subir otra.
+            Llegaste al máximo de {MAX_PHOTOS} fotos/videos. Borra alguna para subir otra.
           </p>
         )}
         {uploadingPhotos && <p className="mt-1.5 text-xs text-vivi-muted">Subiendo…</p>}

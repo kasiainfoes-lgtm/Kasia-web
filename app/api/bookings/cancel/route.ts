@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
   if (booking.status === 'pagado') {
     return NextResponse.json(
-      { error: 'Esta reserva ya está pagada. Contactá con tu asesor/a para gestionar la cancelación.' },
+      { error: 'Esta reserva ya está pagada. Contacta con tu asesor/a para gestionar la cancelación.' },
       { status: 400 }
     );
   }

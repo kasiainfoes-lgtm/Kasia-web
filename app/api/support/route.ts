@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   const message = String(body?.message ?? '').trim();
 
   if (!phone || !email) {
-    return NextResponse.json({ error: 'Completá tu teléfono y tu email.' }, { status: 400 });
+    return NextResponse.json({ error: 'Completa tu teléfono y tu email.' }, { status: 400 });
   }
   if (!EMAIL_RE.test(email)) {
     return NextResponse.json({ error: 'Ese email no parece válido.' }, { status: 400 });

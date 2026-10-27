@@ -17,7 +17,7 @@ export default function StripeCheckoutButton({ room, deposit }: { room: Room; de
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.url) {
-      setError(data.error ?? 'No pudimos iniciar el pago. Probá de nuevo.');
+      setError(data.error ?? 'No pudimos iniciar el pago. Prueba de nuevo.');
       setLoading(false);
       return;
     }

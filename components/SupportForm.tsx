@@ -23,7 +23,7 @@ export default function SupportForm() {
     setSending(false);
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(data.error ?? 'No pudimos enviar tu consulta. Probá de nuevo.');
+      setError(data.error ?? 'No pudimos enviar tu consulta. Prueba de nuevo.');
       return;
     }
     setSent(true);
@@ -68,7 +68,7 @@ export default function SupportForm() {
       </div>
       <div>
         <label className="block text-xs font-semibold uppercase tracking-wide text-vivi-muted">
-          Contanos en qué te podemos ayudar (opcional)
+          Cuéntanos en qué te podemos ayudar (opcional)
         </label>
         <textarea
           value={message}

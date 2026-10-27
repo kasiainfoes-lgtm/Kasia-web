@@ -74,8 +74,8 @@ export default async function CobrosPage() {
         ) : (
           <>
             <p className="mt-3 text-sm text-vivi-muted">
-              Conectá tu cuenta bancaria (vas a ir a Stripe, que es quien procesa el pago — nunca
-              nos pasás tu IBAN a nosotros directamente) para poder empezar a recibir pagos. Es
+              Conecta tu cuenta bancaria (vas a ir a Stripe, que es quien procesa el pago — nunca
+              nos pasas tu IBAN a nosotros directamente) para poder empezar a recibir pagos. Es
               gratis y toma unos minutos.
             </p>
             <div className="mt-4">

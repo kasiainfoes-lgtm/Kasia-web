@@ -86,7 +86,7 @@ function PostPaymentPanelInner({
   }
 
   async function handleMarkVisitDone() {
-    if (!window.confirm('¿Confirmás que ya se realizó la visita?')) return;
+    if (!window.confirm('¿Confirmas que ya se realizó la visita?')) return;
     setMarkingDone(true);
     setMarkDoneError(null);
     const res = await fetch('/api/bookings/visit-done', {

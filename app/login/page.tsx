@@ -27,7 +27,7 @@ function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!supabase) {
-      setError('El login todavía no está conectado. Configurá Supabase (ver SETUP.md).');
+      setError('El login todavía no está conectado. Configura Supabase (ver SETUP.md).');
       return;
     }
     setLoading(true);

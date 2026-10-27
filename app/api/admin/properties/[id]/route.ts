@@ -65,7 +65,7 @@ export async function DELETE(_request: Request, { params }: { params: { id: stri
       return NextResponse.json(
         {
           error:
-            'No se puede eliminar: todavía hay datos que dependen de esta habitación. Escribile a soporte técnico si esto se repite.',
+            'No se puede eliminar: todavía hay datos que dependen de esta habitación. Escríbele a soporte técnico si esto se repite.',
         },
         { status: 409 }
       );

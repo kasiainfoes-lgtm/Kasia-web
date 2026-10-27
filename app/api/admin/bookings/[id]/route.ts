@@ -87,7 +87,7 @@ export async function DELETE(_request: Request, { params }: { params: { id: stri
   // sola con un click, hay que resolver la devolución primero.
   if (booking.status === 'pagado') {
     return NextResponse.json(
-      { error: 'Esta reserva ya está pagada. Gestioná la devolución de la fianza antes de cancelarla.' },
+      { error: 'Esta reserva ya está pagada. Gestiona la devolución de la fianza antes de cancelarla.' },
       { status: 400 }
     );
   }
