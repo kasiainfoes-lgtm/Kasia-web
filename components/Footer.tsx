@@ -8,7 +8,7 @@ export default function Footer() {
           <p className="font-semibold text-white">Kasia · Valencia</p>
           <div className="flex items-center gap-4">
             <Link href="/propietarios/registro" className="text-xs font-semibold text-stone-300 hover:text-white">
-              Publicá tu propiedad
+              Publica tu propiedad
             </Link>
             <Link href="/soporte" className="text-xs font-semibold text-stone-300 hover:text-white">
               Soporte técnico

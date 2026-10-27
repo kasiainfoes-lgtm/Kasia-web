@@ -222,7 +222,7 @@ export function reviewRequestEmailTemplate(roomTitle: string, reviewUrl: string)
   return {
     subject: `¿Cómo te está yendo en ${roomTitle}? — Kasia`,
     html: wrapper(
-      '¿Nos contás cómo te fue?',
+      '¿Nos cuentas cómo te fue?',
       `<p style="margin:0 0 16px;color:#3A4356;font-size:14px;line-height:1.6;">¡Hola!</p>
        <p style="margin:0 0 24px;color:#3A4356;font-size:14px;line-height:1.6;">
          Ya visitaste <strong>${safeTitle}</strong>. Nos ayudaría mucho que dejes una reseña de tu
@@ -245,7 +245,7 @@ export function visitScheduledEmailTemplate(roomTitle: string, visitAtLabel: str
       'Tu visita quedó agendada',
       `<p style="margin:0;color:#3A4356;font-size:14px;line-height:1.6;">
          Agendaste tu visita a <strong>${safeTitle}</strong> para el <strong>${safeDate}</strong>.
-         Tu asesor/a te espera ahí. Si necesitás cambiar el horario, podés hacerlo desde la misma
+         Tu asesor/a te espera ahí. Si necesitas cambiar el horario, puedes hacerlo desde la misma
          página de tu reserva.
        </p>`
     ),
@@ -266,7 +266,7 @@ export function visitScheduledAdminNotificationEmailTemplate(
       'Nueva visita agendada',
       `<p style="margin:0;color:#3A4356;font-size:14px;line-height:1.6;">
          <strong>${safeEmail}</strong> agendó una visita a <strong>${safeTitle}</strong> para el
-         <strong>${safeDate}</strong>. Podés ver todas las visitas agendadas en el panel interno.
+         <strong>${safeDate}</strong>. Puedes ver todas las visitas agendadas en el panel interno.
        </p>`
     ),
   };

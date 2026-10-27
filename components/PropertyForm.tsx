@@ -66,7 +66,7 @@ export default function PropertyForm({
     if (!files || files.length === 0) return;
     if (photoUrls.length + files.length > MAX_PHOTOS) {
       setPhotoError(
-        `Como máximo se pueden cargar ${MAX_PHOTOS} fotos/videos — ya hay ${photoUrls.length} cargados. Elegí menos archivos.`
+        `Como máximo se pueden cargar ${MAX_PHOTOS} fotos/videos — ya hay ${photoUrls.length} cargados. Elige menos archivos.`
       );
       return;
     }
@@ -84,7 +84,7 @@ export default function PropertyForm({
           // mensaje real ("No pudimos subir el archivo") jamás se mostraría.
           if (res.status === 413) {
             throw new Error(
-              `"${file.name}" es demasiado grande para el servidor (más allá del límite de la app, hay un límite del servidor web). Avisale a soporte para subir ese límite.`
+              `"${file.name}" es demasiado grande para el servidor (más allá del límite de la app, hay un límite del servidor web). Avisa a soporte para subir ese límite.`
             );
           }
           const body = await res.json().catch(() => null);
@@ -95,7 +95,7 @@ export default function PropertyForm({
       }
       setPhotoUrls((urls) => [...urls, ...uploaded]);
     } catch (err) {
-      setPhotoError(err instanceof Error && err.message ? err.message : 'No pudimos subir alguno de los archivos. Probá de nuevo.');
+      setPhotoError(err instanceof Error && err.message ? err.message : 'No pudimos subir alguno de los archivos. Prueba de nuevo.');
     }
     setUploadingPhotos(false);
   }

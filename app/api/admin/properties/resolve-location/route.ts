@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
   const { url } = await request.json().catch(() => ({ url: null }));
   if (!url || typeof url !== 'string') {
-    return NextResponse.json({ error: 'Pegá un link de Google Maps.' }, { status: 400 });
+    return NextResponse.json({ error: 'Pega un link de Google Maps.' }, { status: 400 });
   }
 
   let parsed: URL;
@@ -52,13 +52,13 @@ export async function POST(request: Request) {
       const res = await fetch(url, { redirect: 'follow' });
       coords = extractLatLng(res.url);
     } catch {
-      return NextResponse.json({ error: 'No pudimos abrir ese link. Probá pegar el link completo en vez del corto.' }, { status: 502 });
+      return NextResponse.json({ error: 'No pudimos abrir ese link. Prueba pegar el link completo en vez del corto.' }, { status: 502 });
     }
   }
 
   if (!coords) {
     return NextResponse.json(
-      { error: 'No encontramos coordenadas en ese link. Abrí el lugar en Google Maps, tocá "Compartir" y pegá ese link, o cargá latitud/longitud a mano.' },
+      { error: 'No encontramos coordenadas en ese link. Abre el lugar en Google Maps, toca "Compartir" y pega ese link, o carga latitud/longitud a mano.' },
       { status: 422 }
     );
   }

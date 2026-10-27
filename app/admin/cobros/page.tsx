@@ -18,8 +18,8 @@ export default async function CobrosPage() {
         <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink sm:text-3xl">Cobros</h1>
         <AdminTabs role="admin" active="/admin/cobros" />
         <p className="text-sm text-vivi-muted">
-          Esta sección es para que los propietarios conecten su cuenta bancaria — vos ya cobrás
-          directo en tu cuenta de Stripe, no hace falta nada acá.
+          Esta sección es para que los propietarios conecten su cuenta bancaria — tú ya cobras
+          directo en tu cuenta de Stripe, no hace falta nada aquí.
         </p>
       </section>
     );
