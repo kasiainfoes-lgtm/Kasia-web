@@ -1,17 +1,22 @@
 import { NextResponse } from 'next/server';
-import { getAdminUser } from '@/lib/require-admin.server';
+import { getOwnerUser, ownsProperty } from '@/lib/require-owner.server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 // Publicar/ocultar una habitación sin pasar por todo el formulario de
 // edición: solo cambia la columna published. Ocultarla no la borra — el
-// admin la sigue viendo en /admin/propiedades y puede volver a activarla
-// cuando quiera.
+// dueño (admin o propietario) la sigue viendo en /admin/propiedades y puede
+// volver a activarla cuando quiera.
 export async function POST(request: Request, { params }: { params: { id: string } }) {
-  const user = await getAdminUser();
-  if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  const access = await getOwnerUser();
+  if (!access) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
 
   const admin = createAdminClient();
   if (!admin) return NextResponse.json({ error: 'Supabase no está configurado.' }, { status: 501 });
+
+  const { data: existing } = await admin.from('properties').select('manager_email').eq('id', params.id).maybeSingle();
+  if (!existing || !ownsProperty(access, existing.manager_email)) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  }
 
   const { published } = await request.json().catch(() => ({ published: null }));
   if (typeof published !== 'boolean') {

@@ -50,11 +50,11 @@ export default function MobileMenu({
           <nav className="flex flex-col gap-4 text-sm font-medium text-vivi-ink">
             {isAdmin ? (
               <Link
-                href="/admin"
+                href={catalogHref}
                 onClick={() => setOpen(false)}
                 className="rounded-full bg-vivi-navy px-5 py-2.5 text-center text-sm font-semibold text-white"
               >
-                Panel interno
+                {catalogCtaLabel}
               </Link>
             ) : (
               <>

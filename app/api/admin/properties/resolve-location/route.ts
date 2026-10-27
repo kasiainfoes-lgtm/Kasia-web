@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAdminUser } from '@/lib/require-admin.server';
+import { getOwnerUser } from '@/lib/require-owner.server';
 import { validateCoordinates } from '@/lib/property-input';
 
 // Enlaces de Google Maps guardan la ubicación de varias formas según de dónde
@@ -26,8 +26,8 @@ function isShortLinkHost(hostname: string): boolean {
 }
 
 export async function POST(request: Request) {
-  const user = await getAdminUser();
-  if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  const access = await getOwnerUser();
+  if (!access) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
 
   const { url } = await request.json().catch(() => ({ url: null }));
   if (!url || typeof url !== 'string') {

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { adminPageGate } from '@/lib/admin-page-gate.server';
+import { ownerPageGate, ownsProperty } from '@/lib/require-owner.server';
 import { fetchRoomById } from '@/lib/properties.server';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
@@ -10,11 +10,14 @@ import PublishToggle from '@/components/PublishToggle';
 export const dynamic = 'force-dynamic';
 
 export default async function EditPropertyPage({ params }: { params: { id: string } }) {
-  const gate = await adminPageGate(`/admin/propiedades/${params.id}`);
+  const gate = await ownerPageGate(`/admin/propiedades/${params.id}`);
   if (!gate.ok) return <AdminGateMessage reason={gate.reason} />;
 
   const room = await fetchRoomById(params.id);
   if (!room) return notFound();
+  // Un propietario no puede editar la habitación de otro propietario
+  // adivinando el id en la URL.
+  if (!ownsProperty(gate, room.managerEmail)) return notFound();
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-12">
@@ -31,8 +34,8 @@ export default async function EditPropertyPage({ params }: { params: { id: strin
           </Link>
         </div>
       </div>
-      <AdminTabs active="/admin/propiedades" />
-      <PropertyForm initial={room} />
+      <AdminTabs role={gate.isAdmin ? 'admin' : 'owner'} active="/admin/propiedades" />
+      <PropertyForm initial={room} lockedManagerEmail={gate.isAdmin ? null : gate.email} />
     </section>
   );
 }

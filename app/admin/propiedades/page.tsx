@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { adminPageGate } from '@/lib/admin-page-gate.server';
-import { fetchRooms } from '@/lib/properties.server';
+import { ownerPageGate } from '@/lib/require-owner.server';
+import { fetchRooms, fetchAllRoomsByManagerEmail } from '@/lib/properties.server';
 import { firstImageUrl } from '@/lib/rooms';
 import AdminGateMessage from '@/components/AdminGateMessage';
 import AdminTabs from '@/components/AdminTabs';
@@ -11,17 +11,20 @@ import PublishToggle from '@/components/PublishToggle';
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPropertiesPage() {
-  const gate = await adminPageGate('/admin/propiedades');
+  const gate = await ownerPageGate('/admin/propiedades');
   if (!gate.ok) return <AdminGateMessage reason={gate.reason} />;
 
-  const rooms = await fetchRooms();
+  // El equipo de Kasia ve todas las propiedades; un propietario externo
+  // solo ve las suyas, identificadas por el email con el que cargó cada
+  // habitación (manager_email).
+  const rooms = gate.isAdmin ? await fetchRooms() : await fetchAllRoomsByManagerEmail(gate.email);
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
       <p className="text-xs font-bold uppercase tracking-wide text-vivi-mint">Panel interno</p>
       <h1 className="mt-2 text-2xl font-extrabold text-vivi-ink sm:text-3xl">Propiedades</h1>
 
-      <AdminTabs active="/admin/propiedades" />
+      <AdminTabs role={gate.isAdmin ? 'admin' : 'owner'} active="/admin/propiedades" />
 
       <div className="mb-6 flex justify-end">
         <Link

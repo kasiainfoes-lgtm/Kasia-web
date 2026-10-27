@@ -1,27 +1,10 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { findAuthUserByEmail } from '@/lib/supabase/find-user.server';
 import { getApplicationById } from '@/lib/applications.server';
 import { APP_ID_COOKIE } from '@/lib/apply-session';
-
-// Busca un usuario de Supabase Auth por email. La API admin no ofrece un
-// filtro por email en esta versión del SDK (solo pagina por page/perPage), así
-// que recorremos las páginas y comparamos nosotros — un volumen totalmente
-// razonable para el tamaño de este proyecto.
-async function findAuthUserByEmail(admin: SupabaseClient, email: string) {
-  const target = email.trim().toLowerCase();
-  const perPage = 1000;
-  for (let page = 1; page <= 10; page++) {
-    const { data, error } = await admin.auth.admin.listUsers({ page, perPage });
-    if (error || !data?.users?.length) return null;
-    const match = data.users.find((u) => u.email?.toLowerCase() === target);
-    if (match) return match;
-    if (data.users.length < perPage) return null;
-  }
-  return null;
-}
 
 // La cuenta se crea SIEMPRE del lado del servidor, nunca con supabase.auth.signUp()
 // directo desde el navegador: así el email viene de la solicitud ya verificada

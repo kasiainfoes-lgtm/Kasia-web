@@ -65,8 +65,17 @@ export async function fetchRoomById(id: string): Promise<Room | undefined> {
 
 // Todas las habitaciones que gestiona un mismo asesor (identificado por su
 // email) — para la página "todas las propiedades de David", al estilo del
-// perfil de un anfitrión en Airbnb.
+// perfil de un anfitrión en Airbnb. Solo las publicadas: esto lo ve
+// cualquier cliente.
 export async function fetchRoomsByManagerEmail(managerEmail: string): Promise<Room[]> {
   const rooms = await fetchPublishedRooms();
+  return rooms.filter((room) => room.managerEmail === managerEmail);
+}
+
+// Misma idea pero sin filtrar por publicadas — para que un propietario vea
+// en su propio panel también las que tiene pausadas, igual que el admin ve
+// todo en /admin/propiedades.
+export async function fetchAllRoomsByManagerEmail(managerEmail: string): Promise<Room[]> {
+  const rooms = await fetchRooms();
   return rooms.filter((room) => room.managerEmail === managerEmail);
 }

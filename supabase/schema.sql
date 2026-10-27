@@ -279,6 +279,13 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   application_id uuid references public.applications(id),
   application_status text,
+  -- 'tenant' = inquilino de siempre (pasa por /apply). 'owner' = propietario
+  -- que se crea su cuenta en /propietarios/registro para publicar sus
+  -- propias habitaciones y cobrar directo con Stripe Connect.
+  role text not null default 'tenant',
+  owner_name text,
+  stripe_connect_account_id text,
+  stripe_connect_onboarded boolean not null default false,
   created_at timestamptz not null default now()
 );
 
@@ -404,3 +411,10 @@ on conflict (id) do nothing;
 --     auth.uid() = user_id
 --     and exists (select 1 from public.bookings b where b.user_id = auth.uid() and b.status = 'pagado')
 --   );
+
+-- Propietarios externos (publicar propiedad + cobrar con Stripe Connect):
+-- si ya tenías la tabla profiles creada de antes, corré esto una vez.
+-- alter table public.profiles add column if not exists role text not null default 'tenant';
+-- alter table public.profiles add column if not exists owner_name text;
+-- alter table public.profiles add column if not exists stripe_connect_account_id text;
+-- alter table public.profiles add column if not exists stripe_connect_onboarded boolean not null default false;

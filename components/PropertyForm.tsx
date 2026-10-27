@@ -19,7 +19,17 @@ function toDMY(dateInput: string): string {
 
 const MAX_PHOTOS = 10;
 
-export default function PropertyForm({ initial }: { initial?: Room }) {
+export default function PropertyForm({
+  initial,
+  lockedManagerEmail = null,
+}: {
+  initial?: Room;
+  // Si quien está en el formulario es un propietario (no el equipo de
+  // Kasia), el email de contacto de la habitación tiene que ser el suyo
+  // propio — se lo mostramos de solo lectura en vez de un input libre, para
+  // que no pueda publicar a nombre de otra cuenta por error ni a propósito.
+  lockedManagerEmail?: string | null;
+}) {
   const router = useRouter();
   const isEdit = !!initial;
 
@@ -47,7 +57,7 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
   const [manager, setManager] = useState(initial?.manager ?? '');
   const [responseTime, setResponseTime] = useState(initial?.responseTime ?? 'Responde en menos de 24 horas');
   const [managerPhone, setManagerPhone] = useState(initial?.managerPhone ?? '');
-  const [managerEmail, setManagerEmail] = useState(initial?.managerEmail ?? '');
+  const [managerEmail, setManagerEmail] = useState(initial?.managerEmail ?? lockedManagerEmail ?? '');
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -422,10 +432,14 @@ export default function PropertyForm({ initial }: { initial?: Room }) {
           <input
             required
             type="email"
+            disabled={!!lockedManagerEmail}
             value={managerEmail}
             onChange={(e) => setManagerEmail(e.target.value)}
-            className={inputClass}
+            className={`${inputClass} ${lockedManagerEmail ? 'bg-stone-100 text-vivi-muted' : ''}`}
           />
+          {lockedManagerEmail && (
+            <p className="mt-1 text-xs text-vivi-muted">Esta habitación queda a tu nombre.</p>
+          )}
         </div>
       </div>
 

@@ -1,18 +1,33 @@
 import { NextResponse } from 'next/server';
-import { getAdminUser } from '@/lib/require-admin.server';
+import { getOwnerUser, ownsProperty } from '@/lib/require-owner.server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { toPropertyRow, validateCoordinates, type PropertyInput } from '@/lib/property-input';
 
+async function loadOwnerEmail(admin: ReturnType<typeof createAdminClient>, id: string): Promise<string | null> {
+  if (!admin) return null;
+  const { data } = await admin.from('properties').select('manager_email').eq('id', id).maybeSingle();
+  return data?.manager_email ?? null;
+}
+
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const user = await getAdminUser();
-  if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  const access = await getOwnerUser();
+  if (!access) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
 
   const admin = createAdminClient();
   if (!admin) return NextResponse.json({ error: 'Supabase no está configurado.' }, { status: 501 });
 
+  const currentOwnerEmail = await loadOwnerEmail(admin, params.id);
+  if (!currentOwnerEmail || !ownsProperty(access, currentOwnerEmail)) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  }
+
   const input: PropertyInput = await request.json();
   const coordError = validateCoordinates(input.lat, input.lng);
   if (coordError) return NextResponse.json({ error: coordError }, { status: 400 });
+
+  // Un propietario no puede "regalarle" su habitación a otro email cambiando
+  // este campo — el dueño de una propiedad ya cargada no cambia desde acá.
+  if (!access.isAdmin) input.managerEmail = currentOwnerEmail;
 
   const row = toPropertyRow(input);
   delete (row as any).id;
@@ -25,11 +40,16 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 export async function DELETE(_request: Request, { params }: { params: { id: string } }) {
-  const user = await getAdminUser();
-  if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  const access = await getOwnerUser();
+  if (!access) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
 
   const admin = createAdminClient();
   if (!admin) return NextResponse.json({ error: 'Supabase no está configurado.' }, { status: 501 });
+
+  const currentOwnerEmail = await loadOwnerEmail(admin, params.id);
+  if (!currentOwnerEmail || !ownsProperty(access, currentOwnerEmail)) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  }
 
   // Antes esto fallaba (23503, foreign_key_violation) apenas alguien había
   // abierto /reservar/[id] una sola vez para esta habitación, porque eso ya

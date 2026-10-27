@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { adminPageGate } from '@/lib/admin-page-gate.server';
+import { ownerPageGate, ownsProperty } from '@/lib/require-owner.server';
 import { fetchRoomById } from '@/lib/properties.server';
 import { getManagerReviews } from '@/lib/reviews.server';
 import AdminGateMessage from '@/components/AdminGateMessage';
@@ -18,11 +18,12 @@ export const dynamic = 'force-dynamic';
 // texto y comodidades antes de publicar, sin tener que crear una cuenta de
 // prueba ni aprobarse a sí mismo una solicitud falsa.
 export default async function PreviewPropertyPage({ params }: { params: { id: string } }) {
-  const gate = await adminPageGate(`/admin/propiedades/${params.id}/vista-previa`);
+  const gate = await ownerPageGate(`/admin/propiedades/${params.id}/vista-previa`);
   if (!gate.ok) return <AdminGateMessage reason={gate.reason} />;
 
   const room = await fetchRoomById(params.id);
   if (!room) return notFound();
+  if (!ownsProperty(gate, room.managerEmail)) return notFound();
 
   const reviews = await getManagerReviews(room.managerEmail);
 

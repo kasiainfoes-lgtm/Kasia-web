@@ -1,12 +1,12 @@
 import { randomUUID } from 'crypto';
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
-import { getAdminUser } from '@/lib/require-admin.server';
+import { getOwnerUser } from '@/lib/require-owner.server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 // Bucket público: cualquiera puede ver las fotos/videos (son de un catálogo),
-// pero solo un admin autenticado puede subir o borrar, siempre a través de
-// esta ruta de servidor con la service_role key.
+// pero solo un admin o propietario autenticado puede subir o borrar, siempre
+// a través de esta ruta de servidor con la service_role key.
 const BUCKET = 'property-photos';
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024;
@@ -23,8 +23,8 @@ const ALLOWED_MIME: Record<string, { extension: string; kind: 'image' | 'video' 
 };
 
 export async function POST(request: Request) {
-  const user = await getAdminUser();
-  if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  const access = await getOwnerUser();
+  if (!access) return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
 
   const admin = createAdminClient();
   if (!admin) return NextResponse.json({ error: 'Supabase no está configurado.' }, { status: 501 });

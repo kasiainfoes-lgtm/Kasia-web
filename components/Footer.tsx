@@ -7,6 +7,9 @@ export default function Footer() {
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-semibold text-white">Kasia · Valencia</p>
           <div className="flex items-center gap-4">
+            <Link href="/propietarios/registro" className="text-xs font-semibold text-stone-300 hover:text-white">
+              Publicá tu propiedad
+            </Link>
             <Link href="/soporte" className="text-xs font-semibold text-stone-300 hover:text-white">
               Soporte técnico
             </Link>

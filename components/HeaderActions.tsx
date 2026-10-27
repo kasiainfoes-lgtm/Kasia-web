@@ -14,14 +14,19 @@ function sameTarget(href: string, pathname: string): boolean {
   return href.split('#')[0] === pathname;
 }
 
+type Panel = { href: string; label: string } | null;
+
 export default function HeaderActions({
-  isAdmin,
+  panel,
   email,
   catalogHref,
   catalogLabel,
   faqHref,
 }: {
-  isAdmin: boolean;
+  // No-null para admin ("Panel interno" → /admin) y para propietarios
+  // ("Mis propiedades" → /admin/propiedades) — ambos ven su propio panel en
+  // vez del flujo de inquilino (completar formulario / ver habitaciones).
+  panel: Panel;
   email: string | null;
   catalogHref: string;
   catalogLabel: string;
@@ -29,20 +34,20 @@ export default function HeaderActions({
 }) {
   const pathname = usePathname();
 
-  if (isAdmin) {
-    const onAdminHome = pathname === '/admin';
+  if (panel) {
+    const onPanelHome = pathname === panel.href;
     return (
       <div className="flex items-center gap-6">
-        {!onAdminHome && (
+        {!onPanelHome && (
           <nav className="hidden items-center gap-8 text-sm font-medium text-vivi-muted sm:flex">
-            <Link href="/admin" className="hover:text-vivi-navy">
-              Panel interno
+            <Link href={panel.href} className="hover:text-vivi-navy">
+              {panel.label}
             </Link>
           </nav>
         )}
         <div className="flex items-center gap-3">
           <AuthButton email={email} />
-          <MobileMenu isAdmin catalogHref="/admin" catalogCtaLabel="Panel interno" faqHref="/admin" />
+          <MobileMenu isAdmin catalogHref={panel.href} catalogCtaLabel={panel.label} faqHref={panel.href} />
         </div>
       </div>
     );

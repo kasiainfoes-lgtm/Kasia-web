@@ -11,7 +11,14 @@ export default async function Navbar() {
   // tiene sentido mostrarle "Completar formulario" o "Ver habitaciones"
   // como si fuera un cliente — por eso ni se consulta su perfil de inquilino.
   const profile = !isAdmin && user ? await getOwnProfile(user.id) : null;
+  const isOwner = !isAdmin && profile?.role === 'owner';
   const approved = profile?.applicationStatus === 'APPROVED';
+
+  const panel = isAdmin
+    ? { href: '/admin', label: 'Panel interno' }
+    : isOwner
+      ? { href: '/admin/propiedades', label: 'Mis propiedades' }
+      : null;
 
   const catalogHref = approved ? '/rooms' : '/apply';
   const catalogLabel = approved ? 'Ver habitaciones' : 'Encontrar habitación';
@@ -20,14 +27,14 @@ export default async function Navbar() {
   return (
     <header className="relative border-b border-stone-200/70 bg-vivi-card/80 backdrop-blur sticky top-0 z-40">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href={isAdmin ? '/admin' : '/'} className="flex items-baseline gap-2">
+        <Link href={panel ? panel.href : '/'} className="flex items-baseline gap-2">
           <span className="text-2xl font-black tracking-tight text-vivi-navy">Kasia</span>
           <span className="text-sm font-medium text-vivi-muted">
-            {isAdmin ? 'Panel interno' : 'Valencia'}
+            {panel ? 'Panel interno' : 'Valencia'}
           </span>
         </Link>
         <HeaderActions
-          isAdmin={isAdmin}
+          panel={panel}
           email={user?.email ?? null}
           catalogHref={catalogHref}
           catalogLabel={catalogLabel}

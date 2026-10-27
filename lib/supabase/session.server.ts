@@ -16,16 +16,30 @@ export const getSessionUser = cache(async () => {
   return user;
 });
 
-export type OwnProfile = { applicationStatus: string | null; applicationId: string | null };
+export type OwnProfile = {
+  applicationStatus: string | null;
+  applicationId: string | null;
+  role: 'tenant' | 'owner';
+  ownerName: string | null;
+  stripeConnectAccountId: string | null;
+  stripeConnectOnboarded: boolean;
+};
 
 export const getOwnProfile = cache(async (userId: string): Promise<OwnProfile | null> => {
   const supabase = createClient();
   if (!supabase) return null;
   const { data } = await supabase
     .from('profiles')
-    .select('application_status, application_id')
+    .select('application_status, application_id, role, owner_name, stripe_connect_account_id, stripe_connect_onboarded')
     .eq('id', userId)
     .maybeSingle();
   if (!data) return null;
-  return { applicationStatus: data.application_status, applicationId: data.application_id };
+  return {
+    applicationStatus: data.application_status,
+    applicationId: data.application_id,
+    role: data.role === 'owner' ? 'owner' : 'tenant',
+    ownerName: data.owner_name,
+    stripeConnectAccountId: data.stripe_connect_account_id,
+    stripeConnectOnboarded: !!data.stripe_connect_onboarded,
+  };
 });

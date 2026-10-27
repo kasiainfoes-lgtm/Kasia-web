@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const tabs = [
+const ADMIN_TABS = [
   { href: '/admin', label: 'Resumen' },
   { href: '/admin/solicitudes', label: 'Solicitudes' },
   { href: '/admin/propiedades', label: 'Propiedades' },
@@ -8,7 +8,17 @@ const tabs = [
   { href: '/admin/integraciones', label: 'Integraciones' },
 ];
 
-export default function AdminTabs({ active }: { active: string }) {
+// Un propietario externo no es parte del equipo de Kasia: no debe ver
+// Resumen/Solicitudes/Visitas (son datos de TODOS los clientes) ni
+// Integraciones (ahí viven las claves de Stripe/Resend de Kasia). Solo sus
+// propias habitaciones y su propia conexión bancaria.
+const OWNER_TABS = [
+  { href: '/admin/propiedades', label: 'Propiedades' },
+  { href: '/admin/cobros', label: 'Cobros' },
+];
+
+export default function AdminTabs({ active, role = 'admin' }: { active: string; role?: 'admin' | 'owner' }) {
+  const tabs = role === 'owner' ? OWNER_TABS : ADMIN_TABS;
   return (
     <div className="mb-8 flex gap-2 border-b border-stone-200">
       {tabs.map((tab) => (
